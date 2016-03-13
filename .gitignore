@@ -10,3 +10,6 @@
 
 # virtual machine crash logs, see http://www.java.com/en/download/help/error_hotspot.xml
 hs_err_pid*
+/trunk/ds-finance-bank-ejb/target/
+/trunk/ds-finance-bank-ear/target/
+/trunk/ds-finance-bank-ejb/nb-configuration.xml
