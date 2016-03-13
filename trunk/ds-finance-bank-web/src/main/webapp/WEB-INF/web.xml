@@ -51,7 +51,17 @@
     <load-on-startup>1</load-on-startup>
   </servlet>
 
-  <!-- Faces Servlet Mapping -->
+<error-page>
+<exception-type>java.lang.Throwable</exception-type>
+<location>/faces/error.xhtml</location>
+</error-page>
+
+
+  <!-- Map these files with JSF -->
+  <servlet-mapping>
+    <servlet-name>Faces Servlet</servlet-name>
+    <url-pattern>/faces/*</url-pattern>
+  </servlet-mapping>
   <servlet-mapping>
     <servlet-name>Faces Servlet</servlet-name>
     <url-pattern>*.xhtml</url-pattern>
@@ -59,9 +69,7 @@
 
   <!-- Welcome files -->
   <welcome-file-list>
-    <welcome-file>index.xhtml</welcome-file>
-    <welcome-file>index.jsp</welcome-file>
-    <welcome-file>index.html</welcome-file>
+    <welcome-file>faces/index.xhtml</welcome-file>
   </welcome-file-list>
   
   <security-constraint>
@@ -73,8 +81,6 @@
     </web-resource-collection>
     <auth-constraint>
       <role-name>bank</role-name>
-    </auth-constraint>
-    <auth-constraint>
       <role-name>customer</role-name>
     </auth-constraint>
         <!--user-data-constraint>
@@ -86,6 +92,9 @@
     <auth-method>BASIC</auth-method>
     <realm-name>DS Finance Bank</realm-name>
   </login-config>
+<!--
+<login-config>  <auth-method>CLIENT-CERT</auth-method>  <realm-name>DS Finance Bank</realm-name></login-config>
+-->  
   <security-role>
     <role-name>bank</role-name>
   </security-role>
@@ -93,6 +102,18 @@
     <role-name>customer</role-name>
   </security-role>
   
+  <security-constraint> 
+    <display-name>Bank Security</display-name> 
+    <web-resource-collection> 
+      <web-resource-name>Bank Area</web-resource-name> 
+      <url-pattern>faces/bank*.xhtml</url-pattern> 
+      <http-method>GET</http-method> 
+      <http-method>POST</http-method> 
+    </web-resource-collection> 
+    <auth-constraint> 
+        <role-name>bank</role-name> 
+    </auth-constraint> 
+ </security-constraint> 
   <session-config>
     <session-timeout>30</session-timeout>
   </session-config>
