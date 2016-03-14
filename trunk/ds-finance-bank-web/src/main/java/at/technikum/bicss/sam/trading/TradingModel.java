@@ -19,7 +19,7 @@ public class TradingModel implements Serializable {
     
     private static final long serialVersionUID = 1L;
     
-    @EJB(name = "BankEJB", mappedName = "EJB-Model-BankEJB")
+    @EJB(name = "BankEJB")
     private BankInterface bank;
     
 
@@ -77,29 +77,29 @@ public class TradingModel implements Serializable {
     @PostConstruct
     public void init()
     {
-        System.out.println("init star");
+        // TODO remove unused code
+        System.out.println("init start");
         role = Role.BANK;
         System.out.println("init role setzen vorbei");
         // Aufruf der Business-Logik (via Local interface)
         bank.sayHello();
-
         System.out.println("say hello vorbei");
 
         
     }
     
-    
     public String create()
     {
-        return "erzeuge";
+        return "create";
     }
 
     //private User current;
+
     public String logout() {
         FacesContext.getCurrentInstance().getExternalContext().invalidateSession();
         setRole(Role.CUSTOMER);
         /* to be on the safe side */
-        return "faces/index.xhtml?faces-redirect=true";
+        return "logout";
     }
 
 }
