@@ -11,7 +11,7 @@ import javax.ejb.Stateless;
 /**
  * @author amaierhofer
  */
-@Stateless(name = "BankEJB", mappedName = "EJB-Model-BankEJB")
+@Stateless(name = "BankEJB")
 @Local(BankInterface.class)
 public class Bank implements BankInterface {
 
@@ -25,6 +25,4 @@ public class Bank implements BankInterface {
         int i = 0;
         i = 5;
     }
-
-
 }
