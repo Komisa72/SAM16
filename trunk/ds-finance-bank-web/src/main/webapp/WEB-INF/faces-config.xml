@@ -9,7 +9,6 @@
         <navigation-case>
             <from-outcome>create</from-outcome>
             <to-view-id>/bank/createcustomer.xhtml</to-view-id>
-            <redirect/>
         </navigation-case>
         <from-view-id>/*</from-view-id>
         <navigation-case>
