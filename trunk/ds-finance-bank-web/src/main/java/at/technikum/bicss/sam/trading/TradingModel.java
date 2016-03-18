@@ -12,16 +12,17 @@ import javax.enterprise.context.SessionScoped;
 import javax.faces.context.FacesContext;
 import javax.inject.Named;
 
+/**
+ *
+ */
 @Named("tradingModel")
 @SessionScoped
 public class TradingModel implements Serializable {
 
-    
     private static final long serialVersionUID = 1L;
-    
+
     @EJB(name = "BankEJB")
     private BankInterface bank;
-    
 
     /**
      * @return the role
@@ -29,11 +30,7 @@ public class TradingModel implements Serializable {
     public Role getRole() {
         return role;
     }
-    
-    private String helpi = "5";
 
-    private String t = null;
-    
     /**
      * @param role the role to set
      */
@@ -45,20 +42,29 @@ public class TradingModel implements Serializable {
      * @return the help
      */
     public String getHelpi() {
-        return helpi;
+        String show = bank.sayHello();
+        return show;
     }
 
     /**
-     * @param help the help to set
+     *
      */
-    public void setHelpi(String help) {
-        this.helpi = help;
-    }
-
     public enum Role {
+
+        /**
+         *
+         */
         CUSTOMER,
+
+        /**
+         *
+         */
         BANK;
 
+        /**
+         *
+         * @return
+         */
         public boolean isBank() {
             return Role.BANK.equals(this);
 
@@ -72,30 +78,40 @@ public class TradingModel implements Serializable {
      */
     public TradingModel() {
     }
-    
-    
+
+    /**
+     *
+     */
     @PostConstruct
-    public void init()
-    {
+    public void init() {
         // TODO remove unused code
+        // aufgrund der session feststellen, in welcher rolle wir uns gerade 
+        // befinden
         System.out.println("init start");
         role = Role.BANK;
         System.out.println("init role setzen vorbei");
-        // Aufruf der Business-Logik (via Local interface)
-        bank.sayHello();
-        System.out.println("say hello vorbei");
-
-        
     }
-    
-    public String create()
-    {
+
+    /**
+     *
+     * @return navigataion output case create.
+     */
+    public String create() {
         return "create";
     }
 
     //private User current;
 
+    /**
+     *
+     * @return navigation output.
+     */
     public String logout() {
+
+        // TODO site crashes when automatic session timeout has already triggered
+        // subject to change
+        //https://murygin.wordpress.com/2012/11/29/jsf-primefaces-session-timeout-handling/
+        // for ajax http://stackoverflow.com/questions/11203195/session-timeout-and-viewexpiredexception-handling-on-jsf-primefaces-ajax-request
         FacesContext.getCurrentInstance().getExternalContext().invalidateSession();
         setRole(Role.CUSTOMER);
         /* to be on the safe side */

@@ -5,6 +5,8 @@
  */
 package at.technikum.bicss.sam.trading;
 
+import java.util.ArrayList;
+import java.util.List;
 import javax.inject.Named;
 import javax.enterprise.context.RequestScoped;
 
@@ -18,6 +20,19 @@ public class CustomerController {
      * Creates a new instance of CustomerController
      */
     public CustomerController() {
+    }
+    
+    public void CreateCustomer()
+    {
+        
+    }
+    
+    // TODO resturn list of Customer instead of Strings
+    public List<String> GetCustomerList()
+    {
+        /* as for now return empty list */
+        return new ArrayList<>();
+    
     }
     
 }

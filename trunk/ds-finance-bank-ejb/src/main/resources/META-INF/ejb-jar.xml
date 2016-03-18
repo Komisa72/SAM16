@@ -1,8 +1,20 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<ejb-jar xmlns = "http://java.sun.com/xml/ns/javaee" 
+<ejb-jar xmlns = "http://java.sun.com/xml/ns/javaee"
          version = "3.1"
-         xmlns:xsi = "http://www.w3.org/2001/XMLSchema-instance" 
+         xmlns:xsi = "http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation = "http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/ejb-jar_3_1.xsd">
-           <module-name>ds-finance-bank-ejb</module-name>
+    <module-name>ds-finance-bank-ejb</module-name>
+    <enterprise-beans>
+        <session>
+            <ejb-name>BankEJB</ejb-name>
+            <ejb-class>at.technikum.bicss.sam.trading.Bank</ejb-class>
+            <env-entry>
+                <description>Password for default "bank employee"</description>
+                <env-entry-name>password</env-entry-name>
+                <env-entry-type>java.lang.String</env-entry-type>
+                <env-entry-value>bank</env-entry-value>
+            </env-entry>
+        </session>
+    </enterprise-beans>
 </ejb-jar>

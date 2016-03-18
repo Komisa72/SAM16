@@ -74,13 +74,23 @@
             <description>Only authenticated users are allowed to access the Web application.</description>
             <url-pattern>/*</url-pattern>
             <http-method>POST</http-method>
+            <http-method>GET</http-method>
         </web-resource-collection>
-<!--
         <auth-constraint>
             <role-name>bank</role-name>
             <role-name>customer</role-name>
         </auth-constraint>
--->
+        <user-data-constraint>
+            <transport-guarantee>NONE</transport-guarantee>
+        </user-data-constraint>
+        <!-- user data constraint war schon auskommentiert -->
+        <!--user-data-constraint
+          <description/>
+          <transport-guarantee>CONFIDENTIAL</transport-guarantee>
+        </user-data-constraint-->
+    </security-constraint>
+
+    <security-constraint>
         <web-resource-collection>
             <web-resource-name>DS Finance Bank</web-resource-name>
             <description>Only authenticated bank users are allowed to access the bank sites.</description>
@@ -88,21 +98,18 @@
             <http-method>POST</http-method>
             <http-method>GET</http-method>
         </web-resource-collection>
-<!--
         <auth-constraint>
             <role-name>bank</role-name>
         </auth-constraint>
---> 
-       <!-- user data constraint war schon auskommentiert -->
-        <!--user-data-constraint
-          <description/>
-          <transport-guarantee>CONFIDENTIAL</transport-guarantee>
-        </user-data-constraint-->
+        <user-data-constraint>
+            <transport-guarantee>NONE</transport-guarantee>
+        </user-data-constraint>
     </security-constraint>
-        <login-config>
-            <auth-method>BASIC</auth-method>
-            <realm-name>DS Finance Bank</realm-name>
-        </login-config>
+
+    <login-config>
+        <auth-method>BASIC</auth-method>
+        <realm-name>DS Finance Bank</realm-name>
+    </login-config>
     <!--
     <login-config>  <auth-method>CLIENT-CERT</auth-method>  <realm-name>DS Finance Bank</realm-name></login-config>
     -->

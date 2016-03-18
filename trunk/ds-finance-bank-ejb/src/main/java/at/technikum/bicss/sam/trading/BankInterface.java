@@ -14,8 +14,8 @@ import javax.ejb.Local;
 public interface BankInterface {
     
     /** sayHello
-     * TP
      * TODO add the real interface methods used by the web application.
+     * @return hello message.
      */
-    public void sayHello();
+    public String sayHello();
 }
