@@ -5,29 +5,42 @@
       xmlns:f="http://java.sun.com/jsf/core"
       xmlns:ui="http://java.sun.com/jsf/facelets"
       xmlns:p="http://primefaces.org/ui">
-    <f:view id="erzeuge" contentType="text/html">
+    <f:view id="createCustomerView" contentType="text/html">
         <h:head>
             <title>Technikum SAM Trading Service</title>
             <f:facet name="createcustomer">
                 <meta content='text/html; charset=UTF-8' http-equiv="Content-Type"/>
             </f:facet>
         </h:head>
-
         <h:body>
             <p:layout fullPage="true">
                 <ui:include  src="/resources/includes/header.xhtml" />
                 <p:layoutUnit position="center">
-                    Create a new customer.
-                <h:form>
-                    <p:growl showDetail="true"/>
-                    <h:panelGrid id="matchGrid" columns="2" cellpadding="5">
-                    </h:panelGrid>
-                </h:form>
+                    <h:form id="createUserForm">
+                        <p:growl showDetail="true"/>
+                        <p:messages id="messages" showDetail="true" autoUpdate="true" />
+                        <h:panelGrid columns="2" id="matchGrid" cellpadding="5">
+                            <h:outputText value="Customer name" />
+                            <p:inputText id="customerName" validator ="#{tradingModel.checkUserName}" /> 
+                            <h:outputLabel for="pwd1" value="Password" />
+                            <p:password id="pwd1" feedback= "true" value="#{customerController.password}" match="pwd2" label="Password" required="true" />
+                            <h:outputLabel for="pwd2" value="Password confirmation" />
+                            <p:password id="pwd2" value="#{customerController.password}" label="Password confirmation" required="true" />
+                        </h:panelGrid>
+                        <p:commandButton update="createUserForm" value="Add customer" action="#{customerController.createCustomer(param['createUserForm:customerName'], param['createUserForm:pwd1'])}"/>
+                    </h:form>
+                    <h:form id="customerList" rendered="#{not empty tradingModel.customerList}">
+                        <p:dataTable var="customer" value="#{tradingModel.customerList}" scrollable="true" scrollWidth="50%" scrollHeight="150">
+                            <p:column headerText="Name" footerText="Name" width="200">
+                                <h:outputText value="#{tradingModel.model}" />
+                            </p:column>
+                        </p:dataTable>
+                    </h:form>
+                    <h:panelGroup rendered="#{empty tradingModel.customerList}">
+                        <p>No customers found. Please add new customer.</p>
+                    </h:panelGroup>
                 </p:layoutUnit>
-
             </p:layout>
-
         </h:body>
-
     </f:view>
 </html>

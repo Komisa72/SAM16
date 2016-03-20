@@ -6,10 +6,18 @@
 package at.technikum.bicss.sam.trading;
 
 import java.io.Serializable;
+import java.util.List;
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
 import javax.enterprise.context.SessionScoped;
+import javax.faces.application.FacesMessage;
+import javax.faces.component.UIComponent;
 import javax.faces.context.FacesContext;
+import javax.faces.model.DataModel;
+import javax.faces.model.ListDataModel;
+import javax.faces.validator.FacesValidator;
+import javax.faces.validator.Validator;
+import javax.faces.validator.ValidatorException;
 import javax.inject.Named;
 
 /**
@@ -21,13 +29,56 @@ public class TradingModel implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
+    private static final int MAX_LENGTH_NAME = 200;
+
     @EJB(name = "BankEJB")
     private BankInterface bank;
+
+    private List<Customer> customerList;
+    private transient DataModel<Customer> customerModel;
+    private Customer selectedCustomer = new Customer();
+
+    public List<Customer> getCustomerList() {
+        return customerList;
+    }
+
+    /**
+     * @return the maxLengthName
+     */
+    public int getMaxLengthName() {
+        return MAX_LENGTH_NAME;
+    }
+
+    public void checkUserName(FacesContext context, UIComponent component, Object value) {
+
+        if (value == null) {
+            throw new ValidatorException(new FacesMessage("Customer name is empty!"));
+        }
+
+        String text = value.toString();
+        if (text.length() < 1) {
+            throw new ValidatorException(new FacesMessage("Customer name is invalid!"));
+        }
+    }
+    
+    
+    public double getVolume()
+    {
+        // TODO read volume from bank interface
+      return 500.33f;
+    }
 
     /**
      * @return the role
      */
     public Role getRole() {
+        FacesContext context = FacesContext.getCurrentInstance();
+        if (context.getExternalContext().isUserInRole("bank")) {
+            role = Role.BANK;
+        } else {
+            role = Role.CUSTOMER;
+        }
+
         return role;
     }
 
@@ -39,14 +90,6 @@ public class TradingModel implements Serializable {
     }
 
     /**
-     * @return the help
-     */
-    public String getHelpi() {
-        String show = bank.sayHello();
-        return show;
-    }
-
-    /**
      *
      */
     public enum Role {
@@ -55,7 +98,6 @@ public class TradingModel implements Serializable {
          *
          */
         CUSTOMER,
-
         /**
          *
          */
@@ -79,6 +121,13 @@ public class TradingModel implements Serializable {
     public TradingModel() {
     }
 
+    public DataModel<Customer> getModel() {
+        if (customerModel == null) {
+            customerModel = new ListDataModel<>(customerList);
+        }
+        return customerModel;
+    }
+
     /**
      *
      */
@@ -90,18 +139,20 @@ public class TradingModel implements Serializable {
         System.out.println("init start");
         role = Role.BANK;
         System.out.println("init role setzen vorbei");
+
+        customerList = bank.listCustomer();
+
     }
 
-    /**
-     *
-     * @return navigataion output case create.
-     */
-    public String create() {
-        return "create";
+    public Customer getSelectedCustomer() {
+        return selectedCustomer;
+    }
+
+    public void setSelectedCustomer(Customer selectedCustomer) {
+        this.selectedCustomer = selectedCustomer;
     }
 
     //private User current;
-
     /**
      *
      * @return navigation output.

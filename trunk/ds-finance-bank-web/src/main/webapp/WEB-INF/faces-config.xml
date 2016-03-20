@@ -7,8 +7,14 @@
        
         <from-view-id>/index.xhtml</from-view-id>
         <navigation-case>
-            <from-outcome>create</from-outcome>
+            <from-outcome>showCustomers</from-outcome>
             <to-view-id>/bank/createcustomer.xhtml</to-view-id>
+        </navigation-case>
+        <from-view-id>/createcustomer.xhtml</from-view-id>
+        <navigation-case>
+            <from-outcome>showCustomers</from-outcome>
+            <to-view-id>/bank/createcustomer.xhtml</to-view-id>
+            <redirect/>
         </navigation-case>
         <from-view-id>/*</from-view-id>
         <navigation-case>

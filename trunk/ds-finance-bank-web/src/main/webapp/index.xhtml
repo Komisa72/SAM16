@@ -17,16 +17,21 @@
             <p:layout fullPage="true">
                 <ui:include  src="resources/includes/header.xhtml" />
                 <p:layoutUnit position="center">
-                    Welcome to SAM Trading Service!
                     <h:form>
                         <p:growl showDetail="true"/>
-                            <h:panelGrid id="createUserGrid" columns="2" cellpadding="5">
-                                <h:outputText rendered = "#{tradingModel.role ne null and tradingModel.role.bank}" value ="Create Customer"></h:outputText>
-                                <p:commandButton id="createCustomer" rendered = "#{tradingModel.role ne null and tradingModel.role.bank}" action="#{tradingModel.create}" value="#{tradingModel.helpi}" ajax="false" ></p:commandButton>
+                        <h:panelGrid id="createUserGrid" columns="2" cellpadding="5">
+                            <h:outputText rendered = "#{tradingModel.role ne null and tradingModel.role.bank}" value ="Current volume">
+                            </h:outputText>
+                            <h:outputText rendered = "#{tradingModel.role ne null and tradingModel.role.bank}" value ="#{tradingModel.volume}">
+                                <f:convertNumber currencyCode="EUR" type="currency" />
+                            </h:outputText>
+                            <h:outputText rendered = "#{tradingModel.role ne null and tradingModel.role.bank}" value ="">
+                            </h:outputText>
+                            <p:commandButton id="createCustomer" rendered = "#{tradingModel.role ne null and tradingModel.role.bank}" action="#{customerController.showCustomers()}" value="Goto Customer view" ajax="false" ></p:commandButton>
                         </h:panelGrid>
                     </h:form>
                 </p:layoutUnit>
             </p:layout>
-     </h:body>
+        </h:body>
     </f:view>
 </html>

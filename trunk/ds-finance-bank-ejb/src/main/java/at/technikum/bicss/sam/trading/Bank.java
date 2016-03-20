@@ -10,12 +10,12 @@ import javax.ejb.Stateless;
 import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import net.froihofer.util.jboss.WildflyAuthDBHelper;
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import javax.annotation.PostConstruct;
 
 /**
@@ -26,7 +26,12 @@ import javax.annotation.PostConstruct;
 @Local(BankInterface.class)
 public class Bank implements BankInterface {
 
-    private WildflyAuthDBHelper authHelper;
+    private static WildflyAuthDBHelper authHelper;
+
+    // TODO subject to change, customerList should be read out of database
+    // TODO think about concurrency when customerList is static, now every Bank-Bean
+    // has it's own customerList!
+    private ArrayList<Customer> customerList;
 
     /**
      * Constructor.
@@ -41,31 +46,45 @@ public class Bank implements BankInterface {
         return "55";
     }
 
+    // Credentials Webservice Trading Service (group account)
+    // user
+    // bic4b16_06
+    // password
+    // Feim0Kah4
+    
+    
     @PostConstruct
-    private void SetupBankRole() {
+    private void init() {
         // setup initial default bank user with default credentials and role.
+        String homeDir = System.getProperty("jboss.home.dir");
+        authHelper = new WildflyAuthDBHelper(new File(homeDir));
+
+        // customerList = dao.customerList();
+        // Actually, you should retrieve the customerList from DAO. This is just for demo.
+        customerList = new ArrayList<>();
+
+    }
+
+    @Override
+    public void createCustomer(Customer customer, String password) throws CustomerCreationFailedException {
+        String[] customerRoles = new String[1];
+        customerRoles[0] = "customer";
+
         try {
-            String password = "bank";
-            /*
-            TODO can not read out password defined in ejb-jar.xml
-             InitialContext iniCtx = new InitialContext();
-            Context envCtx = (Context) iniCtx.lookup("java:comp/env");
-            password = (String) envCtx.lookup("password");
-             */
-            String homeDir = System.getProperty("jboss.home.dir");
-            authHelper = new WildflyAuthDBHelper(new File(homeDir));
-            String[] bankRoles = new String[1];
-            bankRoles[0] = "bank";
-
-            authHelper.addUser("bank", password, bankRoles);
-            System.out.println("Bank user prepared.");
-
-            //} 
-            //catch (NamingException ex) {
-            //    System.out.println("Naming exception.");
+            authHelper.addUser(customer.getName(), password, customerRoles);
+            // TODO persist customer
+            //customer.persist();
+            customer.setId(customerList.isEmpty() ? 1 : customerList.get(customerList.size() - 1).getId() + 1);
+            customerList.add(customer);
         } catch (IOException ex) {
-            System.out.println("Bank user setup bank role io exception.");
+            System.out.println("Could not add customer to password database");
+            throw new CustomerCreationFailedException("Could not add customer to password database.", ex);
         }
 
+    }
+
+    @Override
+    public List<Customer> listCustomer() {
+        return customerList;
     }
 }

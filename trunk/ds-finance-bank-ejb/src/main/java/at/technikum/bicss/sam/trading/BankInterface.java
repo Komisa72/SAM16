@@ -5,6 +5,7 @@
  */
 package at.technikum.bicss.sam.trading;
 
+import java.util.List;
 import javax.ejb.Local;
 
 /** BankInterface
@@ -18,4 +19,10 @@ public interface BankInterface {
      * @return hello message.
      */
     public String sayHello();
+    
+    public void createCustomer(Customer customer, String password) throws CustomerCreationFailedException;
+    
+    public List<Customer> listCustomer();
+
+
 }

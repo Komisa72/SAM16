@@ -5,34 +5,75 @@
  */
 package at.technikum.bicss.sam.trading;
 
-import java.util.ArrayList;
-import java.util.List;
+import javax.ejb.EJB;
 import javax.inject.Named;
 import javax.enterprise.context.RequestScoped;
+
 
 /**
  *
  */
+@Named("customerController")
 @RequestScoped
+
+
+
 public class CustomerController {
 
+    @EJB(name = "BankEJB")
+    private BankInterface bank;
+    
+    
+    private String password;
+    
     /**
      * Creates a new instance of CustomerController
      */
     public CustomerController() {
     }
     
-    public void CreateCustomer()
+    public String createCustomer(String name, String password) throws CustomerCreationFailedException
     {
+        Customer customer = new Customer();
+        customer.setName(name);
+        try {
+            bank.createCustomer(customer, password);
+        } catch (CustomerCreationFailedException ex) {
+            // TODO subject to change
+            // for now let primefaces do the job to display the exception
+            throw ex;
+        }
+        return "showCustomers";
+    }
+    
+    public String showCustomer()
+    {
+        return "showCustomer";
         
     }
-    
-    // TODO resturn list of Customer instead of Strings
-    public List<String> GetCustomerList()
-    {
-        /* as for now return empty list */
-        return new ArrayList<>();
-    
+        /**
+     *
+     * @return navigataion output case create.
+     */
+    public String showCustomers() {
+        return "showCustomers";
     }
+
+    /**
+     * @return the password
+     */
+    public String getPassword() {
+        return password;
+    }
+
+    /**
+     * @param password the password to set
+     */
+    public void setPassword(String password) {
+        this.password = password;
+    }
+    
+
+
     
 }
