@@ -31,12 +31,17 @@
                     </h:form>
                     <p:spacer width="10" height="10" />
                     <h:form id="customerList" rendered="#{not empty tradingModel.model}">
-                        <p:dataTable id="customerTable" rowKey="#{customer.id}" var="customer" value="#{tradingModel.model}" scrollable="true" scrollWidth="100%" scrollHeight="450">
+                         <p:dataTable id="customerTable" selection="#{tradingModel.selectedCustomer}" rowKey="#{customer.id}" var="customer" value="#{tradingModel.model}" scrollable="true" scrollWidth="100%" scrollHeight="450">
                             <p:column headerText="Id" footerText="Id" width="30">
                                 <h:outputText value="#{customer.id}" />
                             </p:column>
                             <p:column headerText="Name" footerText="Name" width="200">
                                 <h:outputText value="#{customer.name}" />
+                            </p:column>
+                            <p:column style="width:32px;text-align: center">
+                                <p:commandButton action="#{customerController.showCustomer()}" icon="ui-icon-edit" title="View">
+                                     <f:setPropertyActionListener value="#{customer}" target="#{tradingModel.selectedCustomer}" />
+                                </p:commandButton>
                             </p:column>
                         </p:dataTable>
                     </h:form>

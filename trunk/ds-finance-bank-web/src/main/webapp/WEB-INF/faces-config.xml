@@ -16,6 +16,10 @@
             <to-view-id>/bank/createcustomer.xhtml</to-view-id>
             <redirect/>
         </navigation-case>
+        <navigation-case>
+            <from-outcome>showCustomer</from-outcome>
+            <to-view-id>showcustomer.xhtml</to-view-id>
+        </navigation-case>
         <from-view-id>/*</from-view-id>
         <navigation-case>
             <from-outcome>logout</from-outcome>

@@ -20,6 +20,7 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.annotation.PostConstruct;
+import javax.annotation.security.DeclareRoles;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.TypedQuery;
@@ -36,6 +37,7 @@ import net.froihofer.dsfinance.ws.trading.TradingWebServiceService;
  */
 @Stateless(name = "BankEJB")
 @Local(BankInterface.class)
+//@DeclareRoles({"bank", "customer"})
 public class Bank implements BankInterface {
 
     private static WildflyAuthDBHelper authHelper;
@@ -43,16 +45,12 @@ public class Bank implements BankInterface {
     @PersistenceContext
     private EntityManager em;
 
-    TradingWebService proxy;
-
-    private double volume;
-
-    // ds-finance-bank.h2.db
     // 1 Mrd. dollar
     private final static double MAX_VOLUME = 1000000000;
-    
-        @WebServiceRef(name = "TradingWebServiceService")
+
+    @WebServiceRef(name = "TradingWebServiceService")
     private TradingWebServiceService stockService;
+    private TradingWebService proxy;
 
     /**
      * Constructor.
@@ -61,23 +59,25 @@ public class Bank implements BankInterface {
 
     }
 
-    // Retrieves all the Customer
     /**
-     * listCustomer
+     * Retrieves all the Customer
      *
      * @return the list of customers.
      */
     @Override
     public List<Customer> listCustomer() {
+        // ds-finance-bank.h2.db
         TypedQuery<Customer> query = em.createQuery(
                 "SELECT c FROM Customer c ORDER BY c.id", Customer.class);
         return query.getResultList();
     }
 
     /**
+     * createCustomer creates a new customer and stores its credentials in
+     * webserver realm, customer data is stored via JPA.
      *
-     * @param customer
-     * @param password
+     * @param customer new customer to be created.
+     * @param password credentials.
      * @throws CustomerCreationFailedException
      */
     @Override
@@ -95,8 +95,30 @@ public class Bank implements BankInterface {
 
     }
 
+    /**
+     * volume used by bank role.
+     *
+     * @return the volume which is available as of now.
+     */
+    @Override
+    public double volume() {
+        // TODO subject to change
+        // this is only a test if webservice can be accessed
+        double volume;
+        try {
+            List<PublicStockQuote> list = proxy.findStockQuotesByCompanyName("OMV");
+            volume = list.size();
+        } catch (TradingWSException_Exception ex) {
+            volume = 0;
+        }
+        // TODO calculate the current volume from shares as of now
+        return volume;
+    }
 
-
+    /**
+     * Init this EJB.
+     */
+    
     @PostConstruct
     private void init() {
         // setup initial default bank user with default credentials and role.
@@ -109,28 +131,12 @@ public class Bank implements BankInterface {
         bindingProvider.getRequestContext().put(
                 BindingProvider.PASSWORD_PROPERTY, "Feim0Kah4");
 
-        volume = 0;
-
-    }
-
-    @Override
-    public double volume() {
-        // TODO subject to change
-        // this is only a test if webservice can be accessed
-        try {
-            List<PublicStockQuote> list = proxy.findStockQuotesByCompanyName("OMV");
-            volume = list.size();
-        } catch (TradingWSException_Exception ex) {
-            volume = 0;
-        }
-        // TODO calculate the current volume from shares as of now
-        return volume;
     }
 
     /**
      * Store a new Customer.
      *
-     * @param customer
+     * @param customer to be stored as JPA entity.
      */
     private void persist(Customer customer) {
         em.persist(customer);

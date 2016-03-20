@@ -5,13 +5,18 @@
  */
 package at.technikum.bicss.sam.trading;
 
+import java.io.IOException;
 import java.io.Serializable;
+import java.security.Principal;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
 import javax.enterprise.context.SessionScoped;
 import javax.faces.application.FacesMessage;
 import javax.faces.component.UIComponent;
+import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
 import javax.faces.model.DataModel;
 import javax.faces.model.ListDataModel;
@@ -19,6 +24,9 @@ import javax.faces.validator.FacesValidator;
 import javax.faces.validator.Validator;
 import javax.faces.validator.ValidatorException;
 import javax.inject.Named;
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 /**
  *
@@ -37,7 +45,7 @@ public class TradingModel implements Serializable {
 
     private List<Customer> customerList;
     private transient DataModel<Customer> customerModel;
-    private Customer selectedCustomer = new Customer();
+    private Customer selectedCustomer;
 
     /**
      *
@@ -46,12 +54,11 @@ public class TradingModel implements Serializable {
     public List<Customer> getCustomerList() {
         return customerList;
     }
-    
+
     /**
-     *
+     * updateModel updates the view via model.
      */
-    public void updateModel()
-    {
+    public void updateModel() {
         customerList = bank.listCustomer();
         customerModel.setWrappedData(customerList);
     }
@@ -80,14 +87,14 @@ public class TradingModel implements Serializable {
             throw new ValidatorException(new FacesMessage("Customer name is invalid!"));
         }
     }
-    
+
     /**
      * Get currect volume of bank.
+     *
      * @return
      */
-    public double getVolume()
-    {
-      return bank.volume();
+    public double getVolume() {
+        return bank.volume();
     }
 
     /**
@@ -97,8 +104,7 @@ public class TradingModel implements Serializable {
         FacesContext context = FacesContext.getCurrentInstance();
         if (context.getExternalContext().isUserInRole("bank")) {
             role = Role.BANK;
-        } 
-        else if (context.getExternalContext().isUserInRole("customer")) {
+        } else if (context.getExternalContext().isUserInRole("customer")) {
             role = Role.CUSTOMER;
         } else {
             role = Role.NONE;
@@ -123,7 +129,6 @@ public class TradingModel implements Serializable {
          * Not logged in.
          */
         NONE,
-        
         /**
          * Logged in as customer.
          */
@@ -145,8 +150,16 @@ public class TradingModel implements Serializable {
 
     private Role role = Role.BANK;
 
+    public Customer getSelectedCustomer() {
+        return selectedCustomer;
+    }
+
+    public void setSelectedCustomer(Customer selectedCustomer) {
+        this.selectedCustomer = selectedCustomer;
+    }
+
     /**
-     * Creates a new instance of TradingController
+     * Creates a new instance of TradingModel
      */
     public TradingModel() {
     }
@@ -163,55 +176,46 @@ public class TradingModel implements Serializable {
     }
 
     /**
-     *
+     * Init this bean.
      */
     @PostConstruct
     public void init() {
         // TODO remove unused code
         // aufgrund der session feststellen, in welcher rolle wir uns gerade 
         // befinden
-        System.out.println("init start");
         role = Role.BANK;
         System.out.println("init role setzen vorbei");
 
         customerList = bank.listCustomer();
+        if (FacesContext.getCurrentInstance().getExternalContext().isUserInRole("customer"))
+        {
+            Principal principal = FacesContext.getCurrentInstance().getExternalContext().getUserPrincipal();
+            //principal.getName();
+            
+                    
+        }
 
     }
 
     /**
-     *
-     * @return
+     * logout from current session.
      */
-    public Customer getSelectedCustomer() {
-        return selectedCustomer;
-    }
-
-    /**
-     *
-     * @param selectedCustomer
-     */
-    public void setSelectedCustomer(Customer selectedCustomer) {
-        this.selectedCustomer = selectedCustomer;
-    }
-
-    //private User current;
-    /**
-     *
-     * @return navigation output.
-     */
-    public String logout() {
+    public void logout() {
 
         // TODO site crashes when automatic session timeout has already triggered
         // subject to change
         //https://murygin.wordpress.com/2012/11/29/jsf-primefaces-session-timeout-handling/
         // for ajax http://stackoverflow.com/questions/11203195/session-timeout-and-viewexpiredexception-handling-on-jsf-primefaces-ajax-request
-        if (FacesContext.getCurrentInstance().getExternalContext() != null)
-        {
-            FacesContext.getCurrentInstance().getExternalContext().invalidateSession();
+        ExternalContext context = FacesContext.getCurrentInstance().getExternalContext();
+        if (context != null) {
+            try {
+                FacesContext.getCurrentInstance().getExternalContext().invalidateSession();
+                context.redirect(context.getRequestContextPath()+ "/index.xhtml");
+            } catch (IOException ex) {
+            }
         }
         setRole(Role.NONE);
-        /* to be on the safe side */
-        return "logout";
+
     }
 
 }
