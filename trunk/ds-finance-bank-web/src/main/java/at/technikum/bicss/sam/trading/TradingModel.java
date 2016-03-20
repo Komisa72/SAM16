@@ -19,6 +19,7 @@ import javax.faces.validator.FacesValidator;
 import javax.faces.validator.Validator;
 import javax.faces.validator.ValidatorException;
 import javax.inject.Named;
+import net.froihofer.dsfinance.ws.trading.PublicStockQuote;
 
 /**
  *
@@ -38,7 +39,7 @@ public class TradingModel implements Serializable {
     private List<Customer> customerList;
     private transient DataModel<Customer> customerModel;
     private Customer selectedCustomer = new Customer();
-
+    private List<PublicStockQuote> companyShares;
     /**
      *
      * @return
@@ -47,6 +48,13 @@ public class TradingModel implements Serializable {
         return customerList;
     }
     
+     public List<PublicStockQuote> getCompanyShares() {
+        return companyShares;
+    }
+     
+      public void setCompanyShares() {
+        companyShares = bank.companyShares();
+    }
     /**
      *
      */
@@ -89,6 +97,12 @@ public class TradingModel implements Serializable {
     {
       return bank.volume();
     }
+    
+    /**
+    * Get list of shares for company 
+    * @return
+    */
+    
 
     /**
      * @return the role
@@ -173,8 +187,8 @@ public class TradingModel implements Serializable {
         System.out.println("init start");
         role = Role.BANK;
         System.out.println("init role setzen vorbei");
-
-        customerList = bank.listCustomer();
+        companyShares = bank.companyShares();
+       customerList = bank.listCustomer();
 
     }
 
@@ -185,6 +199,7 @@ public class TradingModel implements Serializable {
     public Customer getSelectedCustomer() {
         return selectedCustomer;
     }
+    
 
     /**
      *

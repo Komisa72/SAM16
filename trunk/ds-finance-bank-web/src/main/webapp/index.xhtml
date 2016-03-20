@@ -15,7 +15,7 @@
 
         <h:body>
             <p:layout fullPage="true">
-                <ui:include  src="resources/includes/header.xhtml" />
+                <ui:include  src="resources/includes/header.xhtml" /> 
                 <p:layoutUnit position="center">
                     <h:form>
                         <p:growl showDetail="true"/>
@@ -27,8 +27,12 @@
                             </h:outputText>
                             <h:outputText rendered = "#{tradingModel.role ne null and tradingModel.role.bank}" value ="">
                             </h:outputText>
-                            <p:commandButton id="createCustomer" rendered = "#{tradingModel.role ne null and tradingModel.role.bank}" action="#{customerController.showCustomers()}" value="Goto Customer view" ajax="false" ></p:commandButton>
+                            
+                            <p:commandButton id="createCustomer" rendered = "#{tradingModel.role ne null and tradingModel.role.bank}" action="#{customerController.showCustomers()}" value="Goto Customer view" ajax="false" />                
+                            <h:button id="showCompanyShares" rendered = "#{tradingModel.role ne null and tradingModel.role.bank}" outcome="listShares" value="Show company shares" />
+                           
                         </h:panelGrid>
+                   
                     </h:form>
                 </p:layoutUnit>
             </p:layout>

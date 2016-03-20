@@ -7,6 +7,7 @@ package at.technikum.bicss.sam.trading;
 
 import java.util.List;
 import javax.ejb.Local;
+import net.froihofer.dsfinance.ws.trading.PublicStockQuote;
 
 /** BankInterface
  * Local Interface consumed by web applicaton.
@@ -18,7 +19,8 @@ public interface BankInterface {
     public void createCustomer(Customer customer, String password) throws CustomerCreationFailedException;
     
     public List<Customer> listCustomer();
-    
+
+    public List<PublicStockQuote>  companyShares();
     
     public double volume();
 

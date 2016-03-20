@@ -46,7 +46,7 @@ public class Bank implements BankInterface {
     TradingWebService proxy;
 
     private double volume;
-
+    private List<PublicStockQuote> companyShares;
     // ds-finance-bank.h2.db
     // 1 Mrd. dollar
     private final static double MAX_VOLUME = 1000000000;
@@ -118,7 +118,7 @@ public class Bank implements BankInterface {
         // TODO subject to change
         // this is only a test if webservice can be accessed
         try {
-            List<PublicStockQuote> list = proxy.findStockQuotesByCompanyName("OMV");
+            List<PublicStockQuote> list = proxy.findStockQuotesByCompanyName("Apple");
             volume = list.size();
         } catch (TradingWSException_Exception ex) {
             volume = 0;
@@ -127,6 +127,22 @@ public class Bank implements BankInterface {
         return volume;
     }
 
+    @Override
+    public List<PublicStockQuote>  companyShares() {
+        // TODO 
+        companyShares = null;
+        try {
+            companyShares = proxy.findStockQuotesByCompanyName("Apple");
+            System.out.println(companyShares.toString());
+            
+            
+        } catch (TradingWSException_Exception e) {
+            System.out.println("no shares found");
+        }
+        
+        return companyShares;
+    }
+    
     /**
      * Store a new Customer.
      *
