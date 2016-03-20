@@ -14,15 +14,13 @@ import javax.ejb.Local;
 @Local
 public interface BankInterface {
     
-    /** sayHello
-     * TODO add the real interface methods used by the web application.
-     * @return hello message.
-     */
-    public String sayHello();
     
     public void createCustomer(Customer customer, String password) throws CustomerCreationFailedException;
     
     public List<Customer> listCustomer();
+    
+    
+    public double volume();
 
 
 }

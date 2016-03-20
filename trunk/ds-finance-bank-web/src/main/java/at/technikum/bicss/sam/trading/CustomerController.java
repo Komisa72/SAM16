@@ -8,6 +8,7 @@ package at.technikum.bicss.sam.trading;
 import javax.ejb.EJB;
 import javax.inject.Named;
 import javax.enterprise.context.RequestScoped;
+import javax.inject.Inject;
 
 
 /**
@@ -15,13 +16,15 @@ import javax.enterprise.context.RequestScoped;
  */
 @Named("customerController")
 @RequestScoped
-
-
-
 public class CustomerController {
 
     @EJB(name = "BankEJB")
     private BankInterface bank;
+    
+    
+    @Inject
+    @Named("tradingModel") 
+    private TradingModel model;
     
     
     private String password;
@@ -36,8 +39,12 @@ public class CustomerController {
     {
         Customer customer = new Customer();
         customer.setName(name);
+        
+        
         try {
             bank.createCustomer(customer, password);
+            
+            model.updateModel();
         } catch (CustomerCreationFailedException ex) {
             // TODO subject to change
             // for now let primefaces do the job to display the exception
@@ -51,6 +58,9 @@ public class CustomerController {
         return "showCustomer";
         
     }
+    
+    
+    
         /**
      *
      * @return navigataion output case create.

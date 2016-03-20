@@ -5,15 +5,23 @@
  */
 package at.technikum.bicss.sam.trading;
 
+import java.io.Serializable;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+
 /**
  * Customer of bank.
  * TODO: persist the customer to database.
  */
-public class Customer {
-    // TODO add annotations for persisting the id
+@Entity
+public class Customer implements Serializable{
+    private static final long serialVersionUID = 1L;
+    
+    @Id @GeneratedValue
     private int id;
     
-    // TODO add annotations for persisting the name
+
     private String name;
 
     /**
@@ -37,12 +45,5 @@ public class Customer {
         return id;
     }
 
-    /**
-     * @param id the identifier to set
-     */
-    public void setId(int id) {
-        this.id = id;
-    }
-    
     
 }

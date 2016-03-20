@@ -14,9 +14,21 @@ import javax.naming.NamingException;
 import net.froihofer.util.jboss.WildflyAuthDBHelper;
 import java.io.File;
 import java.io.IOException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.annotation.PostConstruct;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import javax.persistence.TypedQuery;
+import javax.xml.ws.BindingProvider;
+import javax.xml.ws.WebServiceRef;
+import net.froihofer.dsfinance.ws.trading.PublicStockQuote;
+import net.froihofer.dsfinance.ws.trading.TradingWSException_Exception;
+import net.froihofer.dsfinance.ws.trading.TradingWebService;
+import net.froihofer.dsfinance.ws.trading.TradingWebServiceService;
 
 /**
  * Bank class responsible for persting customer and its shares in depots. Also
@@ -28,10 +40,19 @@ public class Bank implements BankInterface {
 
     private static WildflyAuthDBHelper authHelper;
 
-    // TODO subject to change, customerList should be read out of database
-    // TODO think about concurrency when customerList is static, now every Bank-Bean
-    // has it's own customerList!
-    private ArrayList<Customer> customerList;
+    @PersistenceContext
+    private EntityManager em;
+
+    TradingWebService proxy;
+
+    private double volume;
+
+    // ds-finance-bank.h2.db
+    // 1 Mrd. dollar
+    private final static double MAX_VOLUME = 1000000000;
+    
+        @WebServiceRef(name = "TradingWebServiceService")
+    private TradingWebServiceService stockService;
 
     /**
      * Constructor.
@@ -40,31 +61,25 @@ public class Bank implements BankInterface {
 
     }
 
+    // Retrieves all the Customer
+    /**
+     * listCustomer
+     *
+     * @return the list of customers.
+     */
     @Override
-    public String sayHello() {
-        // TODO subject to change, remove unused code.
-        return "55";
+    public List<Customer> listCustomer() {
+        TypedQuery<Customer> query = em.createQuery(
+                "SELECT c FROM Customer c ORDER BY c.id", Customer.class);
+        return query.getResultList();
     }
 
-    // Credentials Webservice Trading Service (group account)
-    // user
-    // bic4b16_06
-    // password
-    // Feim0Kah4
-    
-    
-    @PostConstruct
-    private void init() {
-        // setup initial default bank user with default credentials and role.
-        String homeDir = System.getProperty("jboss.home.dir");
-        authHelper = new WildflyAuthDBHelper(new File(homeDir));
-
-        // customerList = dao.customerList();
-        // Actually, you should retrieve the customerList from DAO. This is just for demo.
-        customerList = new ArrayList<>();
-
-    }
-
+    /**
+     *
+     * @param customer
+     * @param password
+     * @throws CustomerCreationFailedException
+     */
     @Override
     public void createCustomer(Customer customer, String password) throws CustomerCreationFailedException {
         String[] customerRoles = new String[1];
@@ -72,10 +87,7 @@ public class Bank implements BankInterface {
 
         try {
             authHelper.addUser(customer.getName(), password, customerRoles);
-            // TODO persist customer
-            //customer.persist();
-            customer.setId(customerList.isEmpty() ? 1 : customerList.get(customerList.size() - 1).getId() + 1);
-            customerList.add(customer);
+            em.persist(customer);
         } catch (IOException ex) {
             System.out.println("Could not add customer to password database");
             throw new CustomerCreationFailedException("Could not add customer to password database.", ex);
@@ -83,8 +95,45 @@ public class Bank implements BankInterface {
 
     }
 
-    @Override
-    public List<Customer> listCustomer() {
-        return customerList;
+
+
+    @PostConstruct
+    private void init() {
+        // setup initial default bank user with default credentials and role.
+        String homeDir = System.getProperty("jboss.home.dir");
+        authHelper = new WildflyAuthDBHelper(new File(homeDir));
+        proxy = stockService.getTradingWebServicePort();
+        BindingProvider bindingProvider = (BindingProvider) proxy;
+        bindingProvider.getRequestContext().put(
+                BindingProvider.USERNAME_PROPERTY, "bic4b16_06");
+        bindingProvider.getRequestContext().put(
+                BindingProvider.PASSWORD_PROPERTY, "Feim0Kah4");
+
+        volume = 0;
+
     }
+
+    @Override
+    public double volume() {
+        // TODO subject to change
+        // this is only a test if webservice can be accessed
+        try {
+            List<PublicStockQuote> list = proxy.findStockQuotesByCompanyName("OMV");
+            volume = list.size();
+        } catch (TradingWSException_Exception ex) {
+            volume = 0;
+        }
+        // TODO calculate the current volume from shares as of now
+        return volume;
+    }
+
+    /**
+     * Store a new Customer.
+     *
+     * @param customer
+     */
+    private void persist(Customer customer) {
+        em.persist(customer);
+    }
+
 }

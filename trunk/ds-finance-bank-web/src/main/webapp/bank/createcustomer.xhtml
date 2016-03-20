@@ -27,16 +27,20 @@
                             <h:outputLabel for="pwd2" value="Password confirmation" />
                             <p:password id="pwd2" value="#{customerController.password}" label="Password confirmation" required="true" />
                         </h:panelGrid>
-                        <p:commandButton update="createUserForm" value="Add customer" action="#{customerController.createCustomer(param['createUserForm:customerName'], param['createUserForm:pwd1'])}"/>
+                        <p:commandButton update=":customerList:customerTable" value="Add customer" actionListener="#{customerController.createCustomer(param['createUserForm:customerName'], param['createUserForm:pwd1'])}"/>
                     </h:form>
-                    <h:form id="customerList" rendered="#{not empty tradingModel.customerList}">
-                        <p:dataTable var="customer" value="#{tradingModel.customerList}" scrollable="true" scrollWidth="50%" scrollHeight="150">
+                    <p:spacer width="10" height="10" />
+                    <h:form id="customerList" rendered="#{not empty tradingModel.model}">
+                        <p:dataTable id="customerTable" rowKey="#{customer.id}" var="customer" value="#{tradingModel.model}" scrollable="true" scrollWidth="100%" scrollHeight="450">
+                            <p:column headerText="Id" footerText="Id" width="30">
+                                <h:outputText value="#{customer.id}" />
+                            </p:column>
                             <p:column headerText="Name" footerText="Name" width="200">
-                                <h:outputText value="#{tradingModel.model}" />
+                                <h:outputText value="#{customer.name}" />
                             </p:column>
                         </p:dataTable>
                     </h:form>
-                    <h:panelGroup rendered="#{empty tradingModel.customerList}">
+                    <h:panelGroup rendered="#{empty tradingModel.model}">
                         <p>No customers found. Please add new customer.</p>
                     </h:panelGroup>
                 </p:layoutUnit>

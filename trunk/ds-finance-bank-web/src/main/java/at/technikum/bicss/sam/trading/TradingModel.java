@@ -22,6 +22,7 @@ import javax.inject.Named;
 
 /**
  *
+ * @author amaierhofer
  */
 @Named("tradingModel")
 @SessionScoped
@@ -38,8 +39,21 @@ public class TradingModel implements Serializable {
     private transient DataModel<Customer> customerModel;
     private Customer selectedCustomer = new Customer();
 
+    /**
+     *
+     * @return
+     */
     public List<Customer> getCustomerList() {
         return customerList;
+    }
+    
+    /**
+     *
+     */
+    public void updateModel()
+    {
+        customerList = bank.listCustomer();
+        customerModel.setWrappedData(customerList);
     }
 
     /**
@@ -49,6 +63,12 @@ public class TradingModel implements Serializable {
         return MAX_LENGTH_NAME;
     }
 
+    /**
+     *
+     * @param context
+     * @param component
+     * @param value
+     */
     public void checkUserName(FacesContext context, UIComponent component, Object value) {
 
         if (value == null) {
@@ -56,16 +76,18 @@ public class TradingModel implements Serializable {
         }
 
         String text = value.toString();
-        if (text.length() < 1) {
+        if ((text.length() < 1) || (text.length() > getMaxLengthName())) {
             throw new ValidatorException(new FacesMessage("Customer name is invalid!"));
         }
     }
     
-    
+    /**
+     * Get currect volume of bank.
+     * @return
+     */
     public double getVolume()
     {
-        // TODO read volume from bank interface
-      return 500.33f;
+      return bank.volume();
     }
 
     /**
@@ -75,8 +97,11 @@ public class TradingModel implements Serializable {
         FacesContext context = FacesContext.getCurrentInstance();
         if (context.getExternalContext().isUserInRole("bank")) {
             role = Role.BANK;
-        } else {
+        } 
+        else if (context.getExternalContext().isUserInRole("customer")) {
             role = Role.CUSTOMER;
+        } else {
+            role = Role.NONE;
         }
 
         return role;
@@ -95,11 +120,16 @@ public class TradingModel implements Serializable {
     public enum Role {
 
         /**
-         *
+         * Not logged in.
+         */
+        NONE,
+        
+        /**
+         * Logged in as customer.
          */
         CUSTOMER,
         /**
-         *
+         * Logged in as bank.
          */
         BANK;
 
@@ -121,6 +151,10 @@ public class TradingModel implements Serializable {
     public TradingModel() {
     }
 
+    /**
+     *
+     * @return
+     */
     public DataModel<Customer> getModel() {
         if (customerModel == null) {
             customerModel = new ListDataModel<>(customerList);
@@ -144,10 +178,18 @@ public class TradingModel implements Serializable {
 
     }
 
+    /**
+     *
+     * @return
+     */
     public Customer getSelectedCustomer() {
         return selectedCustomer;
     }
 
+    /**
+     *
+     * @param selectedCustomer
+     */
     public void setSelectedCustomer(Customer selectedCustomer) {
         this.selectedCustomer = selectedCustomer;
     }
@@ -163,8 +205,11 @@ public class TradingModel implements Serializable {
         // subject to change
         //https://murygin.wordpress.com/2012/11/29/jsf-primefaces-session-timeout-handling/
         // for ajax http://stackoverflow.com/questions/11203195/session-timeout-and-viewexpiredexception-handling-on-jsf-primefaces-ajax-request
-        FacesContext.getCurrentInstance().getExternalContext().invalidateSession();
-        setRole(Role.CUSTOMER);
+        if (FacesContext.getCurrentInstance().getExternalContext() != null)
+        {
+            FacesContext.getCurrentInstance().getExternalContext().invalidateSession();
+        }
+        setRole(Role.NONE);
         /* to be on the safe side */
         return "logout";
     }
