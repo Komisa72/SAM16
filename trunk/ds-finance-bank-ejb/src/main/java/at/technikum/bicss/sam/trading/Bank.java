@@ -124,7 +124,7 @@ public class Bank implements BankInterface {
         try {
             // TODO subject to change
             // this is only a test if webservice can be accessed
-            List<PublicStockQuote> list = proxy.findStockQuotesByCompanyName("Apple");
+            List<PublicStockQuote> list = proxy.findStockQuotesByCompanyName("OMV");
             volume = list.size();
         } catch (TradingWSException_Exception ex) {
             volume = 0;
@@ -134,14 +134,19 @@ public class Bank implements BankInterface {
     }
 
     @Override
-    public List<PublicStockQuote> companyShares() throws StockExchangeUnreachableException {
+    public List<PublicStockQuote> companyShares(String company)
+            throws StockExchangeUnreachableException {
         // TODO
         companyShares = null;
+        System.out.println("company name");
+        System.out.println(company);
+        System.out.println("Holla");
         try {
-            companyShares = proxy.findStockQuotesByCompanyName("Apple");
+            companyShares = proxy.findStockQuotesByCompanyName(company);
             System.out.println(companyShares.toString());
 
         } catch (TradingWSException_Exception e) {
+            System.out.println("passiert");
             throw new StockExchangeUnreachableException("Stock exchange unreachable.", e);
         }
 

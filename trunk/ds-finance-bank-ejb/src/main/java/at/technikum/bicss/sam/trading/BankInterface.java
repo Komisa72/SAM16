@@ -19,12 +19,8 @@ import net.froihofer.dsfinance.ws.trading.PublicStockQuote;
 @RolesAllowed({"bank", "customer"})
 public interface BankInterface {
 
-    /**
-     *
-     * @return the list of found sto
-     * @throws StockExchangeUnreachableException
-     */
-    public List<PublicStockQuote> companyShares() throws StockExchangeUnreachableException;
+    public List<PublicStockQuote> companyShares(String company) 
+            throws StockExchangeUnreachableException;
 
     /**
      * createCustomer creates a new customer and stores its credentials in
@@ -35,10 +31,11 @@ public interface BankInterface {
      * @throws CustomerCreationFailedException
      */
     @RolesAllowed("bank")
-    public void createCustomer(Customer customer, String password) throws CustomerCreationFailedException;
+    public void createCustomer(Customer customer, String password) 
+            throws CustomerCreationFailedException;
 
     /**
-     * createCustomer creates a new customer and stores its credentials in
+     * listCustomer retrieve the list of customers.
      *
      * @return the list of customers.
      */
@@ -49,7 +46,6 @@ public interface BankInterface {
      *
      * @return the volume which is available as of now.
      */
-    @RolesAllowed("bank")
     public double volume();
 
 }

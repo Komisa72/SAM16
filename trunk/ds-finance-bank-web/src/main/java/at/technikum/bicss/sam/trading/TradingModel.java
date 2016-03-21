@@ -6,6 +6,7 @@
 package at.technikum.bicss.sam.trading;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
@@ -26,6 +27,7 @@ import net.froihofer.dsfinance.ws.trading.PublicStockQuote;
  */
 @Named("tradingModel")
 @SessionScoped
+
 public class TradingModel implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -34,87 +36,13 @@ public class TradingModel implements Serializable {
 
     @EJB(name = "BankEJB")
     private BankInterface bank;
+    private String company;
     private Role role = Role.BANK;
 
     private List<Customer> customerList;
     private DataModel<Customer> customerModel;
     private Customer selectedCustomer = new Customer();
-    private List<PublicStockQuote> companyShares;
-
-    /**
-     *
-     * @return
-     */
-    public List<Customer> getCustomerList() {
-        return customerList;
-    }
-
-    /**
-     *
-     * @return
-     */
-    public List<PublicStockQuote> getCompanyShares() {
-        return companyShares;
-    }
-
-    /**
-     * updateModel updates the view via model.
-     */
-    public void updateModel() {
-        customerList = bank.listCustomer();
-        customerModel.setWrappedData(customerList);
-    }
-
-    /**
-     * @return the maxLengthName
-     */
-    public int getMaxLengthName() {
-        // TODO ask bank for maximum length of customer name.
-        return MAX_LENGTH_NAME;
-    }
-
-    /**
-     * checkUserName if it is not empty and not too long.
-     * @param context faces context.
-     * @param component from ui which request the check.
-     * @param value the string input to be ckecked.
-     */
-    public void checkUserName(FacesContext context, UIComponent component, Object value) {
-        if (value == null) {
-            throw new ValidatorException(new FacesMessage("Customer name is empty!"));
-        }
-
-        String text = value.toString();
-        if ((text.length() < 1) || (text.length() > getMaxLengthName())) {
-            throw new ValidatorException(new FacesMessage("Customer name is invalid!"));
-        }
-    }
-
-    /**
-     * Get current volume of bank.
-     *
-     * @return volume in USD.
-     */
-    public double getVolume() {
-        return bank.volume();
-    }
-
-    /**
-     * Give me the current role of the logged in user.
-     * @return the role
-     */
-    public Role getRole() {
-        FacesContext context = FacesContext.getCurrentInstance();
-        if (context.getExternalContext().isUserInRole("bank")) {
-            role = Role.BANK;
-        } else if (context.getExternalContext().isUserInRole("customer")) {
-            role = Role.CUSTOMER;
-        } else {
-            role = Role.NONE;
-        }
-
-        return role;
-    }
+    private List<PublicStockQuote> companyShares = new ArrayList<PublicStockQuote>();
 
     /**
      *
@@ -144,9 +72,103 @@ public class TradingModel implements Serializable {
         }
     }
 
+    /**
+     * getCustomerList for view.
+     *
+     * @return
+     */
+    public List<Customer> getCustomerList() {
+        return customerList;
+    }
 
+    public List<PublicStockQuote> getCompanyShares() throws StockExchangeUnreachableException {
+        if (company != null && !company.trim().isEmpty()) {
+            try {
+                companyShares = bank.companyShares(company);
+            } catch (StockExchangeUnreachableException ex) {
+                // TODO what to do when stock exchange is not available?
+                throw ex;
+            }
+        } else {
+            companyShares.clear();
+        }
+        return companyShares;
+    }
+
+    public void setCompany(String name) {
+        company = name;
+        System.out.println(company);
+    }
+
+    public String getCompany() {
+        return company;
+    }
 
     /**
+     * updateModel updates the customer view via model.
+     */
+    public void updateModel() {
+        customerList = bank.listCustomer();
+        customerModel.setWrappedData(customerList);
+    }
+
+    /**
+     * getMaxLengthName of customer.
+     *
+     * @return the maxLengthName
+     */
+    public int getMaxLengthName() {
+        // TODO ask bank for maximum length of customer name.
+        return MAX_LENGTH_NAME;
+    }
+
+    /**
+     * checkUserName if it is not empty and not too long.
+     *
+     * @param context faces context.
+     * @param component from ui which request the check.
+     * @param value the string input to be ckecked.
+     */
+    public void checkUserName(FacesContext context, UIComponent component, Object value) {
+        if (value == null) {
+            throw new ValidatorException(new FacesMessage("Customer name is empty!"));
+        }
+
+        String text = value.toString();
+        if ((text.length() < 1) || (text.length() > getMaxLengthName())) {
+            throw new ValidatorException(new FacesMessage("Customer name is invalid!"));
+        }
+    }
+
+    /**
+     * Get current volume of bank.
+     *
+     * @return volume in USD.
+     */
+    public double getVolume() {
+        return bank.volume();
+    }
+
+    /**
+     * Give me the current role of the logged in user.
+     *
+     * @return the role
+     */
+    public Role getRole() {
+        FacesContext context = FacesContext.getCurrentInstance();
+        if (context.getExternalContext().isUserInRole("bank")) {
+            role = Role.BANK;
+        } else if (context.getExternalContext().isUserInRole("customer")) {
+            role = Role.CUSTOMER;
+        } else {
+            role = Role.NONE;
+        }
+
+        return role;
+    }
+
+    /**
+     * getSelectedCustomer for role bank.
      *
      * @return
      */
@@ -155,6 +177,7 @@ public class TradingModel implements Serializable {
     }
 
     /**
+     * setSelectedCustomer for role bank.
      *
      * @param selectedCustomer
      */
@@ -169,6 +192,7 @@ public class TradingModel implements Serializable {
     }
 
     /**
+     * getModel as data model for all the xhtml views.
      *
      * @return
      */
@@ -179,7 +203,7 @@ public class TradingModel implements Serializable {
         return customerModel;
     }
 
-    /** 
+    /**
      * Init this bean.
      */
     @PostConstruct
@@ -194,11 +218,6 @@ public class TradingModel implements Serializable {
             //context.redirect(context.getRequestContextPath() + "/showcustomer.xhtml");
         }
 
-        try {
-            companyShares = bank.companyShares();
-        } catch (StockExchangeUnreachableException ex) {
-            // TODO what do we show when webservice fails?
-        }
         customerList = bank.listCustomer();
 
     }
