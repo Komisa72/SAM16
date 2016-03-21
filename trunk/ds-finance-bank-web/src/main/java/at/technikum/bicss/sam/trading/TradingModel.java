@@ -5,12 +5,8 @@
  */
 package at.technikum.bicss.sam.trading;
 
-import java.io.IOException;
 import java.io.Serializable;
-import java.security.Principal;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
 import javax.enterprise.context.SessionScoped;
@@ -20,13 +16,9 @@ import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
 import javax.faces.model.DataModel;
 import javax.faces.model.ListDataModel;
-import javax.faces.validator.FacesValidator;
-import javax.faces.validator.Validator;
 import javax.faces.validator.ValidatorException;
 import javax.inject.Named;
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import net.froihofer.dsfinance.ws.trading.PublicStockQuote;
 
 /**
  *
@@ -42,10 +34,12 @@ public class TradingModel implements Serializable {
 
     @EJB(name = "BankEJB")
     private BankInterface bank;
+    private Role role = Role.BANK;
 
     private List<Customer> customerList;
-    private transient DataModel<Customer> customerModel;
-    private Customer selectedCustomer;
+    private DataModel<Customer> customerModel;
+    private Customer selectedCustomer = new Customer();
+    private List<PublicStockQuote> companyShares;
 
     /**
      *
@@ -53,6 +47,14 @@ public class TradingModel implements Serializable {
      */
     public List<Customer> getCustomerList() {
         return customerList;
+    }
+
+    /**
+     *
+     * @return
+     */
+    public List<PublicStockQuote> getCompanyShares() {
+        return companyShares;
     }
 
     /**
@@ -67,17 +69,17 @@ public class TradingModel implements Serializable {
      * @return the maxLengthName
      */
     public int getMaxLengthName() {
+        // TODO ask bank for maximum length of customer name.
         return MAX_LENGTH_NAME;
     }
 
     /**
-     *
-     * @param context
-     * @param component
-     * @param value
+     * checkUserName if it is not empty and not too long.
+     * @param context faces context.
+     * @param component from ui which request the check.
+     * @param value the string input to be ckecked.
      */
     public void checkUserName(FacesContext context, UIComponent component, Object value) {
-
         if (value == null) {
             throw new ValidatorException(new FacesMessage("Customer name is empty!"));
         }
@@ -89,15 +91,16 @@ public class TradingModel implements Serializable {
     }
 
     /**
-     * Get currect volume of bank.
+     * Get current volume of bank.
      *
-     * @return
+     * @return volume in USD.
      */
     public double getVolume() {
         return bank.volume();
     }
 
     /**
+     * Give me the current role of the logged in user.
      * @return the role
      */
     public Role getRole() {
@@ -111,13 +114,6 @@ public class TradingModel implements Serializable {
         }
 
         return role;
-    }
-
-    /**
-     * @param role the role to set
-     */
-    public void setRole(Role role) {
-        this.role = role;
     }
 
     /**
@@ -148,12 +144,20 @@ public class TradingModel implements Serializable {
         }
     }
 
-    private Role role = Role.BANK;
 
+
+    /**
+     *
+     * @return
+     */
     public Customer getSelectedCustomer() {
         return selectedCustomer;
     }
 
+    /**
+     *
+     * @param selectedCustomer
+     */
     public void setSelectedCustomer(Customer selectedCustomer) {
         this.selectedCustomer = selectedCustomer;
     }
@@ -175,46 +179,27 @@ public class TradingModel implements Serializable {
         return customerModel;
     }
 
-    /**
+    /** 
      * Init this bean.
      */
     @PostConstruct
     public void init() {
         // TODO remove unused code
-        // aufgrund der session feststellen, in welcher rolle wir uns gerade 
+        // aufgrund der session feststellen, in welcher rolle wir uns gerade
         // befinden
-        role = Role.BANK;
-        System.out.println("init role setzen vorbei");
+        Role who = getRole();
+        if (who == Role.CUSTOMER) {
+            FacesContext context = FacesContext.getCurrentInstance();
 
+            //context.redirect(context.getRequestContextPath() + "/showcustomer.xhtml");
+        }
+
+        try {
+            companyShares = bank.companyShares();
+        } catch (StockExchangeUnreachableException ex) {
+            // TODO what do we show when webservice fails?
+        }
         customerList = bank.listCustomer();
-        if (FacesContext.getCurrentInstance().getExternalContext().isUserInRole("customer"))
-        {
-            Principal principal = FacesContext.getCurrentInstance().getExternalContext().getUserPrincipal();
-            //principal.getName();
-            
-                    
-        }
-
-    }
-
-    /**
-     * logout from current session.
-     */
-    public void logout() {
-
-        // TODO site crashes when automatic session timeout has already triggered
-        // subject to change
-        //https://murygin.wordpress.com/2012/11/29/jsf-primefaces-session-timeout-handling/
-        // for ajax http://stackoverflow.com/questions/11203195/session-timeout-and-viewexpiredexception-handling-on-jsf-primefaces-ajax-request
-        ExternalContext context = FacesContext.getCurrentInstance().getExternalContext();
-        if (context != null) {
-            try {
-                FacesContext.getCurrentInstance().getExternalContext().invalidateSession();
-                context.redirect(context.getRequestContextPath()+ "/index.xhtml");
-            } catch (IOException ex) {
-            }
-        }
-        setRole(Role.NONE);
 
     }
 

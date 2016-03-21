@@ -10,6 +10,11 @@
             <from-outcome>showCustomers</from-outcome>
             <to-view-id>/bank/createcustomer.xhtml</to-view-id>
         </navigation-case>
+        <from-view-id>/index.xhtml</from-view-id>
+        <navigation-case>
+            <from-outcome>showCompanyShares</from-outcome>
+            <to-view-id>/listShares.xhtml</to-view-id>
+        </navigation-case>
         <from-view-id>/createcustomer.xhtml</from-view-id>
         <navigation-case>
             <from-outcome>showCustomers</from-outcome>
@@ -20,13 +25,10 @@
             <from-outcome>showCustomer</from-outcome>
             <to-view-id>showcustomer.xhtml</to-view-id>
         </navigation-case>
-        <from-view-id>/*</from-view-id>
-        <navigation-case>
-            <from-outcome>logout</from-outcome>
-            <to-view-id>/index.xhtml</to-view-id>
-            <redirect/>
-        </navigation-case>
-
     </navigation-rule>
+    <servlet-mapping>
+    <servlet-name>Faces Servlet</servlet-name>
+    <url-pattern>*.xhtml</url-pattern>
+</servlet-mapping>
 
 </faces-config>

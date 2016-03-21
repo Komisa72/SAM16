@@ -5,7 +5,6 @@
  */
 package at.technikum.bicss.sam.trading;
 
-import java.beans.*;
 import java.io.File;
 import java.io.IOException;
 import javax.annotation.PostConstruct;
@@ -13,15 +12,14 @@ import javax.ejb.Singleton;
 import javax.ejb.Startup;
 import net.froihofer.util.jboss.WildflyAuthDBHelper;
 
-
 @Startup
 @Singleton
-public class StartupBean {
-  private String status;
+public class StartupTradingService {
 
-  @PostConstruct
-  void init() {
-        WildflyAuthDBHelper authHelper;
+    private WildflyAuthDBHelper authHelper;
+
+    @PostConstruct
+    void init() {
 
         // setup initial default bank user with default credentials and role.
         try {
@@ -37,7 +35,7 @@ public class StartupBean {
             String[] bankRoles = new String[1];
             bankRoles[0] = "bank";
 
-            authHelper.addUser("bank", password, bankRoles);
+            getAuthHelper().addUser("bank", password, bankRoles);
             System.out.println("Bank user prepared.");
 
             //} 
@@ -46,7 +44,13 @@ public class StartupBean {
         } catch (IOException ex) {
             System.out.println("Bank user setup bank role io exception.");
         }
-  }
+    }
+
+    /**
+     * @return the authHelper
+     */
+    public WildflyAuthDBHelper getAuthHelper() {
+        return authHelper;
+    }
 
 }
-

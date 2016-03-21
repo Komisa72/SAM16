@@ -9,14 +9,22 @@ import java.util.List;
 import javax.annotation.security.DeclareRoles;
 import javax.annotation.security.RolesAllowed;
 import javax.ejb.Local;
+import net.froihofer.dsfinance.ws.trading.PublicStockQuote;
 
 /**
  * BankInterface Local Interface consumed by web applicaton.
  */
 @Local
 @DeclareRoles({"bank", "customer"})
-@RolesAllowed({"customer", "bank"})
+@RolesAllowed({"bank", "customer"})
 public interface BankInterface {
+
+    /**
+     *
+     * @return the list of found sto
+     * @throws StockExchangeUnreachableException
+     */
+    public List<PublicStockQuote> companyShares() throws StockExchangeUnreachableException;
 
     /**
      * createCustomer creates a new customer and stores its credentials in
@@ -26,21 +34,21 @@ public interface BankInterface {
      * @param password credentials.
      * @throws CustomerCreationFailedException
      */
-    
     @RolesAllowed("bank")
     public void createCustomer(Customer customer, String password) throws CustomerCreationFailedException;
 
     /**
      * createCustomer creates a new customer and stores its credentials in
+     *
      * @return the list of customers.
-    */
+     */
     public List<Customer> listCustomer();
 
     /**
      * volume used by bank role.
+     *
      * @return the volume which is available as of now.
-    */
-    
+     */
     @RolesAllowed("bank")
     public double volume();
 

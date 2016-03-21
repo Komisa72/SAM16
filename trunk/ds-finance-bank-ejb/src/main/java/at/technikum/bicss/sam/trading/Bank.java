@@ -17,10 +17,10 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.annotation.PostConstruct;
 import javax.annotation.security.DeclareRoles;
+import javax.ejb.EJB;
+import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.TypedQuery;
@@ -40,10 +40,10 @@ import net.froihofer.dsfinance.ws.trading.TradingWebServiceService;
 //@DeclareRoles({"bank", "customer"})
 public class Bank implements BankInterface {
 
-    private static WildflyAuthDBHelper authHelper;
-
     @PersistenceContext
     private EntityManager em;
+    @EJB
+    StartupTradingService info;
 
     // 1 Mrd. dollar
     private final static double MAX_VOLUME = 1000000000;
@@ -51,6 +51,8 @@ public class Bank implements BankInterface {
     @WebServiceRef(name = "TradingWebServiceService")
     private TradingWebServiceService stockService;
     private TradingWebService proxy;
+
+    private List<PublicStockQuote> companyShares;
 
     /**
      * Constructor.
@@ -86,12 +88,28 @@ public class Bank implements BankInterface {
         customerRoles[0] = "customer";
 
         try {
-            authHelper.addUser(customer.getName(), password, customerRoles);
+            // TODO check if addUser is threadsafe
+            info.getAuthHelper().addUser(customer.getName(), password, customerRoles);
             em.persist(customer);
         } catch (IOException ex) {
             System.out.println("Could not add customer to password database");
             throw new CustomerCreationFailedException("Could not add customer to password database.", ex);
         }
+
+    }
+
+    /**
+     * Init this EJB.
+     */
+    @PostConstruct
+    private void init() {
+
+        proxy = stockService.getTradingWebServicePort();
+        BindingProvider bindingProvider = (BindingProvider) proxy;
+        bindingProvider.getRequestContext().put(
+                BindingProvider.USERNAME_PROPERTY, "bic4b16_06");
+        bindingProvider.getRequestContext().put(
+                BindingProvider.PASSWORD_PROPERTY, "Feim0Kah4");
 
     }
 
@@ -102,11 +120,11 @@ public class Bank implements BankInterface {
      */
     @Override
     public double volume() {
-        // TODO subject to change
-        // this is only a test if webservice can be accessed
         double volume;
         try {
-            List<PublicStockQuote> list = proxy.findStockQuotesByCompanyName("OMV");
+            // TODO subject to change
+            // this is only a test if webservice can be accessed
+            List<PublicStockQuote> list = proxy.findStockQuotesByCompanyName("Apple");
             volume = list.size();
         } catch (TradingWSException_Exception ex) {
             volume = 0;
@@ -115,22 +133,19 @@ public class Bank implements BankInterface {
         return volume;
     }
 
-    /**
-     * Init this EJB.
-     */
-    
-    @PostConstruct
-    private void init() {
-        // setup initial default bank user with default credentials and role.
-        String homeDir = System.getProperty("jboss.home.dir");
-        authHelper = new WildflyAuthDBHelper(new File(homeDir));
-        proxy = stockService.getTradingWebServicePort();
-        BindingProvider bindingProvider = (BindingProvider) proxy;
-        bindingProvider.getRequestContext().put(
-                BindingProvider.USERNAME_PROPERTY, "bic4b16_06");
-        bindingProvider.getRequestContext().put(
-                BindingProvider.PASSWORD_PROPERTY, "Feim0Kah4");
+    @Override
+    public List<PublicStockQuote> companyShares() throws StockExchangeUnreachableException {
+        // TODO
+        companyShares = null;
+        try {
+            companyShares = proxy.findStockQuotesByCompanyName("Apple");
+            System.out.println(companyShares.toString());
 
+        } catch (TradingWSException_Exception e) {
+            throw new StockExchangeUnreachableException("Stock exchange unreachable.", e);
+        }
+
+        return companyShares;
     }
 
     /**
