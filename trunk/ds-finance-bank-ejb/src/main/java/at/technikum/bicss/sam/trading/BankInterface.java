@@ -20,7 +20,7 @@ public interface BankInterface {
     
     public List<Customer> listCustomer();
 
-    public List<PublicStockQuote>  companyShares();
+    public List<PublicStockQuote>  companyShares(String company);
     
     public double volume();
 

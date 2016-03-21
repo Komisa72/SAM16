@@ -19,7 +19,14 @@
                 <p:layoutUnit position="center">
                     <h:form>
                   <p:panel header="Company shares">
-                    <p:dataTable id="datalist"  rendered = "#{tradingModel.role ne null and tradingModel.role.bank}" value="#{tradingModel.companyShares}" var="share"    
+                    <h:outputText rendered = "#{tradingModel.role ne null and tradingModel.role.bank}" value ="Company name:">
+                    </h:outputText>
+                    <h:inputText id="txtCompany" value="#{tradingModel.company}"/>
+                    <h:commandButton value="Show shares" immediate="false" action="#{tradingModel.setCompany(tradingModel.company)}">
+                    </h:commandButton>
+
+                      
+                    <p:dataTable id="datalist"  rendered = "#{tradingModel.role ne null and tradingModel.role.bank and not empty tradingModel.getCompanyShares()}" value="#{tradingModel.getCompanyShares()}" var="share"    
                                  paginator="false"
                                  rowKey="#{share.companyName}"
                                  rows="10"                          

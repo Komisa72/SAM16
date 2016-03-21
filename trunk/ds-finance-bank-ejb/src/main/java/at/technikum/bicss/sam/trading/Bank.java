@@ -128,11 +128,11 @@ public class Bank implements BankInterface {
     }
 
     @Override
-    public List<PublicStockQuote>  companyShares() {
+    public List<PublicStockQuote>  companyShares(String company) {
         // TODO 
         companyShares = null;
         try {
-            companyShares = proxy.findStockQuotesByCompanyName("Apple");
+            companyShares = proxy.findStockQuotesByCompanyName(company);
             System.out.println(companyShares.toString());
             
             

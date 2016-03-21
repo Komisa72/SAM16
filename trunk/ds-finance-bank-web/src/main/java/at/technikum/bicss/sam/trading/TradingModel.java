@@ -27,6 +27,7 @@ import net.froihofer.dsfinance.ws.trading.PublicStockQuote;
  */
 @Named("tradingModel")
 @SessionScoped
+
 public class TradingModel implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -35,11 +36,13 @@ public class TradingModel implements Serializable {
 
     @EJB(name = "BankEJB")
     private BankInterface bank;
+    private String company;
 
     private List<Customer> customerList;
     private transient DataModel<Customer> customerModel;
     private Customer selectedCustomer = new Customer();
     private List<PublicStockQuote> companyShares;
+   
     /**
      *
      * @return
@@ -49,12 +52,20 @@ public class TradingModel implements Serializable {
     }
     
      public List<PublicStockQuote> getCompanyShares() {
+        companyShares = bank.companyShares(company);
         return companyShares;
     }
      
-      public void setCompanyShares() {
-        companyShares = bank.companyShares();
+    public void setCompany(String name) {
+        company = name;
+        System.out.println(company);
     }
+    
+    public String getCompany() {
+        return company;
+    }
+     
+    
     /**
      *
      */
@@ -184,11 +195,11 @@ public class TradingModel implements Serializable {
         // TODO remove unused code
         // aufgrund der session feststellen, in welcher rolle wir uns gerade 
         // befinden
-        System.out.println("init start");
-        role = Role.BANK;
-        System.out.println("init role setzen vorbei");
-        companyShares = bank.companyShares();
+       System.out.println("init start");
+       role = Role.BANK;
+       System.out.println("init role setzen vorbei");
        customerList = bank.listCustomer();
+      
 
     }
 
