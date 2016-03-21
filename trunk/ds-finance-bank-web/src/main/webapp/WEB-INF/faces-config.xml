@@ -4,18 +4,18 @@
               xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
               xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee http://xmlns.jcp.org/xml/ns/javaee/web-facesconfig_2_2.xsd">
     <navigation-rule>
-       
         <from-view-id>/index.xhtml</from-view-id>
         <navigation-case>
             <from-outcome>showCustomers</from-outcome>
             <to-view-id>/bank/createcustomer.xhtml</to-view-id>
         </navigation-case>
-        <from-view-id>/index.xhtml</from-view-id>
         <navigation-case>
             <from-outcome>showCompanyShares</from-outcome>
             <to-view-id>/listShares.xhtml</to-view-id>
         </navigation-case>
-        <from-view-id>/createcustomer.xhtml</from-view-id>
+    </navigation-rule>
+    <navigation-rule>
+        <from-view-id>/bank/createcustomer.xhtml</from-view-id>
         <navigation-case>
             <from-outcome>showCustomers</from-outcome>
             <to-view-id>/bank/createcustomer.xhtml</to-view-id>
@@ -27,8 +27,8 @@
         </navigation-case>
     </navigation-rule>
     <servlet-mapping>
-    <servlet-name>Faces Servlet</servlet-name>
-    <url-pattern>*.xhtml</url-pattern>
-</servlet-mapping>
+        <servlet-name>Faces Servlet</servlet-name>
+        <url-pattern>*.xhtml</url-pattern>
+    </servlet-mapping>
 
 </faces-config>
