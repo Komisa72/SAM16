@@ -12,5 +12,6 @@
 hs_err_pid*
 /trunk/ds-finance-bank-ejb/target/
 /trunk/ds-finance-bank-ear/target/
-/trunk/ds-finance-bank-ejb/nb-configuration.xml
-/trunk/ds-finance-bank-web/nb-configuration.xml
+/trunk/ds-finance-bank-client/target/
+nb-configuration.xml
+*.NavData
