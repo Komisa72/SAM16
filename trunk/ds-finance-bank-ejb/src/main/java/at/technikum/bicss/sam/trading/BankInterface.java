@@ -10,8 +10,7 @@ import javax.annotation.security.DeclareRoles;
 import javax.annotation.security.RolesAllowed;
 import javax.ejb.Local;
 import net.froihofer.dsfinance.ws.trading.PublicStockQuote;
-import net.froihofer.dsfinance.ws.trading.GetStockQuotes;
-import net.froihofer.dsfinance.ws.trading.Buy;
+
 
 /**
  * BankInterface Local Interface consumed by web applicaton.
@@ -21,7 +20,14 @@ import net.froihofer.dsfinance.ws.trading.Buy;
 @RolesAllowed({"bank", "customer"})
 public interface BankInterface {
 
-    public List<PublicStockQuote> companyShares(String company) 
+    /**
+     * findShares finds shares by company name.
+     *
+     * @param company search pattern, part of company name, empty strings are not supported.
+     * @return list of shares for the given company search pattern.
+     * @throws StockExchangeUnreachableException
+     */
+    public List<Share> findShares(String company) 
             throws StockExchangeUnreachableException;
     
     public List<PublicStockQuote> getStockQuotes(List<String> symbols)
