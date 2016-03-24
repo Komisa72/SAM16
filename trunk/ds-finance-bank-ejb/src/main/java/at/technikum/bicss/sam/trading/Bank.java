@@ -47,8 +47,8 @@ public class Bank implements BankInterface {
     @EJB
     StartupTradingService info;
 
-    // 1 Mrd. dollar
-    private final static double MAX_VOLUME = 1000000000;
+    // 1 Mrd. dollar - TODO: sollte evtl. umbenannt werden auf "inital volume"
+    private final static double MAX_VOLUME = 1000*1000*1000;
 
     @WebServiceRef(name = "TradingWebServiceService")
     private TradingWebServiceService stockService;
@@ -58,6 +58,7 @@ public class Bank implements BankInterface {
     private List<PublicStockQuote> stockQuotes;
     private List<PublicStockQuote> stockQuoteHistory;
     private double buyShares;
+    private double sellShares;
 
     /**
      * Constructor.
@@ -129,6 +130,12 @@ public class Bank implements BankInterface {
         return stockQuotes;
     }
     
+    /**
+     * 
+     * @param symbol of shares to be listet
+     * @return list of stock quote history
+     * @throws StockExchangeUnreachableException 
+     */
     @Override
     public List<PublicStockQuote> getStockQuoteHistory(String symbol)
             throws StockExchangeUnreachableException {
@@ -146,14 +153,18 @@ public class Bank implements BankInterface {
         
         return stockQuoteHistory;
     }
-    
+    /**
+     * 
+     * @param symbol of shares to be bought
+     * @param shares number of shares to be bought
+     * @return bought shares
+     * @throws StockExchangeUnreachableException
+     * @throws BuySharesException 
+     */
     @Override
     public double buy(String symbol, int shares)
             throws StockExchangeUnreachableException, BuySharesException {
-        
             
-        
-        
         try {
             buyShares = proxy.buy(symbol, shares);
             System.out.println("Bought shares" + buyShares);
@@ -167,9 +178,28 @@ public class Bank implements BankInterface {
                 throw new BuySharesException("Could not buy shares");
             }
         }
-
         
         return buyShares;
+    }
+    /**
+     * 
+     * @param symbol of shares that are sold
+     * @param shares number of shares sold
+     * @return sold shares
+     * @throws StockExchangeUnreachableException 
+     */
+    @Override
+    public double sell(String symbol, int shares)
+            throws StockExchangeUnreachableException {
+        
+        try {
+            sellShares = proxy.sell(symbol, shares);
+            System.out.println("Sold shares " + sellShares);
+        } catch (TradingWSException_Exception e) {
+            System.out.println("passiert");
+            throw new StockExchangeUnreachableException("Stock exchange unreachable.", e);
+        }
+        return sellShares;
     }
 
     /**

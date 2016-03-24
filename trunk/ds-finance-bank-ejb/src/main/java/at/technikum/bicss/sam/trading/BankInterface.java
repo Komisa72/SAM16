@@ -32,6 +32,9 @@ public interface BankInterface {
     
     public double buy(String symbol, int shares)
             throws StockExchangeUnreachableException, BuySharesException;
+    
+    public double sell(String symbol, int shares)
+            throws StockExchangeUnreachableException;
             
     /**
      * createCustomer creates a new customer and stores its credentials in
