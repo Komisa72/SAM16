@@ -26,7 +26,6 @@ import javax.persistence.PersistenceContext;
 import javax.persistence.TypedQuery;
 import javax.xml.ws.BindingProvider;
 import javax.xml.ws.WebServiceRef;
-import net.froihofer.dsfinance.ws.trading.Buy;
 import net.froihofer.dsfinance.ws.trading.GetStockQuotes;
 import net.froihofer.dsfinance.ws.trading.PublicStockQuote;
 import net.froihofer.dsfinance.ws.trading.TradingWSException_Exception;
@@ -39,7 +38,6 @@ import net.froihofer.dsfinance.ws.trading.TradingWebServiceService;
  */
 @Stateless(name = "BankEJB")
 @Local(BankInterface.class)
-//@DeclareRoles({"bank", "customer"})
 public class Bank implements BankInterface {
 
     @PersistenceContext
@@ -47,18 +45,12 @@ public class Bank implements BankInterface {
     @EJB
     StartupTradingService info;
 
-    // 1 Mrd. dollar - TODO: sollte evtl. umbenannt werden auf "inital volume"
-    private final static double MAX_VOLUME = 1000*1000*1000;
+    // 1 Mrd. dollar, limit to be checked against when a share is bought
+    private final static double MAX_VOLUME = 1E9;
 
     @WebServiceRef(name = "TradingWebServiceService")
     private TradingWebServiceService stockService;
     private TradingWebService proxy;
-
-    private List<PublicStockQuote> companyShares;
-    private List<PublicStockQuote> stockQuotes;
-    private List<PublicStockQuote> stockQuoteHistory;
-    private double buyShares;
-    private double sellShares;
 
     /**
      * Constructor.
@@ -103,100 +95,106 @@ public class Bank implements BankInterface {
         }
 
     }
-    
+
     /**
-     * 
-     * gets a stock quote by symbol
-     * 
+     *
+     * gets a list of stock quotes by symbol
+     *
      * @param symbols symbol for which stock quotes are to be returned
      * @return list of stock quotes
-     * @throws StockExchangeUnreachableException 
+     * @throws StockExchangeUnreachableException
      */
     @Override
-    public List<PublicStockQuote> getStockQuotes(List<String> symbols) 
+    public List<PublicStockQuote> getStockQuotes(List<String> symbols)
             throws StockExchangeUnreachableException {
-        
-        stockQuotes = null;
-        
+
+        List<PublicStockQuote> stockQuotes;
+
         try {
             stockQuotes = proxy.getStockQuotes(symbols);
             System.out.println(stockQuotes.toString());
 
         } catch (TradingWSException_Exception e) {
-            System.out.println("passiert");
             throw new StockExchangeUnreachableException("Stock exchange unreachable.", e);
         }
-        
+
         return stockQuotes;
     }
-    
+
     /**
-     * 
+     *
      * @param symbol of shares to be listet
      * @return list of stock quote history
-     * @throws StockExchangeUnreachableException 
+     * @throws StockExchangeUnreachableException
      */
     @Override
     public List<PublicStockQuote> getStockQuoteHistory(String symbol)
             throws StockExchangeUnreachableException {
-        
-        stockQuoteHistory = null;
-        
+        List<PublicStockQuote> stockQuoteHistory;
+
         try {
             stockQuoteHistory = proxy.getStockQuoteHistory(symbol);
             System.out.println(stockQuoteHistory.toString());
 
         } catch (TradingWSException_Exception e) {
-            System.out.println("passiert");
             throw new StockExchangeUnreachableException("Stock exchange unreachable.", e);
         }
-        
+
         return stockQuoteHistory;
     }
+
     /**
-     * 
+     *
      * @param symbol of shares to be bought
      * @param shares number of shares to be bought
      * @return bought shares
      * @throws StockExchangeUnreachableException
-     * @throws BuySharesException 
+     * @throws BuySharesException
      */
     @Override
     public double buy(String symbol, int shares)
             throws StockExchangeUnreachableException, BuySharesException {
-            
+
+        // TODO check if MAX_LIMIT is not exceeded on bye
+        // if limit is exceeded throw exception.
+        double buyShares = 0;
         try {
             buyShares = proxy.buy(symbol, shares);
-            System.out.println("Bought shares" + buyShares);
 
-        } catch (Exception  e) {
+            System.out.println("Bought shares" + buyShares);
+        // TODO AM warum hier die Basis-Exception fangen, das fängt alle
+        // auftretenden Exception (OutOfMemory,....) - das kann nicht so bleiben
+        // BuySharesException wird nicht im Webservice-Server seitig geworfen
+        // daher wird dieser Code nie erreicht
+        // BuySharesException wird hier gefangen und geworfen, wofür soll das gut sein?
+        } catch (Exception e) {
             if (e instanceof TradingWSException_Exception) {
                 System.out.println("passiert");
-            throw new StockExchangeUnreachableException("Stock exchange unreachable.", e);
-            }
-            else if (e instanceof BuySharesException) {
+                throw new StockExchangeUnreachableException("Stock exchange unreachable.", e);
+            } else if (e instanceof BuySharesException) {
                 throw new BuySharesException("Could not buy shares");
             }
         }
-        
+
         return buyShares;
     }
+
     /**
-     * 
+     *
      * @param symbol of shares that are sold
      * @param shares number of shares sold
      * @return sold shares
-     * @throws StockExchangeUnreachableException 
+     * @throws StockExchangeUnreachableException
      */
     @Override
     public double sell(String symbol, int shares)
             throws StockExchangeUnreachableException {
-        
+        double sellShares;
+
         try {
             sellShares = proxy.sell(symbol, shares);
             System.out.println("Sold shares " + sellShares);
         } catch (TradingWSException_Exception e) {
-            System.out.println("passiert");
             throw new StockExchangeUnreachableException("Stock exchange unreachable.", e);
         }
         return sellShares;
@@ -237,24 +235,31 @@ public class Bank implements BankInterface {
         return volume;
     }
 
+    /**
+     * findShares finds shares by company name.
+     *
+     * @param company part of company name, empty strings are not supported.
+     * @return list of found shares or empty list.
+     * @throws StockExchangeUnreachableException
+     */
     @Override
-    public List<PublicStockQuote> companyShares(String company)
+        public List<Share> findShares(String company)
             throws StockExchangeUnreachableException {
-        // TODO
+        List<PublicStockQuote> companyShares;
+        List<Share> found;
         companyShares = null;
-        System.out.println("company name");
-        System.out.println(company);
-        System.out.println("Holla");
         try {
             companyShares = proxy.findStockQuotesByCompanyName(company);
-            System.out.println(companyShares.toString());
-
         } catch (TradingWSException_Exception e) {
-            System.out.println("passiert");
             throw new StockExchangeUnreachableException("Stock exchange unreachable.", e);
         }
+        found = new ArrayList<>();
+        for (PublicStockQuote temp : companyShares) {
+            found.add(new Share(temp.getSymbol(), temp.getCompanyName(), 
+                    temp.getFloatShares(), temp.getLastTradePrice()));
+        }
 
-        return companyShares;
+        return found;
     }
 
     /**
