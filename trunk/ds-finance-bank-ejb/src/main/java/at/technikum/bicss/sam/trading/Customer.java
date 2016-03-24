@@ -17,9 +17,20 @@ import javax.persistence.Id;
 @Entity
 public class Customer implements Serializable{
     private static final long serialVersionUID = 1L;
+
+    /**
+     * @return the MAX_LENGTH_NAME
+     */
+    public static int getMaxLengthName() {
+        return MAX_LENGTH_NAME;
+    }
     
     @Id @GeneratedValue
     private int id;
+    
+    
+    // limit lenght of customer name to this size
+    private final static int MAX_LENGTH_NAME = 200;
     
 
     private String name;
