@@ -26,6 +26,7 @@ import javax.persistence.PersistenceContext;
 import javax.persistence.TypedQuery;
 import javax.xml.ws.BindingProvider;
 import javax.xml.ws.WebServiceRef;
+import net.froihofer.dsfinance.ws.trading.GetStockQuotes;
 import net.froihofer.dsfinance.ws.trading.PublicStockQuote;
 import net.froihofer.dsfinance.ws.trading.TradingWSException_Exception;
 import net.froihofer.dsfinance.ws.trading.TradingWebService;
@@ -53,6 +54,8 @@ public class Bank implements BankInterface {
     private TradingWebService proxy;
 
     private List<PublicStockQuote> companyShares;
+    private List<PublicStockQuote> stockQuotes;
+    private List<PublicStockQuote> stockQuoteHistory;
 
     /**
      * Constructor.
@@ -96,6 +99,50 @@ public class Bank implements BankInterface {
             throw new CustomerCreationFailedException("Could not add customer to password database.", ex);
         }
 
+    }
+    
+    /**
+     * 
+     * gets a stock quote by symbol
+     * 
+     * @param symbols symbol for which stock quotes are to be returned
+     * @return list of stock quotes
+     * @throws StockExchangeUnreachableException 
+     */
+    @Override
+    public List<PublicStockQuote> getStockQuotes(List<String> symbols) 
+            throws StockExchangeUnreachableException {
+        
+        stockQuotes = null;
+        
+        try {
+            stockQuotes = proxy.getStockQuotes(symbols);
+            System.out.println(stockQuotes.toString());
+
+        } catch (TradingWSException_Exception e) {
+            System.out.println("passiert");
+            throw new StockExchangeUnreachableException("Stock exchange unreachable.", e);
+        }
+        
+        return stockQuotes;
+    }
+    
+    @Override
+    public List<PublicStockQuote> getStockQuoteHistory(String symbol)
+            throws StockExchangeUnreachableException {
+        
+        stockQuoteHistory = null;
+        
+        try {
+            stockQuoteHistory = proxy.getStockQuoteHistory(symbol);
+            System.out.println(stockQuoteHistory.toString());
+
+        } catch (TradingWSException_Exception e) {
+            System.out.println("passiert");
+            throw new StockExchangeUnreachableException("Stock exchange unreachable.", e);
+        }
+        
+        return stockQuoteHistory;
     }
 
     /**

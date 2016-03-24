@@ -11,6 +11,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Transient;
+import javax.persistence.Column;
 
 /**
  *
@@ -23,7 +24,16 @@ public class Depot implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
-
+    
+    private Long customerID;
+    
+    @Column(name="DEPOT_VALUE")
+    private double value;
+    
+    /**
+     * 
+     * Getter & Setter Methods 
+     */
     public Long getId() {
         return id;
     }
@@ -31,7 +41,24 @@ public class Depot implements Serializable {
     public void setId(Long id) {
         this.id = id;
     }
+    
+    public Long getCustomerID() {
+        return customerID;
+    }
+    
+    public void setCustomerID(Long customerID) {
+        this.customerID = customerID;
+    }
+    
+    public double getValue() {
+        return value;
+    }
 
+    public void setValue(Long value) {
+        this.value = value;
+    }
+
+    
     @Override
     public int hashCode() {
         int hash = 0;
@@ -60,5 +87,13 @@ public class Depot implements Serializable {
     @Transient
     /* rating must be calculated and not persisted */
     private double rating;
+    
+    public double getRating() {
+        return rating;
+    }
+
+    public void setRating(Long rating) {
+        this.rating = rating;
+    }
     
 }

@@ -10,6 +10,7 @@ import javax.annotation.security.DeclareRoles;
 import javax.annotation.security.RolesAllowed;
 import javax.ejb.Local;
 import net.froihofer.dsfinance.ws.trading.PublicStockQuote;
+import net.froihofer.dsfinance.ws.trading.GetStockQuotes;
 
 /**
  * BankInterface Local Interface consumed by web applicaton.
@@ -21,7 +22,16 @@ public interface BankInterface {
 
     public List<PublicStockQuote> companyShares(String company) 
             throws StockExchangeUnreachableException;
-
+    
+    public List<PublicStockQuote> getStockQuotes(List<String> symbols)
+            throws StockExchangeUnreachableException;
+    
+    public List<PublicStockQuote> getStockQuoteHistory(String symbol)
+            throws StockExchangeUnreachableException;
+    
+    public List<PublicStockQuote> buy(String symbol, int shares)
+            throws StockExchangeUnreachableException;
+            
     /**
      * createCustomer creates a new customer and stores its credentials in
      * webserver realm, customer data is stored via JPA.
@@ -47,5 +57,7 @@ public interface BankInterface {
      * @return the volume which is available as of now.
      */
     public double volume();
+    
+    
 
 }
