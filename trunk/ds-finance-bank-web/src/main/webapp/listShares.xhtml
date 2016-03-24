@@ -20,7 +20,7 @@
                     <p:panel header="Company shares" >
                         <h:outputText value ="Company name:"/>
                         <h:inputText id="txtCompany" value="#{tradingModel.company}"/>
-                        <p:dataTable id="datalist" scrollable="true" scrollWidth="100%" value="#{tradingModel.getCompanyShares()}" var="share"
+                        <p:dataTable id="datalist" scrollable="true" scrollWidth="100%" value="#{tradingModel.findShares()}" var="share"
                                      paginator="false"
                                      rowKey="#{share.companyName}"
                                      rows="20"
@@ -29,11 +29,16 @@
                                 <h:outputText value="#{share.companyName}"/>
                             </p:column>
                             <p:column headerText ="Float Shares">
-                                <h:outputText value="#{share.floatShares}"/>
+                                <h:outputText value="#{share.floatCount}"/>
                             </p:column>
                             <p:column headerText = "Symbol">
                                 <h:outputText value="#{share.symbol}"/>
                             </p:column>
+                            <p:column headerText = "Last trading price">
+                                <h:outputText value="#{share.price}">
+                                    <f:convertNumber currencyCode="USD" type="currency" />
+                                </h:outputText>
+                            </p:column>                        
                         </p:dataTable>
                     </p:panel>
                 </h:form>

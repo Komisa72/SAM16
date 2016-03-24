@@ -19,7 +19,6 @@ import javax.faces.model.DataModel;
 import javax.faces.model.ListDataModel;
 import javax.faces.validator.ValidatorException;
 import javax.inject.Named;
-import net.froihofer.dsfinance.ws.trading.PublicStockQuote;
 
 /**
  *
@@ -32,8 +31,6 @@ public class TradingModel implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
-    private static final int MAX_LENGTH_NAME = 200;
-
     @EJB(name = "BankEJB")
     private BankInterface bank;
     private String company;
@@ -42,7 +39,7 @@ public class TradingModel implements Serializable {
     private List<Customer> customerList;
     private DataModel<Customer> customerModel;
     private Customer selectedCustomer = new Customer();
-    private List<PublicStockQuote> companyShares = new ArrayList<PublicStockQuote>();
+    private List<Share> companyShares = new ArrayList<>();
 
     /**
      *
@@ -81,10 +78,10 @@ public class TradingModel implements Serializable {
         return customerList;
     }
 
-    public List<PublicStockQuote> getCompanyShares() throws StockExchangeUnreachableException {
+    public List<Share> findShares() throws StockExchangeUnreachableException {
         if (company != null && !company.trim().isEmpty()) {
             try {
-                companyShares = bank.companyShares(company);
+                companyShares = bank.findShares(company);
             } catch (StockExchangeUnreachableException ex) {
                 // TODO what to do when stock exchange is not available?
                 throw ex;
@@ -113,16 +110,6 @@ public class TradingModel implements Serializable {
     }
 
     /**
-     * getMaxLengthName of customer.
-     *
-     * @return the maxLengthName
-     */
-    public int getMaxLengthName() {
-        // TODO ask bank for maximum length of customer name.
-        return MAX_LENGTH_NAME;
-    }
-
-    /**
      * checkUserName if it is not empty and not too long.
      *
      * @param context faces context.
@@ -135,7 +122,7 @@ public class TradingModel implements Serializable {
         }
 
         String text = value.toString();
-        if ((text.length() < 1) || (text.length() > getMaxLengthName())) {
+        if ((text.length() < 1) || (text.length() > Customer.getMaxLengthName())) {
             throw new ValidatorException(new FacesMessage("Customer name is invalid!"));
         }
     }
