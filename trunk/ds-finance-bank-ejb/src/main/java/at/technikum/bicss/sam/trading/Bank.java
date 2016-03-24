@@ -26,6 +26,7 @@ import javax.persistence.PersistenceContext;
 import javax.persistence.TypedQuery;
 import javax.xml.ws.BindingProvider;
 import javax.xml.ws.WebServiceRef;
+import net.froihofer.dsfinance.ws.trading.Buy;
 import net.froihofer.dsfinance.ws.trading.GetStockQuotes;
 import net.froihofer.dsfinance.ws.trading.PublicStockQuote;
 import net.froihofer.dsfinance.ws.trading.TradingWSException_Exception;
@@ -56,6 +57,7 @@ public class Bank implements BankInterface {
     private List<PublicStockQuote> companyShares;
     private List<PublicStockQuote> stockQuotes;
     private List<PublicStockQuote> stockQuoteHistory;
+    private double buyShares;
 
     /**
      * Constructor.
@@ -143,6 +145,31 @@ public class Bank implements BankInterface {
         }
         
         return stockQuoteHistory;
+    }
+    
+    @Override
+    public double buy(String symbol, int shares)
+            throws StockExchangeUnreachableException, BuySharesException {
+        
+            
+        
+        
+        try {
+            buyShares = proxy.buy(symbol, shares);
+            System.out.println("Bought shares" + buyShares);
+
+        } catch (Exception  e) {
+            if (e instanceof TradingWSException_Exception) {
+                System.out.println("passiert");
+            throw new StockExchangeUnreachableException("Stock exchange unreachable.", e);
+            }
+            else if (e instanceof BuySharesException) {
+                throw new BuySharesException("Could not buy shares");
+            }
+        }
+
+        
+        return buyShares;
     }
 
     /**

@@ -6,36 +6,34 @@
 package at.technikum.bicss.sam.trading;
 
 /**
- * TradingServiceException base exception of the application.
+ *
+ * @author Claudia
  */
-public class TradingServiceException extends Exception {
-
-    /**
-     * Creates a new instance of <code>TradingServiceException</code> without
-     * detail message.
-     */
-    public TradingServiceException() {
+public class BuySharesException extends Exception {
+    
+    public BuySharesException() {
     }
-
-    /**
+    
+     /**
      * Constructs an instance of <code>TradingServiceException</code> with the
      * specified detail message.
      *
-     * @param msg the detail message.
+     * @param message the detail message.
+     * 
      */
-    public TradingServiceException(String msg) {
-        super(msg);
+    public BuySharesException(String message) {
+        super(message);
     }
     
-    
-    /**
+     /**
      * Constructs an instance of <code>TradingServiceException</code> with the
      * specified detail message.
      *
-     * @param msg the detail message.
+     * @param message the detail message.
      * @param cause the inner cause of the exception.
      */
-    public TradingServiceException(String msg, Throwable cause) {
-        super(msg, cause);
+    public BuySharesException(String message, Throwable cause) {
+        super(message, cause);
     }
+    
 }
