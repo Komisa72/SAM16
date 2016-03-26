@@ -7,14 +7,9 @@ package at.technikum.bicss.sam.trading;
 
 import javax.ejb.Local;
 import javax.ejb.Stateless;
-import javax.naming.Context;
-import javax.naming.InitialContext;
-import javax.naming.NamingException;
 
-import net.froihofer.util.jboss.WildflyAuthDBHelper;
-import java.io.File;
+
 import java.io.IOException;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import javax.annotation.PostConstruct;
@@ -92,6 +87,23 @@ public class Bank implements BankInterface {
         } catch (IOException ex) {
             System.out.println("Could not add customer to password database");
             throw new CustomerCreationFailedException("Could not add customer to password database.", ex);
+        }
+
+    }
+    
+     @Override
+    public void createDepot(Customer customer) throws DepotCreationFailedException{
+        Long Id = (long)(customer.getId()+1000);
+        Depot depot = new Depot();
+        depot.setId(Id);
+        depot.setCustomerID(customer.getId());
+              
+
+        try {        
+            em.persist(depot);
+        } catch (Exception ex) {
+            System.out.println("Could not add depot");
+            throw new DepotCreationFailedException("Could not add depot to database.", ex);
         }
 
     }

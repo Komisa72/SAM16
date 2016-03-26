@@ -42,8 +42,7 @@ public class CustomerController {
         
         
         try {
-            bank.createCustomer(customer, password);
-            
+            bank.createCustomer(customer, password);           
             model.updateModel();
         } catch (CustomerCreationFailedException ex) {
             // TODO subject to change

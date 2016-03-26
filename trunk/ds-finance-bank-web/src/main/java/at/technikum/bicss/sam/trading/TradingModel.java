@@ -38,8 +38,9 @@ public class TradingModel implements Serializable {
 
     private List<Customer> customerList;
     private DataModel<Customer> customerModel;
-    private Customer selectedCustomer = new Customer();
+    private Customer customer = new Customer();
     private List<Share> companyShares = new ArrayList<>();
+   
 
     /**
      *
@@ -91,6 +92,10 @@ public class TradingModel implements Serializable {
         }
         return companyShares;
     }
+    
+   
+
+    
 
     public void setCompany(String name) {
         company = name;
@@ -160,7 +165,7 @@ public class TradingModel implements Serializable {
      * @return
      */
     public Customer getSelectedCustomer() {
-        return selectedCustomer;
+        return customer;
     }
 
     /**
@@ -169,7 +174,7 @@ public class TradingModel implements Serializable {
      * @param selectedCustomer
      */
     public void setSelectedCustomer(Customer selectedCustomer) {
-        this.selectedCustomer = selectedCustomer;
+        this.customer = selectedCustomer;
     }
 
     /**

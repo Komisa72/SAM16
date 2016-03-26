@@ -26,7 +26,7 @@ public class Customer implements Serializable{
     }
     
     @Id @GeneratedValue
-    private int id;
+    private Long id;
     
     
     // limit lenght of customer name to this size
@@ -52,7 +52,7 @@ public class Customer implements Serializable{
     /**
      * @return the identifier
      */
-    public int getId() {
+    public Long getId() {
         return id;
     }
 
