@@ -53,6 +53,9 @@ public interface BankInterface {
     @RolesAllowed("bank")
     public void createCustomer(Customer customer, String password) 
             throws CustomerCreationFailedException;
+     @RolesAllowed("bank")
+    public void createDepot(Customer customer) 
+           throws DepotCreationFailedException;
 
     /**
      * listCustomer retrieve the list of customers.

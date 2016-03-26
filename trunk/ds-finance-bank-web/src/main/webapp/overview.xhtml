@@ -1,0 +1,71 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui">
+    <f:view contentType="text/html"/>
+    <h:head>
+        <title>Technikum SAM Trading Service</title>
+        <f:facet name="overview">
+            <meta content='text/html; charset=UTF-8' http-equiv="Content-Type"/>
+        </f:facet>
+    </h:head>
+    <h:body>
+        <p:layout fullPage="true">
+            <ui:include  src="resources/includes/header.xhtml" />
+            <p:layoutUnit position="center">
+                <h:form>
+                    <h:panelGrid id="panel" columns="2" border="0" cellpadding="0" cellspacing="">
+                        <h:panelGroup style="text-align:left">
+                        <h:outputLabel for="volume" value="Volume: " />                    
+                         <h:outputText id="volume" value="123" />   
+                         <br/> 
+                         <h:outputLabel for="value" value="Value: " />
+                         <h:outputText id="value" value="111" /> 
+                         <br/> 
+                          <h:outputLabel for="rating" value="Rating " />
+                         <h:outputText id="rating" value="234" /> 
+                        </h:panelGroup>
+                        
+                         <h:panelGroup style="text-align:right">
+                         <h:outputLabel for="username" value="User: " />
+                         <h:outputText id="usaername" value="userjshajs" /> 
+                         <br/> 
+                          <h:outputLabel for="depotId" value="Depot: " />
+                         <h:outputText id="depotId" value="111" /> 
+                         <br/> 
+                        </h:panelGroup>
+                    </h:panelGrid>
+                
+                    <p:panel header="Current shares:" >
+                        <h:outputText value ="Company name:"/>
+                        <h:inputText id="txtCompany" value="#{tradingModel.company}"/>
+                        <p:dataTable id="datalist" scrollable="true" scrollWidth="100%" value="#{depotController.getDepotShares()}" var="share"
+                                     paginator="false"
+                                     rowKey="#{share.companyName}"
+                                     rows="20"
+                                     >
+                            <p:column headerText="Company">
+                                <h:outputText value="#{share.companyName}"/>
+                            </p:column>
+                            <p:column headerText ="Float Shares">
+                                <h:outputText value="#{share.floatCount}"/>
+                            </p:column>
+                            <p:column headerText = "Symbol">
+                                <h:outputText value="#{share.symbol}"/>
+                            </p:column>
+                            <p:column headerText = "Last trading price">
+                                <h:outputText value="#{share.price}">
+                                    <f:convertNumber currencyCode="USD" type="currency" />
+                                </h:outputText>
+                            </p:column>                        
+                        </p:dataTable>
+                    </p:panel>
+                </h:form>
+            </p:layoutUnit>
+        </p:layout>
+    </h:body>
+</html>
+

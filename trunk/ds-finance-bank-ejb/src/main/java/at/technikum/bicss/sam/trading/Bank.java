@@ -9,6 +9,7 @@ import javax.ejb.Local;
 import javax.ejb.Stateless;
 
 import net.froihofer.util.jboss.WildflyAuthDBHelper;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -83,6 +84,23 @@ public class Bank implements BankInterface {
         } catch (IOException ex) {
             System.out.println("Could not add customer to password database");
             throw new CustomerCreationFailedException("Could not add customer to password database.", ex);
+        }
+
+    }
+    
+     @Override
+    public void createDepot(Customer customer) throws DepotCreationFailedException{
+        Long Id = (long)(customer.getId()+1000);
+        Depot depot = new Depot();
+        depot.setId(Id);
+        depot.setCustomerID(customer.getId());
+              
+
+        try {        
+            em.persist(depot);
+        } catch (Exception ex) {
+            System.out.println("Could not add depot");
+            throw new DepotCreationFailedException("Could not add depot to database.", ex);
         }
 
     }

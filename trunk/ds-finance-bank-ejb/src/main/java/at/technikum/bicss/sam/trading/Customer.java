@@ -31,13 +31,14 @@ public class Customer implements Serializable {
     public static int getMaxLengthName() {
         return MAX_LENGTH_NAME;
     }
-
-    @Id
-    @GeneratedValue
-    private int id;
-
+    
+    @Id @GeneratedValue
+    private Long id;
+    
+    
     // limit lenght of customer name to this size
-    public final static short MAX_LENGTH_NAME = 200;
+    private final static int MAX_LENGTH_NAME = 200;
+    
 
     @Column(name = "name", unique= true, nullable = false, length = MAX_LENGTH_NAME)
     private String name;
@@ -59,7 +60,7 @@ public class Customer implements Serializable {
     /**
      * @return the identifier
      */
-    public int getId() {
+    public Long getId() {
         return id;
     }
 
