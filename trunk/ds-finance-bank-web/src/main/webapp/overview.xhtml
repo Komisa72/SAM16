@@ -19,26 +19,26 @@
                 <h:form>
                     <h:panelGrid id="panel" columns="2" border="0" cellpadding="0" cellspacing="">
                         <h:panelGroup style="text-align:left">
-                        <h:outputLabel for="volume" value="Volume: " />                    
-                         <h:outputText id="volume" value="123" />   
-                         <br/> 
-                         <h:outputLabel for="value" value="Value: " />
-                         <h:outputText id="value" value="111" /> 
-                         <br/> 
-                          <h:outputLabel for="rating" value="Rating " />
-                         <h:outputText id="rating" value="234" /> 
+                            <h:outputLabel for="volume" value="Volume: " />
+                            <h:outputText id="volume" value="123" />
+                            <br/>
+                            <h:outputLabel for="value" value="Value: " />
+                            <h:outputText id="value" value="111" />
+                            <br/>
+                            <h:outputLabel for="rating" value="Rating " />
+                            <h:outputText id="rating" value="234" />
                         </h:panelGroup>
-                        
-                         <h:panelGroup style="text-align:right">
-                         <h:outputLabel for="username" value="User: " />
-                         <h:outputText id="usaername" value="userjshajs" /> 
-                         <br/> 
-                          <h:outputLabel for="depotId" value="Depot: " />
-                         <h:outputText id="depotId" value="111" /> 
-                         <br/> 
+
+                        <h:panelGroup style="text-align:right">
+                            <h:outputLabel for="username" value="User: " />
+                            <h:outputText id="usaername" value="userjshajs" />
+                            <br/>
+                            <h:outputLabel for="depotId" value="Depot: " />
+                            <h:outputText id="depotId" value="111" />
+                            <br/>
                         </h:panelGroup>
                     </h:panelGrid>
-                
+
                     <p:panel header="Current shares:" >
                         <h:outputText value ="Company name:"/>
                         <h:inputText id="txtCompany" value="#{tradingModel.company}"/>
@@ -60,7 +60,7 @@
                                 <h:outputText value="#{share.price}">
                                     <f:convertNumber currencyCode="USD" type="currency" />
                                 </h:outputText>
-                            </p:column>                        
+                            </p:column>
                         </p:dataTable>
                     </p:panel>
                 </h:form>
