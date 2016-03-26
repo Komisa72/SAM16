@@ -6,6 +6,11 @@
 package at.technikum.bicss.sam.trading;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
+import java.math.MathContext;
+import java.util.ArrayList;
+import java.util.List;
+import javax.annotation.PostConstruct;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -21,44 +26,79 @@ import javax.persistence.Column;
 public class Depot implements Serializable {
 
     private static final long serialVersionUID = 1L;
+
+    private List<Share> shareList;
+
+    /**
+     *
+     * @param share
+     */
+    public void add(Share share) {
+        shareList.add(share);
+    }
+    
+    
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
-    
+
     private Long customerID;
-    
-    @Column(name="DEPOT_VALUE")
+
+    // TODO AM: depot value is a calculated value from the shareList
+    // mark this as @Transient and do not persist in database
+    @Column(name = "DEPOT_VALUE")
     private double value;
-    
+
     /**
-     * 
-     * Getter & Setter Methods 
+     *
+     * Getter & Setter Methods
+     *
+     * @return
      */
     public Long getId() {
         return id;
     }
 
+    /**
+     *
+     * @param id
+     */
     public void setId(Long id) {
         this.id = id;
     }
-    
+
+    /**
+     *
+     * @return
+     */
     public Long getCustomerID() {
         return customerID;
     }
-    
+
+    /**
+     *
+     * @param customerID
+     */
     public void setCustomerID(Long customerID) {
         this.customerID = customerID;
     }
-    
+
+    /**
+     *
+     * @return
+     */
     public double getValue() {
         return value;
     }
 
+    /**
+     *
+     * @param value
+     */
     public void setValue(Long value) {
         this.value = value;
     }
 
-    
     @Override
     public int hashCode() {
         int hash = 0;
@@ -83,17 +123,44 @@ public class Depot implements Serializable {
     public String toString() {
         return "at.technikum.bicss.sam.trading.Depot[ id=" + id + " ]";
     }
-    
+
     @Transient
     /* rating must be calculated and not persisted */
     private double rating;
-    
+
+    /**
+     *
+     * @return
+     */
     public double getRating() {
         return rating;
     }
 
+    /**
+     *
+     * @param rating
+     */
     public void setRating(Long rating) {
         this.rating = rating;
     }
-    
+
+    /**
+     * listShares list shareList for this depot.
+     *
+     * @return list of found shares or empty list.
+     */
+    public List<Share> listShares() {
+        return shareList;
+
+    }
+
+    // TODO AM: subject to change, do not initialise with dummy data
+    @PostConstruct
+    private void init() {
+        shareList = new ArrayList<>();
+        Share dummy = new Share("471147114711", "Dummy 4711 Koelnisch Wasser",
+                4711, new BigDecimal(47.11d, new MathContext(2)));
+        shareList.add(dummy);
+    }
+
 }

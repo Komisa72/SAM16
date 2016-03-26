@@ -7,26 +7,18 @@ package at.technikum.bicss.sam.trading;
 
 import javax.ejb.Local;
 import javax.ejb.Stateless;
-import javax.naming.Context;
-import javax.naming.InitialContext;
-import javax.naming.NamingException;
 
 import net.froihofer.util.jboss.WildflyAuthDBHelper;
-import java.io.File;
 import java.io.IOException;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import javax.annotation.PostConstruct;
-import javax.annotation.security.DeclareRoles;
 import javax.ejb.EJB;
-import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-import javax.persistence.TypedQuery;
+import javax.persistence.Query;
 import javax.xml.ws.BindingProvider;
 import javax.xml.ws.WebServiceRef;
-import net.froihofer.dsfinance.ws.trading.GetStockQuotes;
 import net.froihofer.dsfinance.ws.trading.PublicStockQuote;
 import net.froihofer.dsfinance.ws.trading.TradingWSException_Exception;
 import net.froihofer.dsfinance.ws.trading.TradingWebService;
@@ -67,8 +59,7 @@ public class Bank implements BankInterface {
     @Override
     public List<Customer> listCustomer() {
         // ds-finance-bank.h2.db
-        TypedQuery<Customer> query = em.createQuery(
-                "SELECT c FROM Customer c ORDER BY c.id", Customer.class);
+        Query query = em.createNamedQuery("allCustomers");
         return query.getResultList();
     }
 
@@ -162,11 +153,11 @@ public class Bank implements BankInterface {
             buyShares = proxy.buy(symbol, shares);
 
             System.out.println("Bought shares" + buyShares);
-        // TODO AM warum hier die Basis-Exception fangen, das fängt alle
-        // auftretenden Exception (OutOfMemory,....) - das kann nicht so bleiben
-        // BuySharesException wird nicht im Webservice-Server seitig geworfen
-        // daher wird dieser Code nie erreicht
-        // BuySharesException wird hier gefangen und geworfen, wofür soll das gut sein?
+            // TODO AM warum hier die Basis-Exception fangen, das fängt alle
+            // auftretenden Exception (OutOfMemory,....) - das kann nicht so bleiben
+            // BuySharesException wird nicht im Webservice-Server seitig geworfen
+            // daher wird dieser Code nie erreicht
+            // BuySharesException wird hier gefangen und geworfen, wofür soll das gut sein?
         } catch (Exception e) {
             if (e instanceof TradingWSException_Exception) {
                 System.out.println("passiert");
@@ -243,7 +234,7 @@ public class Bank implements BankInterface {
      * @throws StockExchangeUnreachableException
      */
     @Override
-        public List<Share> findShares(String company)
+    public List<Share> findShares(String company)
             throws StockExchangeUnreachableException {
         List<PublicStockQuote> companyShares;
         List<Share> found;
@@ -255,7 +246,7 @@ public class Bank implements BankInterface {
         }
         found = new ArrayList<>();
         for (PublicStockQuote temp : companyShares) {
-            found.add(new Share(temp.getSymbol(), temp.getCompanyName(), 
+            found.add(new Share(temp.getSymbol(), temp.getCompanyName(),
                     temp.getFloatShares(), temp.getLastTradePrice()));
         }
 
