@@ -11,16 +11,19 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.Column;
+import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 
 /**
  * Customer of bank.
  */
 @Entity
-@NamedQuery(
-    name="allCustomers",
-    query="SELECT c FROM Customer c ORDER BY c.id"
-)
+@NamedQueries({  
+@NamedQuery(name="allCustomers",
+    query="SELECT c FROM Customer c ORDER BY c.id"),
+@NamedQuery(name="singleCustomer",
+    query="SELECT c FROM Customer c WHERE c.name LIKE :customerName")
+})
 public class Customer implements Serializable {
 
     private static final long serialVersionUID = 1L;

@@ -65,6 +65,19 @@ public class Bank implements BankInterface {
     }
 
     /**
+     * getCustomer retrieves the customer with the given name.
+     *
+     * @param name of the customer.
+     * @return the found customer.
+     */
+    @Override
+    public Customer getCustomer(String name) {
+        Query query = em.createNamedQuery("singleCustomer");
+        query.setParameter("customerName", name);
+        return (Customer) query.getSingleResult();
+    }
+
+    /**
      * createCustomer creates a new customer and stores its credentials in
      * webserver realm, customer data is stored via JPA.
      *
@@ -87,16 +100,15 @@ public class Bank implements BankInterface {
         }
 
     }
-    
-     @Override
-    public void createDepot(Customer customer) throws DepotCreationFailedException{
-        Long Id = (long)(customer.getId()+1000);
+
+    @Override
+    public void createDepot(Customer customer) throws DepotCreationFailedException {
+        Long Id = (long) (customer.getId() + 1000);
         Depot depot = new Depot();
         depot.setId(Id);
         depot.setCustomerID(customer.getId());
-              
 
-        try {        
+        try {
             em.persist(depot);
         } catch (Exception ex) {
             System.out.println("Could not add depot");
@@ -231,15 +243,7 @@ public class Bank implements BankInterface {
      */
     @Override
     public double volume() {
-        double volume;
-        try {
-            // TODO subject to change
-            // this is only a test if webservice can be accessed
-            List<PublicStockQuote> list = proxy.findStockQuotesByCompanyName("OMV");
-            volume = list.size();
-        } catch (TradingWSException_Exception ex) {
-            volume = 0;
-        }
+        double volume = 2d;
         // TODO calculate the current volume from shares as of now
         return volume;
     }

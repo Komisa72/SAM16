@@ -63,6 +63,16 @@ public interface BankInterface {
      * @return the list of customers.
      */
     public List<Customer> listCustomer();
+    
+    
+    /**
+     * getCustomer retrieves the customer with the given name.
+     *
+     * @param name of the customer.
+     * @return the found customer.
+     */
+    public Customer getCustomer(String name);
+
 
     /**
      * volume used by bank role.

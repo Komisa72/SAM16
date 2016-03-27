@@ -5,9 +5,12 @@
  */
 package at.technikum.bicss.sam.trading;
 
+import java.io.IOException;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
 import javax.enterprise.context.SessionScoped;
@@ -198,6 +201,7 @@ public class TradingModel implements Serializable {
     /**
      * Init this bean.
      */
+
     @PostConstruct
     public void init() {
         // TODO remove unused code
@@ -206,8 +210,13 @@ public class TradingModel implements Serializable {
         Role who = getRole();
         if (who == Role.CUSTOMER) {
             FacesContext context = FacesContext.getCurrentInstance();
-
-            //context.redirect(context.getRequestContextPath() + "/showcustomer.xhtml");
+            
+            setSelectedCustomer(bank.getCustomer(context.getExternalContext().getRemoteUser()));
+            try {
+                context.getExternalContext().redirect(context.getExternalContext().getRequestContextPath() + "/showcustomer.xhtml");
+            } catch (IOException ex) {
+                // TODO AM what to do when redirect fails?
+            }
         }
 
         customerList = bank.listCustomer();

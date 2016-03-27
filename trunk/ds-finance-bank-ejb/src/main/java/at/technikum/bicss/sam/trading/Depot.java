@@ -27,6 +27,9 @@ public class Depot implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
+    // TODO AM this list must be persisted later, therefore remove 
+    // @Transient annotation
+    @Transient
     private List<Share> shareList;
 
     /**
