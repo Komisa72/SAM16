@@ -20,7 +20,6 @@ import javax.persistence.Column;
 
 /**
  *
- * @author amaierhofer
  */
 @Entity
 public class Depot implements Serializable {
