@@ -11,6 +11,8 @@ import javax.ejb.Stateless;
 import net.froihofer.util.jboss.WildflyAuthDBHelper;
 
 import java.io.IOException;
+import java.math.BigDecimal;
+import java.math.MathContext;
 import java.util.ArrayList;
 import java.util.List;
 import javax.annotation.PostConstruct;
@@ -44,6 +46,16 @@ public class Bank implements BankInterface {
     @WebServiceRef(name = "TradingWebServiceService")
     private TradingWebServiceService stockService;
     private TradingWebService proxy;
+    
+    //get current total value of depots
+    public double currentValue = 539209.200;
+    
+    //TODO: sinnvolle Instanz anlegen für die Persistierung
+    public Depot myDepot = new Depot();
+    
+    //TODO: sinnvolle Instanz anlegen für die Persistierung - hier rein für Testzwecke
+    public Share myShare = new Share("471147114711", "Dummy 4711 Koelnisch Wasser",
+                4711, new BigDecimal(47.11d, new MathContext(2)));
 
     /**
      * Constructor.
@@ -62,6 +74,24 @@ public class Bank implements BankInterface {
         // ds-finance-bank.h2.db
         Query query = em.createNamedQuery("allCustomers");
         return query.getResultList();
+    }
+    /**
+     * 
+     * @return total value of bought shares 
+     */
+    @Override
+    public List<Depot> getDepotValue() {       
+        Query query = em.createNamedQuery("getDepot");
+        return query.getResultList();
+    }
+    
+    /**
+     * 
+     * @return current volume that can be invested
+     */
+    @Override
+    public double volume() {
+        return MAX_VOLUME - currentValue;
     }
 
     /**
@@ -101,12 +131,14 @@ public class Bank implements BankInterface {
 
     }
 
+    //TODO CB: Dummy Werte ersetzen gegen sinnvolle Persistierung
     @Override
     public void createDepot(Customer customer) throws DepotCreationFailedException {
         Long Id = (long) (customer.getId() + 1000);
         Depot depot = new Depot();
         depot.setId(Id);
         depot.setCustomerID(customer.getId());
+        depot.setValue(42000320.205);
 
         try {
             em.persist(depot);
@@ -176,24 +208,20 @@ public class Bank implements BankInterface {
     public double buy(String symbol, int shares)
             throws StockExchangeUnreachableException, BuySharesException {
 
-        // TODO check if MAX_LIMIT is not exceeded on bye
-        // if limit is exceeded throw exception.
         double buyShares = 0;
         try {
             buyShares = proxy.buy(symbol, shares);
-
-            System.out.println("Bought shares" + buyShares);
-            // TODO AM warum hier die Basis-Exception fangen, das fängt alle
-            // auftretenden Exception (OutOfMemory,....) - das kann nicht so bleiben
-            // BuySharesException wird nicht im Webservice-Server seitig geworfen
-            // daher wird dieser Code nie erreicht
-            // BuySharesException wird hier gefangen und geworfen, wofür soll das gut sein?
-        } catch (Exception e) {
-            if (e instanceof TradingWSException_Exception) {
-                System.out.println("passiert");
-                throw new StockExchangeUnreachableException("Stock exchange unreachable.", e);
-            } else if (e instanceof BuySharesException) {
+            
+            if ((buyShares + currentValue) > MAX_VOLUME) {
                 throw new BuySharesException("Could not buy shares");
+            }
+            
+            System.out.println("Bought shares" + buyShares);
+            currentValue = currentValue + buyShares;
+                
+        } catch (BuySharesException | TradingWSException_Exception e) {
+            if (e instanceof TradingWSException_Exception) {
+                throw new StockExchangeUnreachableException("Stock exchange unreachable.", e);
             }
         }
 
@@ -215,6 +243,10 @@ public class Bank implements BankInterface {
         try {
             sellShares = proxy.sell(symbol, shares);
             System.out.println("Sold shares " + sellShares);
+            
+            //adapting current investing volume of the bank
+            currentValue = currentValue - sellShares;
+            
         } catch (TradingWSException_Exception e) {
             throw new StockExchangeUnreachableException("Stock exchange unreachable.", e);
         }
@@ -234,18 +266,6 @@ public class Bank implements BankInterface {
         bindingProvider.getRequestContext().put(
                 BindingProvider.PASSWORD_PROPERTY, "Feim0Kah4");
 
-    }
-
-    /**
-     * volume used by bank role.
-     *
-     * @return the volume which is available as of now.
-     */
-    @Override
-    public double volume() {
-        double volume = 2d;
-        // TODO calculate the current volume from shares as of now
-        return volume;
     }
 
     /**
@@ -280,8 +300,10 @@ public class Bank implements BankInterface {
      *
      * @param customer to be stored as JPA entity.
      */
-    private void persist(Customer customer) {
+    private void persist(Customer customer, Share share, Depot depot) {
         em.persist(customer);
+        em.persist(share);
+        em.persist(depot);
     }
 
 }

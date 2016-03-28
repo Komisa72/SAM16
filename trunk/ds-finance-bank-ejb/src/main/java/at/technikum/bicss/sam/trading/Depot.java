@@ -17,11 +17,17 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Transient;
 import javax.persistence.Column;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
 
 /**
  *
  */
 @Entity
+@NamedQueries({  
+@NamedQuery(name="getDepot",
+    query="SELECT SUM(c.value) FROM Depot c"),
+})
 public class Depot implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -97,7 +103,7 @@ public class Depot implements Serializable {
      *
      * @param value
      */
-    public void setValue(Long value) {
+    public void setValue(double value) {
         this.value = value;
     }
 
