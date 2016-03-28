@@ -79,7 +79,7 @@ public interface BankInterface {
      *
      * @return the volume which is available as of now.
      */
-    public List<Depot> getDepotValue();
+    public double getDepotValue();
     
     /**
      * 

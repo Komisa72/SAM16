@@ -75,6 +75,7 @@ public class Share implements Serializable {
         time = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(
                 new Timestamp(System.currentTimeMillis()));
     }
+    
     /*
      * 
      * Getter & Setter Methods 

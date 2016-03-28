@@ -26,7 +26,7 @@ import javax.persistence.NamedQuery;
 @Entity
 @NamedQueries({  
 @NamedQuery(name="getDepot",
-    query="SELECT SUM(c.value) FROM Depot c"),
+    query="SELECT d FROM Depot d ORDER BY d.id"),
 })
 public class Depot implements Serializable {
 
@@ -98,7 +98,6 @@ public class Depot implements Serializable {
     public double getValue() {
         return value;
     }
-
     /**
      *
      * @param value
@@ -161,6 +160,7 @@ public class Depot implements Serializable {
         return shareList;
 
     }
+    
 
     // TODO AM: subject to change, do not initialise with dummy data
     @PostConstruct

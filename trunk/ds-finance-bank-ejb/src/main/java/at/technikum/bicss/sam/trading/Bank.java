@@ -48,7 +48,8 @@ public class Bank implements BankInterface {
     private TradingWebService proxy;
     
     //get current total value of depots
-    public double currentValue = 539209.200;
+    //public double currentValue = getDepotValue();
+    public double currentValue = 2449010.20149;
     
     //TODO: sinnvolle Instanz anlegen für die Persistierung
     public Depot myDepot = new Depot();
@@ -78,11 +79,30 @@ public class Bank implements BankInterface {
     /**
      * 
      * @return total value of bought shares 
-     */
+     */    
+ 
     @Override
-    public List<Depot> getDepotValue() {       
+    public double getDepotValue() {
+        List<PublicStockQuote> allShares;
+        double d = 0;
+        double value;
+        double valueSum = 0;
+        
+        double temp = Double.longBitsToDouble(15552451L);
+        
+        BigDecimal price = new BigDecimal(d);
+        
         Query query = em.createNamedQuery("getDepot");
-        return query.getResultList();
+        allShares = query.getResultList();
+        
+        for (PublicStockQuote a : allShares) {
+            temp = a.getFloatShares();
+            price = a.getLastTradePrice();
+            value = temp * price.doubleValue();
+            valueSum = valueSum + value;
+        }
+        
+        return valueSum;
     }
     
     /**
@@ -139,6 +159,7 @@ public class Bank implements BankInterface {
         depot.setId(Id);
         depot.setCustomerID(customer.getId());
         depot.setValue(42000320.205);
+        
 
         try {
             em.persist(depot);
@@ -213,7 +234,7 @@ public class Bank implements BankInterface {
             buyShares = proxy.buy(symbol, shares);
             
             if ((buyShares + currentValue) > MAX_VOLUME) {
-                throw new BuySharesException("Could not buy shares");
+                throw new BuySharesException("Could not buy shares, because volume would exceed allowed value.\n");
             }
             
             System.out.println("Bought shares" + buyShares);
