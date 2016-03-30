@@ -54,7 +54,7 @@ public interface BankInterface {
     public void createCustomer(Customer customer, String password) 
             throws CustomerCreationFailedException;
      @RolesAllowed("bank")
-    public void createDepot(Customer customer) 
+    public String createDepot(Customer customer) 
            throws DepotCreationFailedException;
 
     /**
@@ -72,6 +72,8 @@ public interface BankInterface {
      * @return the found customer.
      */
     public Customer getCustomer(String name);
+    
+    public Depot getDepot(String id);
 
 
     /**

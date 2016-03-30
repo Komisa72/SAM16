@@ -27,7 +27,10 @@ import javax.persistence.NamedQuery;
 @NamedQueries({  
 @NamedQuery(name="getDepot",
     query="SELECT d FROM Depot d ORDER BY d.id"),
+@NamedQuery(name="getDepotById",
+    query="SELECT d FROM Depot d WHERE d.id = :depotId")
 })
+
 public class Depot implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -165,6 +168,7 @@ public class Depot implements Serializable {
     // TODO AM: subject to change, do not initialise with dummy data
     @PostConstruct
     private void init() {
+           
         shareList = new ArrayList<>();
         Share dummy = new Share("471147114711", "Dummy 4711 Koelnisch Wasser",
                 4711, new BigDecimal(47.11d, new MathContext(2)));
