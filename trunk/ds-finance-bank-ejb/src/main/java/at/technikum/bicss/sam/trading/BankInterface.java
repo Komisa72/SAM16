@@ -41,6 +41,8 @@ public interface BankInterface {
     
     public double sell(String symbol, int shares)
             throws StockExchangeUnreachableException;
+    public String createDepot(Customer customer) 
+            throws DepotCreationFailedException;
             
     /**
      * createCustomer creates a new customer and stores its credentials in
@@ -54,8 +56,7 @@ public interface BankInterface {
     public void createCustomer(Customer customer, String password) 
             throws CustomerCreationFailedException;
      @RolesAllowed("bank")
-    public String createDepot(Customer customer) 
-           throws DepotCreationFailedException;
+
 
     /**
      * listCustomer retrieve the list of customers.

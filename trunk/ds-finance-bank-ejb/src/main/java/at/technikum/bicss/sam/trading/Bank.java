@@ -166,14 +166,14 @@ public class Bank implements BankInterface {
 
     //TODO CB: Dummy Werte ersetzen gegen sinnvolle Persistierung
     @Override
-    public void createDepot(Customer customer) throws DepotCreationFailedException {
+    public String createDepot(Customer customer) throws DepotCreationFailedException {
         Long Id = (long) (customer.getId() + 1000);
         Depot depot = new Depot(Id, 10409.100);
         //depot.setId(Id);
         //depot.setCustomerID(customer.getId());
         //depot.setValue(42000320.205);
         
-*/
+
         try {
             em.persist(depot);
         } catch (Exception ex) {
