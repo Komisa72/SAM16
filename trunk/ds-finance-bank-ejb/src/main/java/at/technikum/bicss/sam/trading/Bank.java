@@ -52,7 +52,7 @@ public class Bank implements BankInterface {
     public double currentValue = 2449010.20149;
     
     //TODO: sinnvolle Instanz anlegen für die Persistierung
-    public Depot myDepot = new Depot();
+    //public Depot myDepot = new Depot();
     
     //TODO: sinnvolle Instanz anlegen für die Persistierung - hier rein für Testzwecke
     public Share myShare = new Share("471147114711", "Dummy 4711 Koelnisch Wasser",
@@ -155,12 +155,11 @@ public class Bank implements BankInterface {
     @Override
     public void createDepot(Customer customer) throws DepotCreationFailedException {
         Long Id = (long) (customer.getId() + 1000);
-        Depot depot = new Depot();
-        depot.setId(Id);
-        depot.setCustomerID(customer.getId());
-        depot.setValue(42000320.205);
+        Depot depot = new Depot(Id, 10409.100);
+        //depot.setId(Id);
+        //depot.setCustomerID(customer.getId());
+        //depot.setValue(42000320.205);
         
-
         try {
             em.persist(depot);
         } catch (Exception ex) {
