@@ -126,6 +126,19 @@ public class Bank implements BankInterface {
         query.setParameter("customerName", name);
         return (Customer) query.getSingleResult();
     }
+    
+    /**
+     * getDepot retrieves the customer with the given name.
+     *
+     * @param id of the depot.
+     * @return the found depot.
+     */
+    @Override
+    public Depot getDepot(String id) {
+        Query query = em.createNamedQuery("getDepotById");
+        query.setParameter("depotId", id);
+        return (Depot) query.getSingleResult();
+    }
 
     /**
      * createCustomer creates a new customer and stores its credentials in
@@ -160,6 +173,7 @@ public class Bank implements BankInterface {
         //depot.setCustomerID(customer.getId());
         //depot.setValue(42000320.205);
         
+*/
         try {
             em.persist(depot);
         } catch (Exception ex) {
@@ -167,6 +181,7 @@ public class Bank implements BankInterface {
             throw new DepotCreationFailedException("Could not add depot to database.", ex);
         }
 
+        return depot.toString();
     }
 
     /**

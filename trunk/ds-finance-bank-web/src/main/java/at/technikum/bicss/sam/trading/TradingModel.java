@@ -43,6 +43,7 @@ public class TradingModel implements Serializable {
     private DataModel<Customer> customerModel;
     private Customer customer = new Customer();
     private List<Share> companyShares = new ArrayList<>();
+    private Depot depot;
    
 
     /**
@@ -97,7 +98,23 @@ public class TradingModel implements Serializable {
     }
     
    
+    public Depot getDepot()
+    {
+       
+        return depot;
+    }
 
+    private void setDepot()
+    {
+        try{
+            Customer n_customer = new Customer();
+            n_customer.setName("test");
+            bank.createCustomer(n_customer, "test");
+       
+        String d_id= bank.createDepot(n_customer);
+        depot= bank.getDepot(d_id);
+        }catch (Exception e){System.out.println("Could not create Depot");}    
+    }
     
 
     public void setCompany(String name) {
@@ -220,6 +237,8 @@ public class TradingModel implements Serializable {
         }
 
         customerList = bank.listCustomer();
+        setDepot();
+        
 
     }
 

@@ -29,7 +29,8 @@
                             </h:outputText>
                             
                             <p:commandButton id="listCustomers" rendered = "#{tradingModel.role ne null and tradingModel.role.bank}" action="#{customerController.showCustomers()}" value="Goto Customer view" ajax="false" />                
-                            <h:button id="listShares" rendered = "#{tradingModel.role ne null and tradingModel.role.bank}" outcome="listShares" value="Show depot overview" />
+                            <h:button id="listShares" rendered = "#{tradingModel.role ne null and tradingModel.role.bank}" outcome="listShares" value="List company shares" />
+                             <h:button id="depotOverview" rendered = "#{tradingModel.role ne null and tradingModel.role.bank}" outcome="overview" value="Show depot overview" />
                            
                         </h:panelGrid>
                    
