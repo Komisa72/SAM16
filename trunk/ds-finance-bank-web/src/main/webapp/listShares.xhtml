@@ -21,7 +21,7 @@
                         <h:outputText value ="Company name:"/>
                         <h:inputText id="txtCompany" value="#{tradingModel.company}"/>
                         <p:dataTable id="datalist" scrollable="true" scrollWidth="100%" value="#{tradingModel.findShares()}" var="share"
-                                     paginator="false"
+                                     paginator="true"
                                      rowKey="#{share.companyName}"
                                      rows="20"
                                      >
