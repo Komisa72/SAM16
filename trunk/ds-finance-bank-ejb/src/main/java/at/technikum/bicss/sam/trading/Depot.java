@@ -26,7 +26,7 @@ import javax.persistence.NamedQuery;
 @Entity
 @NamedQueries({  
 @NamedQuery(name="getDepot",
-    query="SELECT d FROM Depot d ORDER BY d.id"),
+    query="SELECT SUM(d.value) FROM Depot d"),
 })
 public class Depot implements Serializable {
 
@@ -49,13 +49,17 @@ public class Depot implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
-
     private Long customerID;
-
     // TODO AM: depot value is a calculated value from the shareList
     // mark this as @Transient and do not persist in database
     @Column(name = "DEPOT_VALUE")
     private double value;
+    
+    public Depot(Long customerID, double value) {
+        this.customerID = customerID;
+        this.value = value;
+        
+    }
 
     /**
      *

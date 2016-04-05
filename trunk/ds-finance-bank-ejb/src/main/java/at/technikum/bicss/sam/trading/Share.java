@@ -26,18 +26,13 @@ public class Share implements Serializable {
 
     private static final long serialVersionUID = 2L;
     
-    // TODO symbol ist kein automatisch generierter Key, wird aus webservicee 
-    // ausgelesen. d. h. symbol muss richtig initialisiert werden.
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
     private String symbol;
 
     private String companyName;
     
-    // TODO: AM use BigDecimal as given in webservice
-    //@Column(name="price", precision=19, scale=2)
-    //private BigDecimal price;
-    private double price;
+    @Column(precision=19, scale=2)
+    private BigDecimal price;
     
     @Column(name="BUY_TIME")
     private String time;
@@ -63,12 +58,10 @@ public class Share implements Serializable {
      * @param count of shares of the given symbol.
      * @param price of this share.
      */
-    public Share(String symbol, String companyName, long count, BigDecimal price)
-    {
+    public Share(String symbol, String companyName, long count, BigDecimal price) {
         this.symbol = symbol;
         this.companyName = companyName;
-        // TODO AM set correct price
-        this.price = 47.11;
+        this.price = price;
         this.floatCount = count;
         
         // set the time as of now
@@ -102,7 +95,7 @@ public class Share implements Serializable {
      *
      * @return
      */
-    public Double getPrice() {
+    public BigDecimal getPrice() {
         return price;
     }
     
@@ -110,7 +103,7 @@ public class Share implements Serializable {
      *
      * @param price
      */
-    public void setPrice(double price) {
+    public void setPrice(BigDecimal price) {
         this.price = price;
     }
     
@@ -166,7 +159,7 @@ public class Share implements Serializable {
     public long getFloatCount() {
         return floatCount;
     }
-
+    
     /**
      * Setter.
      * @param floatCount the floatCount to set

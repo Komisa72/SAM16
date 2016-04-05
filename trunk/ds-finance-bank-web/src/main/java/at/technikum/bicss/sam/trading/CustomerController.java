@@ -42,12 +42,17 @@ public class CustomerController {
         
         
         try {
-            bank.createCustomer(customer, password);           
+            bank.createCustomer(customer, password);
+            bank.createDepot(customer);
             model.updateModel();
-        } catch (CustomerCreationFailedException ex) {
-            // TODO subject to change
-            // for now let primefaces do the job to display the exception
-            throw ex;
+        } catch (CustomerCreationFailedException | DepotCreationFailedException ex) {
+            
+            if(ex instanceof CustomerCreationFailedException) {
+                System.out.println("Customer could not be created.");
+            }
+            else if (ex instanceof DepotCreationFailedException) {
+                System.out.println("Depot could not be created.");
+            }
         }
         return "showCustomers";
     }

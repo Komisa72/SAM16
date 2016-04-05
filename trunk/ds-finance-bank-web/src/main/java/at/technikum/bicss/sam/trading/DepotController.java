@@ -95,9 +95,9 @@ public class DepotController implements Serializable {
      * @param customer
      * @throws DepotCreationFailedException
      */
-    public void createDepot(Customer customer) throws DepotCreationFailedException
+    /*public void createDepot(Customer customer) throws DepotCreationFailedException
     {
-        depot = new Depot();
+        
        
         try {
             bank.createDepot(customer);           
@@ -106,7 +106,7 @@ public class DepotController implements Serializable {
             throw ex;
         }
         
-    }
+    } */
   
     public List<Share> getShares(long depotID) throws StockExchangeUnreachableException {
         if (depotID != 0) 

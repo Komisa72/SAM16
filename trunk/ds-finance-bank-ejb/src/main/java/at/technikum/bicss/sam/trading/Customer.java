@@ -69,7 +69,7 @@ public class Customer implements Serializable {
 
     
     
-    @PostConstruct
+    /* @PostConstruct
     private void init()
     {
         // TODO; AM subject to change, read depot/shares from database
@@ -77,6 +77,6 @@ public class Customer implements Serializable {
         depot = new Depot();
         
     }
-    
-    Depot depot;
+    */
+    //Depot depot;
 }
