@@ -27,6 +27,9 @@ import javax.persistence.NamedQuery;
 @NamedQueries({  
 @NamedQuery(name="getDepot",
     query="SELECT SUM(d.value) FROM Depot d"),
+
+@NamedQuery(name="getDepotById",
+    query="SELECT d.id FROM Depot d WHERE d.id=:depotId"),
 })
 
 public class Depot implements Serializable {
