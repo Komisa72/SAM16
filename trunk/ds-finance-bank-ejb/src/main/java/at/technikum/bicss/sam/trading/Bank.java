@@ -26,6 +26,7 @@ import net.froihofer.dsfinance.ws.trading.PublicStockQuote;
 import net.froihofer.dsfinance.ws.trading.TradingWSException_Exception;
 import net.froihofer.dsfinance.ws.trading.TradingWebService;
 import net.froihofer.dsfinance.ws.trading.TradingWebServiceService;
+import javax.persistence.NoResultException;
 
 /**
  * Bank class responsible for persting customer and its shares in depots. Also
@@ -55,8 +56,8 @@ public class Bank implements BankInterface {
     //public Depot myDepot = new Depot();
     
     //TODO: sinnvolle Instanz anlegen für die Persistierung - hier rein für Testzwecke
-    public Share myShare = new Share("471147114711", "Dummy 4711 Koelnisch Wasser",
-                4711, new BigDecimal(47.11d, new MathContext(2)));
+    //public Share myShare = new Share("471147114711", "Dummy 4711 Koelnisch Wasser",
+    //           4711, new BigDecimal(47.11d, new MathContext(2)));
 
     /**
      * Constructor.
@@ -122,9 +123,14 @@ public class Bank implements BankInterface {
      */
     @Override
     public Customer getCustomer(String name) {
+       try{
         Query query = em.createNamedQuery("singleCustomer");
         query.setParameter("customerName", name);
         return (Customer) query.getSingleResult();
+        }catch(NoResultException e)
+        {
+            return null;
+        }
     }
     
     /**
@@ -137,8 +143,32 @@ public class Bank implements BankInterface {
     
     public Depot getDepot(Long id) {
         Query query = em.createNamedQuery("getDepotById");
+        try{
+            query.setParameter("depotId", id);
+            return (Depot)query.getSingleResult();
+        }catch(NoResultException e)
+        {
+            return null;
+        }
+        
+       
+    }
+    
+    @Override
+     public List<Share>  getDepotShares(Long id) {
+        List<Share> allShares;
+       try{
+        Query query = em.createNamedQuery("getDepotShares");
         query.setParameter("depotId", id);
-        return (Depot)query.getSingleResult();
+        allShares = query.getResultList();
+      
+        return allShares;
+         }catch(NoResultException e)
+        {
+            return null;
+        }
+        
+       
     }
 
     /**
@@ -168,15 +198,12 @@ public class Bank implements BankInterface {
     //TODO CB: Dummy Werte ersetzen gegen sinnvolle Persistierung
     @Override
     public Long createDepot(Customer customer) throws DepotCreationFailedException {
-       // Long Id = (long) (customer.getId() + 1000);
+     
         Depot depot = new Depot(customer.getId(),10409.100);
-        //depot.setId(Id);
-        //depot.setCustomerID(customer.getId());
-        //depot.setValue(42000320.205);
-        
-
+   
         try {
             em.persist(depot);
+            System.out.println("Depot was added. Id: "+depot.getId());
         } catch (Exception ex) {
             System.out.println("Could not add depot");
             throw new DepotCreationFailedException("Could not add depot to database.", ex);
@@ -325,7 +352,7 @@ public class Bank implements BankInterface {
         found = new ArrayList<>();
         for (PublicStockQuote temp : companyShares) {
             found.add(new Share(temp.getSymbol(), temp.getCompanyName(),
-                    temp.getFloatShares(), temp.getLastTradePrice()));
+                    temp.getFloatShares(), temp.getLastTradePrice(), null));
         }
 
         return found;

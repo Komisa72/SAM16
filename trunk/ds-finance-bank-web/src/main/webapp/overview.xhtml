@@ -17,30 +17,39 @@
             <ui:include  src="resources/includes/header.xhtml" />
             <p:layoutUnit position="center">
                 <h:form>
+                    
+                    <p:panel header="Enter depot id:" >
+                          <h:inputText id="txtSearchId" value="#{tradingModel.searchId}"/>
+                          <br></br>
+                           <h:outputText rendered="#{tradingModel.getDepotById() eq null}" value ="No depot found with entered ID"/>
+                     </p:panel>
+                    
                     <h:panelGrid id="panel" columns="2" columnClasses="table-odd-col, table-even-col" width="500" border="0" cellpadding="0" cellspacing="">
                         <h:panelGroup style="text-align:left" >
                            
-                            <h:outputLabel for="value" value="Value: " />
-                            <h:outputText id="value" value="#{tradingModel.getDepot().value}" />
+                            <h:outputLabel for="value" rendered="#{tradingModel.getDepotById() ne null}" value="Value: " />
+                            <h:outputText id="value" rendered="#{tradingModel.getDepotById() ne null}" value="#{tradingModel.depot.value}" />
                             <br/>
-                            <h:outputLabel for="rating" value="Rating: " />
-                            <h:outputText id="rating" value="#{tradingModel.getDepot().rating}" />
+                            <h:outputLabel for="rating" rendered="#{tradingModel.getDepotById() ne null}" value="Rating: " />
+                            <h:outputText id="rating" rendered="#{tradingModel.getDepotById() ne null}" value="#{tradingModel.depot.rating}" />
                         </h:panelGroup>
                       
                         <h:panelGroup style="text-align:right">
-                            <h:outputLabel for="customer" value="Customer: " />
-                            <h:outputText id="customer" value="#{tradingModel.getDepot().customerID}" />
+                            <h:outputLabel for="customer" rendered="#{tradingModel.getDepotById() ne null}" value="Customer: " />
+                            <h:outputText id="customer" rendered="#{tradingModel.getDepotById() ne null}" value="#{tradingModel.depot.customerID}" />
                             <br/>
-                            <h:outputLabel for="depotId" value="Depot: " />
-                            <h:outputText id="depotId" value="#{tradingModel.getDepot().id}" />
+                            <h:outputLabel for="depotId" rendered="#{tradingModel.getDepotById() ne null}" value="Depot: " />
+                            <h:outputText id="depotId" rendered="#{tradingModel.getDepotById() ne null}" value="#{tradingModel.depot.id}" />
                             <br/>
                         </h:panelGroup>
+                       
                     </h:panelGrid>
+                     
 
                     <p:panel header="Current shares:" >
-                        <h:outputText rendered="#{tradingModel.getDepot() eq null}" value ="No shares found."/>
+                        <h:outputText rendered="#{tradingModel.depotShares eq null}" value ="No shares found"/>
                        
-                        <p:dataTable id="datalist" rendered = "#{tradingModel.getDepot() ne null}" scrollable="true" scrollWidth="100%" value="#{tradingModel.getDepot().setShareList().listShares()}" var="share"
+                        <p:dataTable id="datalist" rendered = "#{tradingModel.searchId ne null and tradingModel.getDepotById() ne null}" scrollable="true" scrollWidth="100%" value="#{tradingModel.depotShares}" var="share"
                                      paginator="false"
                                      rowKey="#{share.companyName}"
                                      rows="20"

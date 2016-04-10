@@ -29,7 +29,10 @@ import javax.persistence.NamedQuery;
     query="SELECT SUM(d.value) FROM Depot d"),
 
 @NamedQuery(name="getDepotById",
-    query="SELECT d FROM Depot d WHERE d.id LIKE :depotId"),
+    query="SELECT d FROM Depot d WHERE d.id IS :depotId"),
+
+@NamedQuery(name="getDepotShares",
+    query="SELECT s FROM Share s WHERE s.depotId IS :depotId")
 })
 
 public class Depot implements Serializable {
@@ -168,18 +171,17 @@ public class Depot implements Serializable {
      *
      * @return list of found shares or empty list.
      */
-    public List<Share> listShares() {
-        return shareList;
-
-    }
-    
- 
-    
-    public void setShareList(){
+   
+    /**
+     * listShares list shareList for this depot.
+     * @param depotId
+     * @return list of found shares or empty list.
+     */
+    public void setShareList(Long depotId){
     
         shareList = new ArrayList<>();
         Share dummy = new Share("471147114711", "Dummy 4711 Koelnisch Wasser",
-                4711, new BigDecimal(47.11d, new MathContext(2)));
+                4711, new BigDecimal(47.11d, new MathContext(2)), depotId);
         shareList.add(dummy);
     }
     
@@ -190,7 +192,7 @@ public class Depot implements Serializable {
            
         shareList = new ArrayList<>();
         Share dummy = new Share("471147114711", "Dummy 4711 Koelnisch Wasser",
-                4711, new BigDecimal(47.11d, new MathContext(2)));
+                4711, new BigDecimal(47.11d, new MathContext(2)),id);
         shareList.add(dummy);
     }
 

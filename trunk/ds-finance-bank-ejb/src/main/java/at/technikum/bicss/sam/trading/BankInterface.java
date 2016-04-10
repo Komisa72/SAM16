@@ -76,6 +76,10 @@ public interface BankInterface {
     
     
     public Depot getDepot(Long id);
+    
+    
+    public List<Share> getDepotShares(Long id);
+
 
 
     /**

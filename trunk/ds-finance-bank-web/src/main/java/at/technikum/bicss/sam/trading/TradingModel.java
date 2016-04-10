@@ -43,7 +43,9 @@ public class TradingModel implements Serializable {
     private DataModel<Customer> customerModel;
     private Customer customer = new Customer();
     private List<Share> companyShares = new ArrayList<>();
+     private List<Share> depotShares = new ArrayList<>();
     private Depot depot;
+    private String searchId;
    
 
     /**
@@ -98,6 +100,7 @@ public class TradingModel implements Serializable {
     }
     
    
+   
     public Depot getDepot()
     {
        
@@ -116,10 +119,57 @@ public class TradingModel implements Serializable {
         }catch (Exception e){System.out.println("Could not create Depot");}    
     }
     
+     public Depot getDepotById()
+    {
+        //only for testing
+        if((searchId!=null)&&(bank.getDepot(Long.parseLong(searchId))!=null))
+        {
+        setDepotShares();
+        }
+        
+        try{
+        depot = bank.getDepot(Long.parseLong(searchId));
+        return depot;
+        }catch(NumberFormatException e){}
+        return null;
+    }
+     
+      public List<Share> getSharesByDepotId()
+   {
+       
+     return depotShares;
+    
+   }
+      
+      public List<Share> getDepotShares() 
+      {
+          return depotShares;
+      }
+ 
+      private void setDepotShares()
+      {
+         depot = bank.getDepot(Long.parseLong(searchId));
+         depot.setShareList(depot.getId());
+         try{
+         System.out.println(bank.getDepotShares(depot.getId()));
+         depotShares= bank.getDepotShares(depot.getId());
+        
+        }catch(NumberFormatException e){}
+      }
+    
+    public String getSearchId()
+    {
+        return searchId;
+    }
+    
+    public void setSearchId(String id)
+    {
+        searchId = id;
+    }
+    
 
     public void setCompany(String name) {
         company = name;
-        System.out.println(company);
     }
 
     public String getCompany() {

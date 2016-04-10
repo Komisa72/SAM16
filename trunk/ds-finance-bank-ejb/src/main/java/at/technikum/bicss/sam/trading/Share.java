@@ -37,6 +37,8 @@ public class Share implements Serializable {
     @Column(name="BUY_TIME")
     private String time;
     
+    private Long depotId;
+    
 
     // number of shares, maybe also used for showing floats of stock exchange.
     private long floatCount;
@@ -58,11 +60,12 @@ public class Share implements Serializable {
      * @param count of shares of the given symbol.
      * @param price of this share.
      */
-    public Share(String symbol, String companyName, long count, BigDecimal price) {
+    public Share(String symbol, String companyName, long count, BigDecimal price, Long depId) {
         this.symbol = symbol;
         this.companyName = companyName;
         this.price = price;
         this.floatCount = count;
+        this.depotId = depId;
         
         // set the time as of now
         time = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(
@@ -121,6 +124,16 @@ public class Share implements Serializable {
      */
     public void setTime(String time) {
         this.time = time;
+    }
+    
+    private Long getDepotId()
+    {
+        return depotId;
+    }
+    
+    public void setDepotId(Long id)
+    {
+        depotId=id;
     }
     
     @Override
