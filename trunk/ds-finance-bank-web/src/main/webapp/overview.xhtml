@@ -18,29 +18,29 @@
             <p:layoutUnit position="center">
                 <h:form>
                     <h:panelGrid id="panel" columns="2" columnClasses="table-odd-col, table-even-col" width="500" border="0" cellpadding="0" cellspacing="">
-                        <h:panelGroup style="text-align:left">
+                        <h:panelGroup style="text-align:left" >
                            
                             <h:outputLabel for="value" value="Value: " />
-                            <h:outputText id="value" value="#{depot.value}" />
+                            <h:outputText id="value" value="#{tradingModel.getDepot().value}" />
                             <br/>
-                            <h:outputLabel for="rating" value="Rating " />
-                            <h:outputText id="rating" value="#{depot.rating}" />
+                            <h:outputLabel for="rating" value="Rating: " />
+                            <h:outputText id="rating" value="#{tradingModel.getDepot().rating}" />
                         </h:panelGroup>
                       
                         <h:panelGroup style="text-align:right">
-                            <h:outputLabel for="username" value="User: " />
-                            <h:outputText id="username" value="#{depot.customer.name}" />
+                            <h:outputLabel for="customer" value="Customer: " />
+                            <h:outputText id="customer" value="#{tradingModel.getDepot().customerID}" />
                             <br/>
                             <h:outputLabel for="depotId" value="Depot: " />
-                            <h:outputText id="depotId" value="#{depot.id}" />
+                            <h:outputText id="depotId" value="#{tradingModel.getDepot().id}" />
                             <br/>
                         </h:panelGroup>
                     </h:panelGrid>
 
                     <p:panel header="Current shares:" >
-                        <h:outputText rendered="#{depot eq null}" value ="No shares found."/>
-                        <h:inputText rendered = "#{depot ne null}" id="txtID" value="#{depot.id}"/>
-                        <p:dataTable id="datalist" rendered = "#{depot ne null}" scrollable="true" scrollWidth="100%" value="#{depot.listShares()}" var="share"
+                        <h:outputText rendered="#{tradingModel.getDepot() eq null}" value ="No shares found."/>
+                       
+                        <p:dataTable id="datalist" rendered = "#{tradingModel.getDepot() ne null}" scrollable="true" scrollWidth="100%" value="#{tradingModel.getDepot().setShareList().listShares()}" var="share"
                                      paginator="false"
                                      rowKey="#{share.companyName}"
                                      rows="20"

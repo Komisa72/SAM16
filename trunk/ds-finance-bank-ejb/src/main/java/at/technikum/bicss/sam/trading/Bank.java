@@ -128,16 +128,17 @@ public class Bank implements BankInterface {
     }
     
     /**
-     * getDepot retrieves the customer with the given name.
+     * getDepot retrieves the depot with the given name.
      *
      * @param id of the depot.
      * @return the found depot.
      */
     @Override
-    public Depot getDepot(String id) {
+    
+    public Depot getDepot(Long id) {
         Query query = em.createNamedQuery("getDepotById");
         query.setParameter("depotId", id);
-        return (Depot) query.getSingleResult();
+        return (Depot)query.getSingleResult();
     }
 
     /**
@@ -166,9 +167,9 @@ public class Bank implements BankInterface {
 
     //TODO CB: Dummy Werte ersetzen gegen sinnvolle Persistierung
     @Override
-    public String createDepot(Customer customer) throws DepotCreationFailedException {
-        Long Id = (long) (customer.getId() + 1000);
-        Depot depot = new Depot(Id, 10409.100);
+    public Long createDepot(Customer customer) throws DepotCreationFailedException {
+       // Long Id = (long) (customer.getId() + 1000);
+        Depot depot = new Depot(customer.getId(),10409.100);
         //depot.setId(Id);
         //depot.setCustomerID(customer.getId());
         //depot.setValue(42000320.205);
@@ -181,7 +182,7 @@ public class Bank implements BankInterface {
             throw new DepotCreationFailedException("Could not add depot to database.", ex);
         }
 
-        return depot.toString();
+        return depot.getId();
     }
 
     /**

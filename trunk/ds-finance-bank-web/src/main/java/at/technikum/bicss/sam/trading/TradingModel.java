@@ -111,7 +111,7 @@ public class TradingModel implements Serializable {
             n_customer.setName("test");
             bank.createCustomer(n_customer, "test");
        
-        String d_id= bank.createDepot(n_customer);
+        Long d_id= bank.createDepot(n_customer);
         depot= bank.getDepot(d_id);
         }catch (Exception e){System.out.println("Could not create Depot");}    
     }

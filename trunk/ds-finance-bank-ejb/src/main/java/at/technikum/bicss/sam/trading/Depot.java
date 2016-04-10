@@ -29,7 +29,7 @@ import javax.persistence.NamedQuery;
     query="SELECT SUM(d.value) FROM Depot d"),
 
 @NamedQuery(name="getDepotById",
-    query="SELECT d.id FROM Depot d WHERE d.id=:depotId"),
+    query="SELECT d FROM Depot d WHERE d.id LIKE :depotId"),
 })
 
 public class Depot implements Serializable {
@@ -40,6 +40,9 @@ public class Depot implements Serializable {
     // @Transient annotation
     @Transient
     private List<Share> shareList;
+
+    public Depot() {
+    }
 
     /**
      *
@@ -54,6 +57,7 @@ public class Depot implements Serializable {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
     private Long customerID;
+    
     // TODO AM: depot value is a calculated value from the shareList
     // mark this as @Transient and do not persist in database
     @Column(name = "DEPOT_VALUE")
@@ -167,6 +171,16 @@ public class Depot implements Serializable {
     public List<Share> listShares() {
         return shareList;
 
+    }
+    
+ 
+    
+    public void setShareList(){
+    
+        shareList = new ArrayList<>();
+        Share dummy = new Share("471147114711", "Dummy 4711 Koelnisch Wasser",
+                4711, new BigDecimal(47.11d, new MathContext(2)));
+        shareList.add(dummy);
     }
     
 

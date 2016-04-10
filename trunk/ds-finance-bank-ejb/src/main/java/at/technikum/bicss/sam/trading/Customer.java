@@ -22,7 +22,7 @@ import javax.persistence.NamedQuery;
 @NamedQuery(name="allCustomers",
     query="SELECT c FROM Customer c ORDER BY c.id"),
 @NamedQuery(name="singleCustomer",
-    query="SELECT c FROM Customer c WHERE c.name LIKE :customerName")
+    query="SELECT c FROM Customer c WHERE c.name IS :customerName")
 })
 public class Customer implements Serializable {
 

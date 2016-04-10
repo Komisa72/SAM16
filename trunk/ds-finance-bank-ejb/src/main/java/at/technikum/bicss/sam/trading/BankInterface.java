@@ -41,7 +41,7 @@ public interface BankInterface {
     
     public double sell(String symbol, int shares)
             throws StockExchangeUnreachableException;
-    public String createDepot(Customer customer) 
+    public Long createDepot(Customer customer) 
             throws DepotCreationFailedException;
             
     /**
@@ -74,7 +74,8 @@ public interface BankInterface {
      */
     public Customer getCustomer(String name);
     
-    public Depot getDepot(String id);
+    
+    public Depot getDepot(Long id);
 
 
     /**
