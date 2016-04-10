@@ -9,74 +9,68 @@ import java.io.Serializable;
 import java.math.BigDecimal;
 import java.sql.Timestamp;
 import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Column;
 import java.text.SimpleDateFormat;
-import java.util.Date;
-
+import javax.persistence.IdClass;
 
 /**
  *
  * @author cbaierl
  */
 @Entity
+@IdClass(SharePrimaryKey.class)
 public class Share implements Serializable {
 
-    private static final long serialVersionUID = 2L;
-    
+    private static final long serialVersionUID = 3L;
+
+    private final static String TIME_FORMAT = "yyyy-MM-dd HH:mm:ss";
+
     @Id
     private String symbol;
 
     private String companyName;
-    
-    @Column(precision=19, scale=2)
+
+    @Column(precision = 19, scale = 2)
     private BigDecimal price;
-    
-    @Column(name="BUY_TIME")
+
+    @Id
+    @Column(name = "BUY_TIME")
     private String time;
-    
+
+    // foreign key
     private Long depotId;
-    
 
     // number of shares, maybe also used for showing floats of stock exchange.
     private long floatCount;
 
-    // TODO: AM die Klasse Buy ist eine generierte Klasse! daher kein Schieben möglich!
-    // wofür brauchen wir eine Methode?
-    //TODO: Diese 2 Zeilen in eine Methode umwandeln und die Klasse Buy schieben
-    //TODO: AM see hint of netbeans date is a reserved SQL-99 keyword  
-    private Date date = new Date();
-    // TODO: AM warum nur Tag? Kann ich an einem Tag nicht mehrere Aktien von 
-    // der gleichen Firma kaufen?
-    // wofür brauchen wir eine Variable newstring? was ist ihre Aufgabe? 
-    private String newstring = new SimpleDateFormat("yyyy-MM-dd").format(date);
-  
+    public Share() {
+    }
+
     /**
      * Constructor for shares.
-     * @param symbol unique identifier for the share, delivered by stock exchange..
+     *
+     * @param symbol unique identifier for the share, delivered by stock
+     * exchange..
      * @param companyName name of company.
      * @param count of shares of the given symbol.
      * @param price of this share.
      */
-    public Share(String symbol, String companyName, long count, BigDecimal price, Long depId) {
+    public Share(String symbol, String companyName, long count, BigDecimal price, Long depotId) {
         this.symbol = symbol;
         this.companyName = companyName;
         this.price = price;
         this.floatCount = count;
-        this.depotId = depId;
-        
+
         // set the time as of now
-        time = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(
+        time = new SimpleDateFormat(TIME_FORMAT).format(
                 new Timestamp(System.currentTimeMillis()));
     }
-    
+
     /*
      * 
      * Getter & Setter Methods 
      */
-    
     /**
      *
      * @return
@@ -92,8 +86,7 @@ public class Share implements Serializable {
     public void setSymbol(String symbol) {
         this.symbol = symbol;
     }
-    
-    
+
     /**
      *
      * @return
@@ -101,7 +94,7 @@ public class Share implements Serializable {
     public BigDecimal getPrice() {
         return price;
     }
-    
+
     /**
      *
      * @param price
@@ -109,7 +102,7 @@ public class Share implements Serializable {
     public void setPrice(BigDecimal price) {
         this.price = price;
     }
-    
+
     /**
      *
      * @return
@@ -117,7 +110,7 @@ public class Share implements Serializable {
     public String getTime() {
         return time;
     }
-    
+
     /**
      *
      * @param time
@@ -125,32 +118,16 @@ public class Share implements Serializable {
     public void setTime(String time) {
         this.time = time;
     }
-    
-    private Long getDepotId()
-    {
-        return depotId;
-    }
-    
-    public void setDepotId(Long id)
-    {
-        depotId=id;
-    }
-    
-    @Override
-    public int hashCode() {
-        int hash = 0;
-        hash += (symbol != null ? symbol.hashCode() : 0);
-        return hash;
-    }
-
 
     @Override
     public String toString() {
-        return "at.technikum.bicss.sam.trading.Share[ symbol=" + symbol + " ]";
+        return "at.technikum.bicss.sam.trading.Share[ symbol=" + symbol + " "
+                + time + " ]";
     }
 
     /**
      * Getter of company name.
+     *
      * @return the companyName
      */
     public String getCompanyName() {
@@ -159,6 +136,7 @@ public class Share implements Serializable {
 
     /**
      * Setter of company name.
+     *
      * @param companyName the companyName to set
      */
     public void setCompanyName(String companyName) {
@@ -167,19 +145,20 @@ public class Share implements Serializable {
 
     /**
      * Getter.
+     *
      * @return the floatCount
      */
     public long getFloatCount() {
         return floatCount;
     }
-    
+
     /**
      * Setter.
+     *
      * @param floatCount the floatCount to set
      */
     public void setFloatCount(long floatCount) {
         this.floatCount = floatCount;
     }
-    
 
 }

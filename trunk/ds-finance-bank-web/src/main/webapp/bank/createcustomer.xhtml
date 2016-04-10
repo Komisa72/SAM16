@@ -17,6 +17,7 @@
                 <ui:include  src="/resources/includes/header.xhtml" />
                 <p:layoutUnit position="center">
                     <h:form id="createUserForm">
+                        Customer management
                         <p:growl showDetail="true"/>
                         <p:messages id="messages" showDetail="true" autoUpdate="true" />
                         <h:panelGrid columns="2" id="matchGrid" cellpadding="5">
@@ -32,7 +33,7 @@
                     <p:spacer width="10" height="10" />
                     <h:form id="customerList" rendered="#{not empty tradingModel.model}">
                          <p:dataTable id="customerTable" selection="#{tradingModel.selectedCustomer}" rowKey="#{customer.id}" var="customer" value="#{tradingModel.model}" scrollable="true" scrollWidth="100%" scrollHeight="450">
-                            <p:column headerText="Id" footerText="Id" width="30">
+                             <p:column headerText="Id" footerText="Id" width="30">
                                 <h:outputText value="#{customer.id}" />
                             </p:column>
                             <p:column headerText="Name" footerText="Name" width="200">

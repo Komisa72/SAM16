@@ -15,7 +15,7 @@
 
         <h:body>
             <p:layout fullPage="true">
-                <ui:include  src="resources/includes/header.xhtml" /> 
+                <ui:include  src="resources/includes/header.xhtml" />
                 <p:layoutUnit position="center">
                     <h:form>
                         <p:growl showDetail="true"/>
@@ -25,15 +25,15 @@
                             <h:outputText rendered = "#{tradingModel.role ne null and tradingModel.role.bank}" value ="#{tradingModel.volume}">
                                 <f:convertNumber currencyCode="USD" type="currency" />
                             </h:outputText>
+                            <p:commandButton id="listCustomers" rendered = "#{tradingModel.role ne null and tradingModel.role.bank}" action="#{customerController.showCustomers()}" value="Customer Management" ajax="false" />
                             <h:outputText rendered = "#{tradingModel.role ne null and tradingModel.role.bank}" value ="">
                             </h:outputText>
-                            
-                            <p:commandButton id="listCustomers" rendered = "#{tradingModel.role ne null and tradingModel.role.bank}" action="#{customerController.showCustomers()}" value="Goto Customer view" ajax="false" />                
-                            <h:button id="listShares" rendered = "#{tradingModel.role ne null and tradingModel.role.bank}" outcome="listShares" value="List company shares" />
-                             <h:button id="depotOverview" rendered = "#{tradingModel.role ne null and tradingModel.role.bank}" outcome="overview" value="Show depot overview" />
-                           
+                            <h:button id="depotOverview" rendered = "#{tradingModel.role ne null and tradingModel.role.bank}" outcome="overview" value="Show depot overview" />
+                            <h:outputText rendered = "#{tradingModel.role ne null and tradingModel.role.bank}" value ="">
+                            </h:outputText>
+
                         </h:panelGrid>
-                   
+
                     </h:form>
                 </p:layoutUnit>
             </p:layout>

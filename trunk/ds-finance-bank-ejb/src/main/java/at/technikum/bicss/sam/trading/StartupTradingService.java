@@ -7,9 +7,14 @@ package at.technikum.bicss.sam.trading;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.annotation.PostConstruct;
 import javax.ejb.Singleton;
 import javax.ejb.Startup;
+import javax.naming.Context;
+import javax.naming.InitialContext;
+import javax.naming.NamingException;
 import net.froihofer.util.jboss.WildflyAuthDBHelper;
 
 @Startup
@@ -24,12 +29,11 @@ public class StartupTradingService {
         // setup initial default bank user with default credentials and role.
         try {
             String password = "bank";
-            /*
-            TODO can not read out password defined in ejb-jar.xml
-             InitialContext iniCtx = new InitialContext();
-            Context envCtx = (Context) iniCtx.lookup("java:comp/env");
-            password = (String) envCtx.lookup("password");
-             */
+
+            //TODO can not read out password defined in ejb-jar.xml
+            // InitialContext iniCtx = new InitialContext();
+            //Context envCtx = (Context) iniCtx.lookup("java:comp/env");
+            //password = (String) envCtx.lookup("password");
             String homeDir = System.getProperty("jboss.home.dir");
             authHelper = new WildflyAuthDBHelper(new File(homeDir));
             String[] bankRoles = new String[1];

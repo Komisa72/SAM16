@@ -5,13 +5,67 @@ To change this template file, choose Tools | Templates
 and open the template in the editor.
 -->
 <!DOCTYPE html>
-<html xmlns="http://www.w3.org/1999/xhtml">
-    <head>
-        <title>TODO supply a title</title>
-        <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-    </head>
-    <body>
-        <div>Anzeige der Kundendaten für #{tradingModel.selectedCustomer.name}</div>
-        
-    </body>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui">
+    <f:view contentType="text/html">
+        <h:head>
+            <title>Technikum SAM Trading Service</title>
+            <f:facet name="showcustomer">
+                <meta content='text/html; charset=UTF-8' http-equiv="Content-Type"/>
+            </f:facet>
+        </h:head>
+
+        <h:body>
+            <p:layout fullPage="true">
+                <ui:include  src="resources/includes/header.xhtml" />
+                <p:layoutUnit position="center">
+                    <h:form>
+                        Customer name: #{tradingModel.selectedCustomer.name}
+                        <br/>
+                        <p>
+                        <h:outputText value ="Shares in this depot:"/>
+                        <br />
+                        </p>
+                        <p>
+                        <h:outputText value ="Get latest stock quotes:"/>
+                        <h:inputText id="txtCompany" value="#{tradingModel.company}"/>
+                        </p>
+                        <p:dataTable id="datalist" scrollable="true" scrollWidth="100%" value="#{tradingModel.findShares()}" var="share"
+                                     paginator="#{tradingModel.companyPaginator}"
+                                     rowKey="#{share.companyName}"
+                                     rows="#{tradingModel.rowCount}"
+                                     >
+                            <p:column style="width:70px;text-align: center">
+                                <p:commandButton value="buy" title="buy">
+                                    <f:setPropertyActionListener value="#{share}" target="#{tradingModel.selectedShare}" />
+                                </p:commandButton>
+                            </p:column>
+                            <p:column headerText="Company">
+                                <h:outputText value="#{share.companyName}"/>
+                            </p:column>
+                            <p:column headerText ="Float Shares">
+                                <h:outputText value="#{share.floatCount}"/>
+                            </p:column>
+                            <p:column headerText = "Symbol">
+                                <h:outputText value="#{share.symbol}"/>
+                            </p:column>
+                            <p:column headerText = "Last trading price">
+                                <h:outputText value="#{share.price}">
+                                    <f:convertNumber currencyCode="USD" type="currency" />
+                                </h:outputText>
+                            </p:column>
+                        </p:dataTable>
+
+                    </h:form>
+                </p:layoutUnit>
+            </p:layout>
+        </h:body>
+    </f:view>
 </html>
+
+
+
+

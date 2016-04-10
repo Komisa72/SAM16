@@ -7,7 +7,9 @@ package at.technikum.bicss.sam.trading;
 
 import java.io.IOException;
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -37,6 +39,7 @@ public class TradingModel implements Serializable {
     @EJB(name = "BankEJB")
     private BankInterface bank;
     private String company;
+    private String lastCompany = null;
     private Role role = Role.BANK;
 
     private List<Customer> customerList;
@@ -46,7 +49,22 @@ public class TradingModel implements Serializable {
      private List<Share> depotShares = new ArrayList<>();
     private Depot depot;
     private String searchId;
-   
+
+    Date lastTime;
+
+    /**
+     * @return the selectedShare
+     */
+    public Share getSelectedShare() {
+        return selectedShare;
+    }
+
+    /**
+     * @param selectedShare the selectedShare to set
+     */
+    public void setSelectedShare(Share selectedShare) {
+        this.selectedShare = selectedShare;
+    }
 
     /**
      *
@@ -84,21 +102,55 @@ public class TradingModel implements Serializable {
     public List<Customer> getCustomerList() {
         return customerList;
     }
+    
+    /**
+     * Number of rows to be shown in any list.
+     * @return number of rows to be shown in list.
+     */
+    public int getRowCount()
+    {
+        return 10;
+    }
 
+    /**
+     * Determine if we need a paginator in table.
+     * @return number of rows to be shown in list.
+     */
+    public boolean getCompanyPaginator()
+    {
+        return companyShares.size() > getRowCount();
+    }
+
+    
     public List<Share> findShares() throws StockExchangeUnreachableException {
+        System.out.println("in web findShares.");
+        boolean search = false;
         if (company != null && !company.trim().isEmpty()) {
-            try {
-                companyShares = bank.findShares(company);
-            } catch (StockExchangeUnreachableException ex) {
-                // TODO what to do when stock exchange is not available?
-                throw ex;
+            // workaround because findShares is called multiple times by primefaces
+            // within a second
+            if (lastCompany == null) {
+                search = true;
+            } else if (!lastCompany.equals(company)) {
+                search = true;
+            } else if ((new java.util.Date()).getTime() - lastTime.getTime() > 1000) {
+                search = true;
+            }
+            if (search) {
+                try {
+                    companyShares = bank.findShares(company);
+                    lastTime = new Date();
+                    lastCompany = company;
+                } catch (StockExchangeUnreachableException ex) {
+                    // TODO what to do +-when stock exchange is not available?
+                    throw ex;
+                }
             }
         } else {
             companyShares.clear();
         }
         return companyShares;
     }
-    
+
    
    
     public Depot getDepot()
@@ -202,12 +254,31 @@ public class TradingModel implements Serializable {
         }
     }
 
+        /**
+     * checkUserName if it is not empty and not too long.
+     *
+     * @param context faces context.
+     * @param component from ui which request the check.
+     * @param value the string input to be ckecked.
+     */
+    public void checkBuyCount(FacesContext context, UIComponent component, Object value) {
+        if (value == null) {
+            throw new ValidatorException(new FacesMessage("Anzahl ist 0."));
+        }
+
+        String text = value.toString();
+        // TODO max. soviele shares kaufen wie zur zeit als floatShares verfügbar
+        
+    }
+
+    
+    
     /**
      * Get current volume of bank.
      *
      * @return volume in USD.
      */
-    public double getVolume() {
+    public BigDecimal getVolume() {
         return bank.volume();
     }
 
@@ -265,10 +336,12 @@ public class TradingModel implements Serializable {
         return customerModel;
     }
 
+    
+    
+    private Share selectedShare;
     /**
      * Init this bean.
      */
-
     @PostConstruct
     public void init() {
         // TODO remove unused code
@@ -277,7 +350,7 @@ public class TradingModel implements Serializable {
         Role who = getRole();
         if (who == Role.CUSTOMER) {
             FacesContext context = FacesContext.getCurrentInstance();
-            
+
             setSelectedCustomer(bank.getCustomer(context.getExternalContext().getRemoteUser()));
             try {
                 context.getExternalContext().redirect(context.getExternalContext().getRequestContextPath() + "/showcustomer.xhtml");
@@ -288,7 +361,6 @@ public class TradingModel implements Serializable {
 
         customerList = bank.listCustomer();
         setDepot();
-        
 
     }
 

@@ -24,15 +24,15 @@ import javax.persistence.NamedQuery;
  *
  */
 @Entity
-@NamedQueries({  
-@NamedQuery(name="getDepot",
-    query="SELECT SUM(d.value) FROM Depot d"),
+@NamedQueries({
+    @NamedQuery(name = "getDepot",
+            query = "SELECT SUM(d.value) FROM Depot d"),
 
-@NamedQuery(name="getDepotById",
-    query="SELECT d FROM Depot d WHERE d.id IS :depotId"),
+    @NamedQuery(name = "getDepotById",
+            query = "SELECT d FROM Depot d WHERE d.id IS :depotId"),
 
-@NamedQuery(name="getDepotShares",
-    query="SELECT s FROM Share s WHERE s.depotId IS :depotId")
+    @NamedQuery(name = "getDepotShares",
+            query = "SELECT s FROM Share s WHERE s.depotId IS :depotId")
 })
 
 public class Depot implements Serializable {
@@ -41,6 +41,7 @@ public class Depot implements Serializable {
 
     // TODO AM this list must be persisted later, therefore remove 
     // @Transient annotation
+    // Mayn
     @Transient
     private List<Share> shareList;
 
@@ -54,22 +55,21 @@ public class Depot implements Serializable {
     public void add(Share share) {
         shareList.add(share);
     }
-    
-    
+
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
     private Long customerID;
-    
+
     // TODO AM: depot value is a calculated value from the shareList
     // mark this as @Transient and do not persist in database
     @Column(name = "DEPOT_VALUE")
     private double value;
-    
+
     public Depot(Long customerID, double value) {
         this.customerID = customerID;
         this.value = value;
-        
+
     }
 
     /**
@@ -113,6 +113,7 @@ public class Depot implements Serializable {
     public double getValue() {
         return value;
     }
+
     /**
      *
      * @param value
@@ -171,28 +172,27 @@ public class Depot implements Serializable {
      *
      * @return list of found shares or empty list.
      */
-   
     /**
      * listShares list shareList for this depot.
+     *
      * @param depotId
      * @return list of found shares or empty list.
      */
-    public void setShareList(Long depotId){
-    
+    public void setShareList(Long depotId) {
+
         shareList = new ArrayList<>();
         Share dummy = new Share("471147114711", "Dummy 4711 Koelnisch Wasser",
                 4711, new BigDecimal(47.11d, new MathContext(2)), depotId);
         shareList.add(dummy);
     }
-    
 
     // TODO AM: subject to change, do not initialise with dummy data
     @PostConstruct
     private void init() {
-           
+
         shareList = new ArrayList<>();
         Share dummy = new Share("471147114711", "Dummy 4711 Koelnisch Wasser",
-                4711, new BigDecimal(47.11d, new MathContext(2)),id);
+                4711, new BigDecimal(47.11d, new MathContext(2)), id);
         shareList.add(dummy);
     }
 

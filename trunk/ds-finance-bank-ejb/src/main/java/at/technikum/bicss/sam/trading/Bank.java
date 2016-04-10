@@ -39,25 +39,23 @@ public class Bank implements BankInterface {
     @PersistenceContext
     private EntityManager em;
     @EJB
-    StartupTradingService info;
+    private StartupTradingService info;
 
-    // 1 Mrd. dollar, limit to be checked against when a share is bought
-    private final static double MAX_VOLUME = 1E9;
+    // precision of US dollar is 2
+    private static final int PRICE_SCALE = 2;
+
+    // 1 Mrd. US dollar, limit to be checked against when a share is bought
+    private final static BigDecimal MAX_VOLUME = new BigDecimal("1E9",
+            new MathContext(PRICE_SCALE));
 
     @WebServiceRef(name = "TradingWebServiceService")
     private TradingWebServiceService stockService;
     private TradingWebService proxy;
-    
+
     //get current total value of depots
     //public double currentValue = getDepotValue();
-    public double currentValue = 2449010.20149;
-    
-    //TODO: sinnvolle Instanz anlegen für die Persistierung
-    //public Depot myDepot = new Depot();
-    
-    //TODO: sinnvolle Instanz anlegen für die Persistierung - hier rein für Testzwecke
-    //public Share myShare = new Share("471147114711", "Dummy 4711 Koelnisch Wasser",
-    //           4711, new BigDecimal(47.11d, new MathContext(2)));
+    private BigDecimal currentValue = new BigDecimal("2449010.20149",
+            new MathContext(PRICE_SCALE));
 
     /**
      * Constructor.
@@ -77,42 +75,32 @@ public class Bank implements BankInterface {
         Query query = em.createNamedQuery("allCustomers");
         return query.getResultList();
     }
+
     /**
-     * 
-     * @return total value of bought shares 
-     */    
- 
+     *
+     * @return total value of bought shares
+     */
     @Override
-    public double getDepotValue() {
+    public BigDecimal getDepotValue() {
         List<PublicStockQuote> allShares;
-        double d = 0;
-        double value;
-        double valueSum = 0;
-        
-        double temp = Double.longBitsToDouble(15552451L);
-        
-        BigDecimal price = new BigDecimal(d);
-        
+
+        BigDecimal sum = new BigDecimal("0", new MathContext(PRICE_SCALE));
         Query query = em.createNamedQuery("getDepot");
         allShares = query.getResultList();
-        
         for (PublicStockQuote a : allShares) {
-            temp = a.getFloatShares();
-            price = a.getLastTradePrice();
-            value = temp * price.doubleValue();
-            valueSum = valueSum + value;
+            sum.add(a.getLastTradePrice().multiply(new BigDecimal(a.getFloatShares())));
         }
-        
-        return valueSum;
+
+        return sum;
     }
-    
+
     /**
-     * 
+     *
      * @return current volume that can be invested
      */
     @Override
-    public double volume() {
-        return MAX_VOLUME - currentValue;
+    public BigDecimal volume() {
+        return MAX_VOLUME.subtract(getOverallDepotValues());
     }
 
     /**
@@ -123,16 +111,15 @@ public class Bank implements BankInterface {
      */
     @Override
     public Customer getCustomer(String name) {
-       try{
-        Query query = em.createNamedQuery("singleCustomer");
-        query.setParameter("customerName", name);
-        return (Customer) query.getSingleResult();
-        }catch(NoResultException e)
-        {
+        try {
+            Query query = em.createNamedQuery("singleCustomer");
+            query.setParameter("customerName", name);
+            return (Customer) query.getSingleResult();
+        } catch (NoResultException e) {
             return null;
         }
     }
-    
+
     /**
      * getDepot retrieves the depot with the given name.
      *
@@ -140,35 +127,31 @@ public class Bank implements BankInterface {
      * @return the found depot.
      */
     @Override
-    
+
     public Depot getDepot(Long id) {
         Query query = em.createNamedQuery("getDepotById");
-        try{
+        try {
             query.setParameter("depotId", id);
-            return (Depot)query.getSingleResult();
-        }catch(NoResultException e)
-        {
+            return (Depot) query.getSingleResult();
+        } catch (NoResultException e) {
             return null;
         }
-        
-       
+
     }
-    
+
     @Override
-     public List<Share>  getDepotShares(Long id) {
+    public List<Share> getDepotShares(Long id) {
         List<Share> allShares;
-       try{
-        Query query = em.createNamedQuery("getDepotShares");
-        query.setParameter("depotId", id);
-        allShares = query.getResultList();
-      
-        return allShares;
-         }catch(NoResultException e)
-        {
+        try {
+            Query query = em.createNamedQuery("getDepotShares");
+            query.setParameter("depotId", id);
+            allShares = query.getResultList();
+
+            return allShares;
+        } catch (NoResultException e) {
             return null;
         }
-        
-       
+
     }
 
     /**
@@ -198,12 +181,12 @@ public class Bank implements BankInterface {
     //TODO CB: Dummy Werte ersetzen gegen sinnvolle Persistierung
     @Override
     public Long createDepot(Customer customer) throws DepotCreationFailedException {
-     
-        Depot depot = new Depot(customer.getId(),10409.100);
-   
+
+        Depot depot = new Depot(customer.getId(), 10409.100);
+
         try {
             em.persist(depot);
-            System.out.println("Depot was added. Id: "+depot.getId());
+            System.out.println("Depot was added. Id: " + depot.getId());
         } catch (Exception ex) {
             System.out.println("Could not add depot");
             throw new DepotCreationFailedException("Could not add depot to database.", ex);
@@ -268,20 +251,22 @@ public class Bank implements BankInterface {
      * @throws BuySharesException
      */
     @Override
-    public double buy(String symbol, int shares)
+    public BigDecimal buy(String symbol, int shares)
             throws StockExchangeUnreachableException, BuySharesException {
 
-        double buyShares = 0;
+        BigDecimal buyShares = new BigDecimal("0", new MathContext(PRICE_SCALE));
         try {
-            buyShares = proxy.buy(symbol, shares);
-            
-            if ((buyShares + currentValue) > MAX_VOLUME) {
+            buyShares = new BigDecimal(proxy.buy(symbol, shares), new MathContext(PRICE_SCALE));
+            BigDecimal sum;
+
+            sum = buyShares.add(getOverallDepotValues());
+            if (sum.compareTo(MAX_VOLUME) == 1) {
                 throw new BuySharesException("Could not buy shares, because volume would exceed allowed value.\n");
             }
-            
+
             System.out.println("Bought shares" + buyShares);
-            currentValue = currentValue + buyShares;
-                
+            setOverallDepotValues(sum);
+
         } catch (BuySharesException | TradingWSException_Exception e) {
             if (e instanceof TradingWSException_Exception) {
                 throw new StockExchangeUnreachableException("Stock exchange unreachable.", e);
@@ -299,17 +284,17 @@ public class Bank implements BankInterface {
      * @throws StockExchangeUnreachableException
      */
     @Override
-    public double sell(String symbol, int shares)
+    public BigDecimal sell(String symbol, int shares)
             throws StockExchangeUnreachableException {
-        double sellShares;
+        BigDecimal sellShares;
 
         try {
-            sellShares = proxy.sell(symbol, shares);
+            sellShares = new BigDecimal(proxy.sell(symbol, shares),
+                    new MathContext(PRICE_SCALE));
             System.out.println("Sold shares " + sellShares);
-            
+
             //adapting current investing volume of the bank
-            currentValue = currentValue - sellShares;
-            
+            setOverallDepotValues(getOverallDepotValues().subtract(sellShares));
         } catch (TradingWSException_Exception e) {
             throw new StockExchangeUnreachableException("Stock exchange unreachable.", e);
         }
@@ -343,6 +328,15 @@ public class Bank implements BankInterface {
             throws StockExchangeUnreachableException {
         List<PublicStockQuote> companyShares;
         List<Share> found;
+
+        if (company == null) {
+            System.out.println("findShare company null.");
+            return new ArrayList<>();
+        }
+        if (company.trim().isEmpty()) {
+            System.out.println("findShare company is empty.");
+            return new ArrayList<>();
+        }
         companyShares = null;
         try {
             companyShares = proxy.findStockQuotesByCompanyName(company);
@@ -350,23 +344,58 @@ public class Bank implements BankInterface {
             throw new StockExchangeUnreachableException("Stock exchange unreachable.", e);
         }
         found = new ArrayList<>();
-        for (PublicStockQuote temp : companyShares) {
-            found.add(new Share(temp.getSymbol(), temp.getCompanyName(),
-                    temp.getFloatShares(), temp.getLastTradePrice(), null));
+        int i = 0;
+        PublicStockQuote test;
+        try {
+            if (companyShares != null) {
+                for (PublicStockQuote temp : companyShares) {
+                    test = temp;
+                    if (temp != null) {
+                        i = i + 1;
+                        if (temp.getSymbol() == null) {
+                            test.setSymbol("Kein SYMBOL!");
+                        }
+                        if (temp.getCompanyName() == null) {
+                            test.setCompanyName("Kein NAME!");
+                        }
+                        if (temp.getFloatShares() == null) {
+                            test.setFloatShares(new Long(0));
+                        }
+                        if (temp.getLastTradePrice() == null) {
+                            test.setLastTradePrice(new BigDecimal("0"));
+                        }
+
+                        found.add(new Share(test.getSymbol(), test.getCompanyName(),
+                                test.getFloatShares(), test.getLastTradePrice(), null));
+
+                    }
+                }
+            }
+        } catch (NullPointerException e) {
+
+            i = i + 1;
+            throw e;
         }
 
         return found;
     }
 
     /**
-     * Store a new Customer.
+     * Retrieve the sum of all depot values.
      *
-     * @param customer to be stored as JPA entity.
+     * @return overall sum of depot values.
      */
-    private void persist(Customer customer, Share share, Depot depot) {
-        em.persist(customer);
-        em.persist(share);
-        em.persist(depot);
+    private BigDecimal getOverallDepotValues() {
+        return currentValue;
+    }
+
+    /**
+     * Retrieve the sum of all depot values.
+     *
+     * @return overall sum of depot values.
+     */
+    private void setOverallDepotValues(BigDecimal newValue) {
+        currentValue = newValue;
     }
 
 }
