@@ -26,24 +26,28 @@ and open the template in the editor.
                         Customer name: #{tradingModel.selectedCustomer.name}
                         <br/>
                         <p>
-                        <h:outputText value ="Shares in this depot:"/>
-                        <br />
+                            <h:outputText value ="Shares in this depot:"/>
+                            <br />
                         </p>
                         <p>
-                        <h:outputText value ="Get latest stock quotes:"/>
-                        <h:inputText id="txtCompany" value="#{tradingModel.company}"/>
+                            <h:outputText value ="Get latest stock quotes:"/>
+                            <h:inputText id="txtCompany" value="#{tradingModel.company}"/>
                         </p>
+
                         <p:dataTable id="datalist" scrollable="true" scrollWidth="100%" value="#{tradingModel.findShares()}" var="share"
                                      paginator="#{tradingModel.companyPaginator}"
                                      rowKey="#{share.companyName}"
                                      rows="#{tradingModel.rowCount}"
                                      >
                             <p:column style="width:70px;text-align: center">
-                                <p:commandButton value="buy" title="buy">
+                                <p:commandButton value="buy" ajax="true" action="#{depotController.buyShare()}" title="buy">
                                     <f:setPropertyActionListener value="#{share}" target="#{tradingModel.selectedShare}" />
                                 </p:commandButton>
                             </p:column>
-                            <p:column headerText="Company">
+
+
+
+                            <p:column headerText ="Company">
                                 <h:outputText value="#{share.companyName}"/>
                             </p:column>
                             <p:column headerText ="Float Shares">

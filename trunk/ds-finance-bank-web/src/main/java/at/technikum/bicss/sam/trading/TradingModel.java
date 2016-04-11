@@ -46,7 +46,7 @@ public class TradingModel implements Serializable {
     private DataModel<Customer> customerModel;
     private Customer customer = new Customer();
     private List<Share> companyShares = new ArrayList<>();
-     private List<Share> depotShares = new ArrayList<>();
+    private List<Share> depotShares = new ArrayList<>();
     private Depot depot;
     private String searchId;
 
@@ -102,26 +102,27 @@ public class TradingModel implements Serializable {
     public List<Customer> getCustomerList() {
         return customerList;
     }
-    
+
     /**
      * Number of rows to be shown in any list.
+     *
      * @return number of rows to be shown in list.
      */
-    public int getRowCount()
-    {
+    public int getRowCount() {
         return 10;
     }
 
+    private Share selectedShare;
+
     /**
      * Determine if we need a paginator in table.
+     *
      * @return number of rows to be shown in list.
      */
-    public boolean getCompanyPaginator()
-    {
+    public boolean getCompanyPaginator() {
         return companyShares.size() > getRowCount();
     }
 
-    
     public List<Share> findShares() throws StockExchangeUnreachableException {
         System.out.println("in web findShares.");
         boolean search = false;
@@ -151,74 +152,66 @@ public class TradingModel implements Serializable {
         return companyShares;
     }
 
-   
-   
-    public Depot getDepot()
-    {
-       
+    public Depot getDepot() {
+
         return depot;
     }
 
-    private void setDepot()
-    {
-        try{
+    private void setDepot() {
+        try {
             Customer n_customer = new Customer();
             n_customer.setName("test");
             bank.createCustomer(n_customer, "test");
-       
-        Long d_id= bank.createDepot(n_customer);
-        depot= bank.getDepot(d_id);
-        }catch (Exception e){System.out.println("Could not create Depot");}    
-    }
-    
-     public Depot getDepotById()
-    {
-        //only for testing
-        if((searchId!=null)&&(bank.getDepot(Long.parseLong(searchId))!=null))
-        {
-        setDepotShares();
+
+            Long d_id = bank.createDepot(n_customer);
+            //depot = bank.getDepot(d_id);
+        } catch (Exception e) {
+            System.out.println("Could not create Depot");
         }
-        
-        try{
-        depot = bank.getDepot(Long.parseLong(searchId));
-        return depot;
-        }catch(NumberFormatException e){}
+    }
+
+    public Depot getDepotById() {
+        //only for testing
+        if ((searchId != null) && (bank.getDepot(Long.parseLong(searchId)) != null)) {
+            setDepotShares();
+        }
+
+        try {
+            depot = bank.getDepot(Long.parseLong(searchId));
+            return depot;
+        } catch (NumberFormatException e) {
+        }
         return null;
     }
-     
-      public List<Share> getSharesByDepotId()
-   {
-       
-     return depotShares;
-    
-   }
-      
-      public List<Share> getDepotShares() 
-      {
-          return depotShares;
-      }
- 
-      private void setDepotShares()
-      {
-         depot = bank.getDepot(Long.parseLong(searchId));
-         depot.setShareList(depot.getId());
-         try{
-         System.out.println(bank.getDepotShares(depot.getId()));
-         depotShares= bank.getDepotShares(depot.getId());
-        
-        }catch(NumberFormatException e){}
-      }
-    
-    public String getSearchId()
-    {
+
+    public List<Share> getSharesByDepotId() {
+
+        return depotShares;
+
+    }
+
+    public List<Share> getDepotShares() {
+        return depotShares;
+    }
+
+    private void setDepotShares() {
+        depot = bank.getDepot(Long.parseLong(searchId));
+        depot.setShareList(depot.getId());
+        try {
+            System.out.println(bank.getDepotShares(depot.getId()));
+            depotShares = bank.getDepotShares(depot.getId());
+
+        } catch (NumberFormatException e) {
+        }
+    }
+
+    public String getSearchId() {
         return searchId;
     }
-    
-    public void setSearchId(String id)
-    {
+
+    public void setSearchId(String id) {
         searchId = id;
     }
-    
 
     public void setCompany(String name) {
         company = name;
@@ -229,9 +222,9 @@ public class TradingModel implements Serializable {
     }
 
     /**
-     * updateModel updates the customer view via model.
+     * updateCustomerModel updates the customer view via model.
      */
-    public void updateModel() {
+    public void updateCustomerModel() {
         customerList = bank.listCustomer();
         customerModel.setWrappedData(customerList);
     }
@@ -254,25 +247,8 @@ public class TradingModel implements Serializable {
         }
     }
 
-        /**
-     * checkUserName if it is not empty and not too long.
-     *
-     * @param context faces context.
-     * @param component from ui which request the check.
-     * @param value the string input to be ckecked.
-     */
-    public void checkBuyCount(FacesContext context, UIComponent component, Object value) {
-        if (value == null) {
-            throw new ValidatorException(new FacesMessage("Anzahl ist 0."));
-        }
 
-        String text = value.toString();
-        // TODO max. soviele shares kaufen wie zur zeit als floatShares verfügbar
-        
-    }
 
-    
-    
     /**
      * Get current volume of bank.
      *
@@ -336,9 +312,6 @@ public class TradingModel implements Serializable {
         return customerModel;
     }
 
-    
-    
-    private Share selectedShare;
     /**
      * Init this bean.
      */
@@ -360,7 +333,7 @@ public class TradingModel implements Serializable {
         }
 
         customerList = bank.listCustomer();
-        setDepot();
+        //setDepot();
 
     }
 

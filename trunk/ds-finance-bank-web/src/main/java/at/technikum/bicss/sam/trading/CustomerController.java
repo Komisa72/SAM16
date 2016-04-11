@@ -34,7 +34,14 @@ public class CustomerController {
      */
     public CustomerController() {
     }
-    
+    /**
+     * Create a new instance of a customer.
+     * 
+     * @param name of the customer to be created
+     * @param password of this customer
+     * @return navigation case output.
+     * @throws CustomerCreationFailedException 
+     */
     public String createCustomer(String name, String password) throws CustomerCreationFailedException
     {
         Customer customer = new Customer();
@@ -44,7 +51,7 @@ public class CustomerController {
         try {
             bank.createCustomer(customer, password);
             bank.createDepot(customer);
-            model.updateModel();
+            model.updateCustomerModel();
         } catch (CustomerCreationFailedException | DepotCreationFailedException ex) {
             
             if(ex instanceof CustomerCreationFailedException) {
@@ -57,37 +64,38 @@ public class CustomerController {
         return "showCustomers";
     }
     
+    /**
+     * Navigate to selected customer view.
+     * @return navigation output.
+     */
     public String showCustomer()
     {
         return "showCustomer";
         
     }
     
-    
-    
-        /**
-     *
-     * @return navigataion output case create.
+     /**
+     * Navigate to customers list view.
+     * @return navigataion output.
      */
     public String showCustomers() {
         return "showCustomers";
     }
 
     /**
-     * @return the password
+     * Getter of password.
+     * @return the password.
      */
     public String getPassword() {
         return password;
     }
 
     /**
+     * Setter of password.
      * @param password the password to set
      */
     public void setPassword(String password) {
         this.password = password;
     }
-    
-
-
     
 }

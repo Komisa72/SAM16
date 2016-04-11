@@ -243,20 +243,21 @@ public class Bank implements BankInterface {
     }
 
     /**
-     *
-     * @param symbol of shares to be bought
-     * @param shares number of shares to be bought
-     * @return bought shares
+     * Bury a share from public stock quote.
+     * @param customer for which customer
+     * @param what shares to be bought
+     * @param count of shares to be bought
      * @throws StockExchangeUnreachableException
      * @throws BuySharesException
      */
     @Override
-    public BigDecimal buy(String symbol, int shares)
+    public void buy(Customer customer, Share what, int count)
             throws StockExchangeUnreachableException, BuySharesException {
 
-        BigDecimal buyShares = new BigDecimal("0", new MathContext(PRICE_SCALE));
+        BigDecimal buyShares;
+
         try {
-            buyShares = new BigDecimal(proxy.buy(symbol, shares), new MathContext(PRICE_SCALE));
+            buyShares = new BigDecimal(proxy.buy(what.getSymbol(), count), new MathContext(PRICE_SCALE));
             BigDecimal sum;
 
             sum = buyShares.add(getOverallDepotValues());
@@ -267,13 +268,26 @@ public class Bank implements BankInterface {
             System.out.println("Bought shares" + buyShares);
             setOverallDepotValues(sum);
 
+            // TODO weil ausgemacht war, dass das Depot erst beim 1. Einkauf 
+            // angelegt wird, prüfen ob nicht null sonst anlegen
+            //if (customer.getDepot() == null) {
+                //customer.createDepot();
+                //em.merge(customer);
+            //}
+            // TODO AM add the persisted share to the depot
+            /*
+            Share bought = new Share(what.getSymbol(), what.getCompanyName(), 
+                    count, buyShares, customer.getDepot()); 
+            em.persist(bought);
+            customer.getDepot().add(bought);
+            */
+            
         } catch (BuySharesException | TradingWSException_Exception e) {
             if (e instanceof TradingWSException_Exception) {
                 throw new StockExchangeUnreachableException("Stock exchange unreachable.", e);
             }
         }
 
-        return buyShares;
     }
 
     /**
@@ -344,39 +358,12 @@ public class Bank implements BankInterface {
             throw new StockExchangeUnreachableException("Stock exchange unreachable.", e);
         }
         found = new ArrayList<>();
-        int i = 0;
-        PublicStockQuote test;
-        try {
-            if (companyShares != null) {
-                for (PublicStockQuote temp : companyShares) {
-                    test = temp;
-                    if (temp != null) {
-                        i = i + 1;
-                        if (temp.getSymbol() == null) {
-                            test.setSymbol("Kein SYMBOL!");
-                        }
-                        if (temp.getCompanyName() == null) {
-                            test.setCompanyName("Kein NAME!");
-                        }
-                        if (temp.getFloatShares() == null) {
-                            test.setFloatShares(new Long(0));
-                        }
-                        if (temp.getLastTradePrice() == null) {
-                            test.setLastTradePrice(new BigDecimal("0"));
-                        }
-
-                        found.add(new Share(test.getSymbol(), test.getCompanyName(),
-                                test.getFloatShares(), test.getLastTradePrice(), null));
-
-                    }
-                }
+        if (companyShares != null) {
+            for (PublicStockQuote temp : companyShares) {
+                found.add(new Share(temp.getSymbol(), temp.getCompanyName(),
+                        temp.getFloatShares(), temp.getLastTradePrice(), null));
             }
-        } catch (NullPointerException e) {
-
-            i = i + 1;
-            throw e;
         }
-
         return found;
     }
 
