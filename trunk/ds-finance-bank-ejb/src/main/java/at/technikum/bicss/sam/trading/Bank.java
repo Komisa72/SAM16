@@ -15,6 +15,8 @@ import java.math.BigDecimal;
 import java.math.MathContext;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
 import javax.persistence.EntityManager;
@@ -138,6 +140,18 @@ public class Bank implements BankInterface {
         }
 
     }
+    
+    @Override
+    public Depot getCustomerDepot(Long customerId)
+    {
+         Query query = em.createNamedQuery("getCustomerDepot");
+        try {
+            query.setParameter("customerId", customerId);
+            return (Depot) query.getSingleResult();
+        } catch (NoResultException e) {
+            return null;
+        }
+    }
 
     @Override
     public List<Share> getDepotShares(Long id) {
@@ -182,10 +196,14 @@ public class Bank implements BankInterface {
     @Override
     public Long createDepot(Customer customer) throws DepotCreationFailedException {
 
-        Depot depot = new Depot(customer.getId(), 10409.100);
+        Depot depot = new Depot(0);
+        depot.setCustomer(customer);
+        customer.setDepot(depot);
 
         try {
             em.persist(depot);
+         //   em.persist(dummy);
+          //  System.out.println("Share was added. Id: " + dummy.getSymbol());
             System.out.println("Depot was added. Id: " + depot.getId());
         } catch (Exception ex) {
             System.out.println("Could not add depot");
@@ -268,26 +286,34 @@ public class Bank implements BankInterface {
             System.out.println("Bought shares" + buyShares);
             setOverallDepotValues(sum);
 
-            // TODO weil ausgemacht war, dass das Depot erst beim 1. Einkauf 
+            //TODO weil ausgemacht war, dass das Depot erst beim 1. Einkauf 
             // angelegt wird, prüfen ob nicht null sonst anlegen
-            //if (customer.getDepot() == null) {
-                //customer.createDepot();
-                //em.merge(customer);
+            
+            Depot sdepot = null;
+            if (customer.getDepot() == null) {
+            try{
+                Long depotId = createDepot(customer);
+                sdepot = getDepot(depotId);
+                em.merge(customer);
+             }catch(DepotCreationFailedException e){System.out.println("Depot could not be created");}
+            }
+            else 
+            {
+                sdepot = customer.getDepot();
+            }
             //}
             // TODO AM add the persisted share to the depot
-            /*
-            Share bought = new Share(what.getSymbol(), what.getCompanyName(), 
-                    count, buyShares, customer.getDepot()); 
-            em.persist(bought);
-            customer.getDepot().add(bought);
-            */
-            
-        } catch (BuySharesException | TradingWSException_Exception e) {
-            if (e instanceof TradingWSException_Exception) {
-                throw new StockExchangeUnreachableException("Stock exchange unreachable.", e);
-            }
-        }
+           
+                Share bought = new Share(what.getSymbol(), what.getCompanyName(), 
+                count, buyShares); 
+                bought.setDepot(sdepot);
+                em.persist(bought);
+              
+ 
 
+    }   catch (TradingWSException_Exception ex) {
+            Logger.getLogger(Bank.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
 
     /**
@@ -361,7 +387,7 @@ public class Bank implements BankInterface {
         if (companyShares != null) {
             for (PublicStockQuote temp : companyShares) {
                 found.add(new Share(temp.getSymbol(), temp.getCompanyName(),
-                        temp.getFloatShares(), temp.getLastTradePrice(), null));
+                        temp.getFloatShares(), temp.getLastTradePrice()));
             }
         }
         return found;

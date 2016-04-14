@@ -13,6 +13,8 @@ import javax.persistence.Id;
 import javax.persistence.Column;
 import java.text.SimpleDateFormat;
 import javax.persistence.IdClass;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 
 /**
  *
@@ -38,12 +40,14 @@ public class Share implements Serializable {
     @Column(name = "BUY_TIME")
     private String time;
 
-    // foreign key
-    private Long depotId;
-
+  
     // number of shares, maybe also used for showing floats of stock exchange.
     private long floatCount;
-
+    
+    @ManyToOne(optional=false) 
+    @JoinColumn(name="id", nullable=false, updatable=false)
+    private Depot depot;
+   
     public Share() {
     }
 
@@ -56,7 +60,7 @@ public class Share implements Serializable {
      * @param count of shares of the given symbol.
      * @param price of this share.
      */
-    public Share(String symbol, String companyName, long count, BigDecimal price, Long depotId) {
+    public Share(String symbol, String companyName, long count, BigDecimal price) {
         this.symbol = symbol;
         this.companyName = companyName;
         this.price = price;
@@ -160,5 +164,15 @@ public class Share implements Serializable {
     public void setFloatCount(long floatCount) {
         this.floatCount = floatCount;
     }
+    
+   public Depot getDepot()
+   {
+      return depot;
+   }
+   public void setDepot(Depot depot)
+   {
+      this.depot = depot;
+   }
 
+ 
 }

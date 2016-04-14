@@ -19,6 +19,7 @@ import javax.persistence.Transient;
 import javax.persistence.Column;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
+import javax.persistence.OneToOne;
 
 /**
  *
@@ -29,10 +30,14 @@ import javax.persistence.NamedQuery;
             query = "SELECT SUM(d.value) FROM Depot d"),
 
     @NamedQuery(name = "getDepotById",
-            query = "SELECT d FROM Depot d WHERE d.id IS :depotId"),
+            query = "SELECT d FROM Depot d WHERE d.id =:depotId"),
 
     @NamedQuery(name = "getDepotShares",
-            query = "SELECT s FROM Share s WHERE s.depotId IS :depotId")
+            query= "SELECT s FROM Share s WHERE s.depot.id =:depotId"),
+    
+    @NamedQuery(name = "getCustomerDepot",
+            query= "SELECT d FROM Depot d WHERE d.customer.id =:customerId")
+           
 })
 
 public class Depot implements Serializable {
@@ -59,19 +64,33 @@ public class Depot implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
-    private Long customerID;
+   // private Long customerID;
+    
+   @OneToOne
+   private Customer customer;
 
     // TODO AM: depot value is a calculated value from the shareList
     // mark this as @Transient and do not persist in database
     @Column(name = "DEPOT_VALUE")
     private double value;
 
-    public Depot(Long customerID, double value) {
-        this.customerID = customerID;
+    public Depot(double value) {
+        
         this.value = value;
 
     }
 
+    
+    
+    
+     public Customer getCustomer() {
+        return customer;
+    }
+
+   
+    public void setCustomer(Customer customer) {
+        this.customer = customer;
+    }
     /**
      *
      * Getter & Setter Methods
@@ -94,7 +113,7 @@ public class Depot implements Serializable {
      *
      * @return
      */
-    public Long getCustomerID() {
+   /* public Long getCustomerID() {
         return customerID;
     }
 
@@ -102,10 +121,11 @@ public class Depot implements Serializable {
      *
      * @param customerID
      */
+    /*
     public void setCustomerID(Long customerID) {
         this.customerID = customerID;
     }
-
+*/
     /**
      *
      * @return
@@ -178,22 +198,25 @@ public class Depot implements Serializable {
      * @param depotId
      * @return list of found shares or empty list.
      */
+    /*
     public void setShareList(Long depotId) {
 
         shareList = new ArrayList<>();
         Share dummy = new Share("471147114711", "Dummy 4711 Koelnisch Wasser",
-                4711, new BigDecimal(47.11d, new MathContext(2)), depotId);
+                4711, new BigDecimal(47.11d, new MathContext(2)));
+        
         shareList.add(dummy);
     }
-
+*/
     // TODO AM: subject to change, do not initialise with dummy data
     @PostConstruct
     private void init() {
-
+/*
         shareList = new ArrayList<>();
         Share dummy = new Share("471147114711", "Dummy 4711 Koelnisch Wasser",
-                4711, new BigDecimal(47.11d, new MathContext(2)), id);
+                4711, new BigDecimal(47.11d, new MathContext(2)));
         shareList.add(dummy);
+*/
     }
 
 }

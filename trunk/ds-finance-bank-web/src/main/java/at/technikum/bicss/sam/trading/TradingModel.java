@@ -164,7 +164,7 @@ public class TradingModel implements Serializable {
             bank.createCustomer(n_customer, "test");
 
             Long d_id = bank.createDepot(n_customer);
-            //depot = bank.getDepot(d_id);
+            depot = bank.getDepot(d_id);
         } catch (Exception e) {
             System.out.println("Could not create Depot");
         }
@@ -172,10 +172,6 @@ public class TradingModel implements Serializable {
 
     public Depot getDepotById() {
         //only for testing
-        if ((searchId != null) && (bank.getDepot(Long.parseLong(searchId)) != null)) {
-            setDepotShares();
-        }
-
         try {
             depot = bank.getDepot(Long.parseLong(searchId));
             return depot;
@@ -191,12 +187,30 @@ public class TradingModel implements Serializable {
     }
 
     public List<Share> getDepotShares() {
-        return depotShares;
+        
+        
+        try {
+            depotShares = bank.getDepotShares(depot.getId());
+            return depotShares;
+        } catch (NumberFormatException e) {
+        }
+        return null;
+       
+    }
+    
+    public Depot getDepotByCustomer()
+    {
+          try {
+            depot = bank.getCustomerDepot(customer.getId());
+            return depot;
+        } catch (NumberFormatException e) {
+        }
+        return null;
     }
 
     private void setDepotShares() {
         depot = bank.getDepot(Long.parseLong(searchId));
-        depot.setShareList(depot.getId());
+        //depot.setShareList(depot.getId());
         try {
             System.out.println(bank.getDepotShares(depot.getId()));
             depotShares = bank.getDepotShares(depot.getId());
@@ -333,7 +347,7 @@ public class TradingModel implements Serializable {
         }
 
         customerList = bank.listCustomer();
-        //setDepot();
+      //  setDepot();
 
     }
 

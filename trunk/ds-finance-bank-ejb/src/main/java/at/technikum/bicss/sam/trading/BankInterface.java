@@ -83,6 +83,8 @@ public interface BankInterface {
     public Customer getCustomer(String name);
 
     public Depot getDepot(Long id);
+    
+    public Depot getCustomerDepot(Long customerId);
 
     public List<Share> getDepotShares(Long id);
 
