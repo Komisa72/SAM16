@@ -52,7 +52,7 @@ public interface BankInterface {
     public BigDecimal sell(String symbol, int shares)
             throws StockExchangeUnreachableException;
 
-    public Long createDepot(Customer customer)
+    public Depot createDepot(Customer customer)
             throws DepotCreationFailedException;
 
     /**

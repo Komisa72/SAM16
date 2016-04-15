@@ -178,8 +178,10 @@ public class Bank implements BankInterface {
 
         try {
             // TODO check if addUser is threadsafe
+           // customer.setDepot(null);
+             em.persist(customer);
             info.getAuthHelper().addUser(customer.getName(), password, customerRoles);
-            em.persist(customer);
+           
         } catch (IOException ex) {
             System.out.println("Could not add customer to password database");
             throw new CustomerCreationFailedException("Could not add customer to password database.", ex);
@@ -188,21 +190,23 @@ public class Bank implements BankInterface {
     }
 
     @Override
-    public Long createDepot(Customer customer) throws DepotCreationFailedException {
+    public Depot createDepot(Customer customer) throws DepotCreationFailedException {
 
         Depot depot = new Depot(0);
         depot.setCustomer(customer);
         customer.setDepot(depot);
+        
 
         try {
             em.persist(depot);
+            depot.setCustomer(customer);
             System.out.println("Depot was added. Id: " + depot.getId());
         } catch (Exception ex) {
             System.out.println("Could not add depot");
             throw new DepotCreationFailedException("Could not add depot to database.", ex);
         }
 
-        return depot.getId();
+        return depot;
     }
 
     /**
@@ -282,25 +286,30 @@ public class Bank implements BankInterface {
 
             //TODO weil ausgemacht war, dass das Depot erst beim 1. Einkauf 
             // angelegt wird, prüfen ob nicht null sonst anlegen
-            Depot sdepot = null;
-            if (customer.getDepot() == null) {
+           
+            if (customer.getDepot()== null) {
+                System.out.println("No customer depot found");
                 try {
-                    Long depotId = createDepot(customer);
-                    sdepot = getDepot(depotId);
-                    em.merge(customer);
+                    customer.setDepot(createDepot(customer));
+                    System.out.println("Depot was added to customer "+customer.getId()+ "with id:" + customer.getDepot().getId());                 
+                   
                 } catch (DepotCreationFailedException e) {
                     System.out.println("Depot could not be created");
+                   Share bought = new Share(what.getSymbol(), what.getCompanyName(),
+                   count, buyShares);
+                   bought.setDepot(customer.getDepot());
+                   em.persist(bought);
                 }
             } else {
-                sdepot = customer.getDepot();
+                   Share bought = new Share(what.getSymbol(), what.getCompanyName(),
+                   count, buyShares);
+                   bought.setDepot(customer.getDepot());
+                   em.persist(bought);
             }
 
-            Share bought = new Share(what.getSymbol(), what.getCompanyName(),
-                    count, buyShares);
-            bought.setDepot(sdepot);
-            em.persist(bought);
+          
 
-            customer.getDepot().add(bought);
+            
 
         } catch (TradingWSException_Exception e) {
             if (e instanceof TradingWSException_Exception) {

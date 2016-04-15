@@ -7,6 +7,7 @@ package at.technikum.bicss.sam.trading;
 
 import java.io.Serializable;
 import javax.annotation.PostConstruct;
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
@@ -15,6 +16,9 @@ import javax.persistence.JoinColumn;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToOne;
+import javax.persistence.PrimaryKeyJoinColumn;
+import javax.persistence.Table;
+import javax.persistence.UniqueConstraint;
 
 /**
  * Customer of bank.
@@ -26,6 +30,8 @@ import javax.persistence.OneToOne;
 @NamedQuery(name="singleCustomer",
     query="SELECT c FROM Customer c WHERE c.name IS :customerName")
 })
+
+@Table(uniqueConstraints={@UniqueConstraint(columnNames={"name"})})
 public class Customer implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -40,15 +46,14 @@ public class Customer implements Serializable {
     @Id @GeneratedValue
     private Long id;
    
-    @OneToOne(optional=true) 
-    @JoinColumn(name="id", nullable=false, updatable=false)
-    private Depot depot;
     
+    @OneToOne(optional=true, cascade={CascadeType.MERGE}) 
+    @PrimaryKeyJoinColumn
+    private Depot depot;
     
     // limit lenght of customer name to this size
     private final static int MAX_LENGTH_NAME = 200;
     
-
     @Column(name = "name", unique= true, nullable = false, length = MAX_LENGTH_NAME)
     private String name;
 
@@ -73,7 +78,7 @@ public class Customer implements Serializable {
         return id;
     }
 
-    
+   
    public Depot getDepot()
    {
       return depot;
@@ -83,14 +88,6 @@ public class Customer implements Serializable {
    {
       this.depot = depot;
    }
-    /* @PostConstruct
-    private void init()
-    {
-        // TODO; AM subject to change, read depot/shares from database
-        // instead of using dummy data
-        depot = new Depot();
-        
-    }
-    */
-    //Depot depot;
+    
+
 }

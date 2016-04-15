@@ -7,19 +7,18 @@ package at.technikum.bicss.sam.trading;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
-import java.math.MathContext;
-import java.util.ArrayList;
-import java.util.List;
-import javax.annotation.PostConstruct;
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Transient;
 import javax.persistence.Column;
+import javax.persistence.JoinColumn;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToOne;
+import javax.persistence.PrimaryKeyJoinColumn;
 
 /**
  *
@@ -44,29 +43,15 @@ public class Depot implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
-    // TODO AM this list must be persisted later, therefore remove 
-    // @Transient annotation
-    // Mayn
-    @Transient
-    private List<Share> shareList;
-
     public Depot() {
-    }
-
-    /**
-     * ADd a share.
-     *
-     * @param share to be added in list.
-     */
-    public void add(Share share) {
-        shareList.add(share);
     }
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
-    @OneToOne
+    @OneToOne(optional=true, cascade={CascadeType.MERGE}) 
+    @PrimaryKeyJoinColumn
     private Customer customer;
 
     // TODO AM: depot value is a calculated value from the shareList

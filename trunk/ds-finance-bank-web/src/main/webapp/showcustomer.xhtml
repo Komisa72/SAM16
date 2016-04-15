@@ -21,7 +21,7 @@ and open the template in the editor.
         <h:body>
             <p:dialog header="Buy Share" widgetVar="buyDialog" modal="true" height="100">
                 <h:form id="buyForm">
-                    <h:outputText value="Anzahl Float" />
+                    <h:outputText value="Amount" />
                     <p:inputText value = "#{depotController.buyCount}" id="buyCount" validator ="#{depotController.checkBuyCount}">
                         <f_converter coverterId="Integer"/>
                     </p:inputText>
@@ -32,11 +32,12 @@ and open the template in the editor.
             <p:layout fullPage="true">
                 <ui:include  src="resources/includes/header.xhtml" />
                 <p:layoutUnit position="center">
-                    <h:form>
+                    <h:form id ="custForm">
                         Customer name: #{tradingModel.selectedCustomer.name}
                         <br/>
                         <p>
-                            <h:outputText value ="Shares in this depot:"/>
+                            <h:outputText value ="Show customer depot:"/>
+                            <p:button id="showDepot" value="Show" rendered = "#{tradingModel.selectedCustomer.getDepot() ne null}" outcome="overview"/>
                             <br />
                         </p>
                         <p>

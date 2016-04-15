@@ -37,25 +37,7 @@ public class DepotController implements Serializable {
 
     private int buyCount = 1;
 
-    /**
-     *
-     * @param customer
-     * @throws DepotCreationFailedException
-     */
-    /*public void createDepot(Customer customer) throws DepotCreationFailedException
-    {
-
-
-        try {
-            bank.createDepot(customer);
-            model.updateModel();
-
-
-        } catch (DepotCreationFailedException ex) {
-            throw ex;
-        }
-
-    } */
+    
     /**
      * Creates a new instance of DepotController
      */
@@ -81,6 +63,7 @@ public class DepotController implements Serializable {
         try {
             bank.buy(model.getSelectedCustomer(), model.getSelectedShare(), getBuyCount());
             buyCount = 1;
+            
         } catch (StockExchangeUnreachableException ex) {
             // in this case show error page, because we can not buy shares.
             throw ex;

@@ -11,8 +11,6 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
 import javax.enterprise.context.SessionScoped;
@@ -154,26 +152,30 @@ public class TradingModel implements Serializable {
 
     public Depot getDepot() {
 
+       
         return depot;
     }
+    
+     public Customer getCustomer() {
 
-    private void setDepot() {
-        try {
-            Customer n_customer = new Customer();
-            n_customer.setName("test");
-            bank.createCustomer(n_customer, "test");
-
-            Long d_id = bank.createDepot(n_customer);
-            depot = bank.getDepot(d_id);
-        } catch (Exception e) {
-            System.out.println("Could not create Depot");
-        }
+         setCustomer();
+        return customer;
     }
 
-    public Depot getDepotById() {
+
+    private void setCustomer()
+    {
+         if(depot.getCustomer()!=null)
+        {
+            customer = depot.getCustomer();
+        }
+        customer = depot.getCustomer();
+    }
+
+    public Depot getDepotById(Long id) {
         //only for testing
         try {
-            depot = bank.getDepot(Long.parseLong(searchId));
+            depot = bank.getDepot(id);
             return depot;
         } catch (NumberFormatException e) {
         }
@@ -185,6 +187,8 @@ public class TradingModel implements Serializable {
         return depotShares;
 
     }
+    
+    
 
     public List<Share> getDepotShares() {
         
@@ -198,27 +202,17 @@ public class TradingModel implements Serializable {
        
     }
     
-    public Depot getDepotByCustomer()
+    public Depot getDepotByCustomer(Long id)
     {
           try {
-            depot = bank.getCustomerDepot(customer.getId());
+            depot = bank.getCustomerDepot(id);
             return depot;
         } catch (NumberFormatException e) {
         }
         return null;
     }
 
-    private void setDepotShares() {
-        depot = bank.getDepot(Long.parseLong(searchId));
-        //depot.setShareList(depot.getId());
-        try {
-            System.out.println(bank.getDepotShares(depot.getId()));
-            depotShares = bank.getDepotShares(depot.getId());
-
-        } catch (NumberFormatException e) {
-        }
-    }
-
+   
     public String getSearchId() {
         return searchId;
     }
@@ -296,6 +290,10 @@ public class TradingModel implements Serializable {
      * @return
      */
     public Customer getSelectedCustomer() {
+        if(customer.getDepot()!=null)
+        {
+            depot = customer.getDepot();
+        }
         return customer;
     }
 

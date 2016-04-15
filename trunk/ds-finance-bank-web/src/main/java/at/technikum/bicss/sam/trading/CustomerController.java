@@ -47,19 +47,20 @@ public class CustomerController {
         Customer customer = new Customer();
         customer.setName(name);
         
+      //  customer.setDepot(null);
+        
         
         try {
             bank.createCustomer(customer, password);
-            bank.createDepot(customer);
+           // bank.createDepot(customer);
             model.updateCustomerModel();
-        } catch (CustomerCreationFailedException | DepotCreationFailedException ex) {
+        } catch (CustomerCreationFailedException  ex) {
             
             if(ex instanceof CustomerCreationFailedException) {
                 System.out.println("Customer could not be created.");
             }
-            else if (ex instanceof DepotCreationFailedException) {
-                System.out.println("Depot could not be created.");
-            }
+         
+            
         }
         return "showCustomers";
     }
