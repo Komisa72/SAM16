@@ -42,9 +42,11 @@ and open the template in the editor.
                         <p>
                             <h:outputText value ="Get latest stock quotes:"/>
                             <h:inputText id="txtCompany" value="#{tradingModel.company}"/>
+                            <p:commandButton update="searchList" value="Search" action="#{tradingModel.findShares()}" ajax="true" >
+                            </p:commandButton>
                         </p>
 
-                        <p:dataTable id="datalist" scrollable="true" scrollWidth="100%" value="#{tradingModel.findShares()}" var="share"
+                        <p:dataTable id="searchList" scrollable="true" scrollWidth="100%" value="#{tradingModel.findShares()}" var="share"
                                      paginator="#{tradingModel.companyPaginator}"
                                      rowKey="#{share.companyName}"
                                      rows="#{tradingModel.rowCount}"
