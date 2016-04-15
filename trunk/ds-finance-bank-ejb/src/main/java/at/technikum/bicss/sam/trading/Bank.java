@@ -13,8 +13,11 @@ import net.froihofer.util.jboss.WildflyAuthDBHelper;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.math.MathContext;
+import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
 import javax.persistence.EntityManager;
@@ -41,12 +44,8 @@ public class Bank implements BankInterface {
     @EJB
     private StartupTradingService info;
 
-    // precision of US dollar is 2
-    private static final int PRICE_SCALE = 2;
-
     // 1 Mrd. US dollar, limit to be checked against when a share is bought
-    private final static BigDecimal MAX_VOLUME = new BigDecimal("1E9",
-            new MathContext(PRICE_SCALE));
+    private final static BigDecimal MAX_VOLUME = new BigDecimal("1E9");
 
     @WebServiceRef(name = "TradingWebServiceService")
     private TradingWebServiceService stockService;
@@ -54,8 +53,7 @@ public class Bank implements BankInterface {
 
     //get current total value of depots
     //public double currentValue = getDepotValue();
-    private BigDecimal currentValue = new BigDecimal("2449010.20149",
-            new MathContext(PRICE_SCALE));
+    private BigDecimal currentValue = new BigDecimal("2449010.20149");
 
     /**
      * Constructor.
@@ -84,7 +82,7 @@ public class Bank implements BankInterface {
     public BigDecimal getDepotValue() {
         List<PublicStockQuote> allShares;
 
-        BigDecimal sum = new BigDecimal("0", new MathContext(PRICE_SCALE));
+        BigDecimal sum = new BigDecimal("0");
         Query query = em.createNamedQuery("getDepot");
         allShares = query.getResultList();
         for (PublicStockQuote a : allShares) {
@@ -140,6 +138,17 @@ public class Bank implements BankInterface {
     }
 
     @Override
+    public Depot getCustomerDepot(Long customerId) {
+        Query query = em.createNamedQuery("getCustomerDepot");
+        try {
+            query.setParameter("customerId", customerId);
+            return (Depot) query.getSingleResult();
+        } catch (NoResultException e) {
+            return null;
+        }
+    }
+
+    @Override
     public List<Share> getDepotShares(Long id) {
         List<Share> allShares;
         try {
@@ -178,11 +187,12 @@ public class Bank implements BankInterface {
 
     }
 
-    //TODO CB: Dummy Werte ersetzen gegen sinnvolle Persistierung
     @Override
     public Long createDepot(Customer customer) throws DepotCreationFailedException {
 
-        Depot depot = new Depot(customer.getId(), 10409.100);
+        Depot depot = new Depot(0);
+        depot.setCustomer(customer);
+        customer.setDepot(depot);
 
         try {
             em.persist(depot);
@@ -244,6 +254,7 @@ public class Bank implements BankInterface {
 
     /**
      * Bury a share from public stock quote.
+     *
      * @param customer for which customer
      * @param what shares to be bought
      * @param count of shares to be bought
@@ -257,7 +268,8 @@ public class Bank implements BankInterface {
         BigDecimal buyShares;
 
         try {
-            buyShares = new BigDecimal(proxy.buy(what.getSymbol(), count), new MathContext(PRICE_SCALE));
+            double val = proxy.buy(what.getSymbol(), count);
+            buyShares = new BigDecimal(val);
             BigDecimal sum;
 
             sum = buyShares.add(getOverallDepotValues());
@@ -268,36 +280,40 @@ public class Bank implements BankInterface {
             System.out.println("Bought shares" + buyShares);
             setOverallDepotValues(sum);
 
-            // TODO weil ausgemacht war, dass das Depot erst beim 1. Einkauf 
+            //TODO weil ausgemacht war, dass das Depot erst beim 1. Einkauf 
             // angelegt wird, prüfen ob nicht null sonst anlegen
-            //if (customer.getDepot() == null) {
-                //customer.createDepot();
-                //em.merge(customer);
-            //}
-            // TODO AM add the persisted share to the depot
-            /*
-            Share bought = new Share(what.getSymbol(), what.getCompanyName(), 
-                    count, buyShares, customer.getDepot()); 
+            Depot sdepot = null;
+            if (customer.getDepot() == null) {
+                try {
+                    Long depotId = createDepot(customer);
+                    sdepot = getDepot(depotId);
+                    em.merge(customer);
+                } catch (DepotCreationFailedException e) {
+                    System.out.println("Depot could not be created");
+                }
+            } else {
+                sdepot = customer.getDepot();
+            }
+
+            Share bought = new Share(what.getSymbol(), what.getCompanyName(),
+                    count, buyShares);
+            bought.setDepot(sdepot);
             em.persist(bought);
+
             customer.getDepot().add(bought);
-            */
-            
+
         } catch (TradingWSException_Exception e) {
             if (e instanceof TradingWSException_Exception) {
                 String detail = e.getMessage();
-                if (detail != null)
-                {
-                    // TODO AM finde den Fehler nicht, warum exected string nicht in detail enthalten ist
+                if (detail != null) {
                     String expected = "Not enough shares available";
-                    if (detail.contains(expected))
-                    {
+                    if (detail.contains(expected)) {
                         throw new BuySharesNotEnoughException();
                     }
                 }
             }
             throw new StockExchangeUnreachableException(e);
         }
-
     }
 
     /**
@@ -313,8 +329,7 @@ public class Bank implements BankInterface {
         BigDecimal sellShares;
 
         try {
-            sellShares = new BigDecimal(proxy.sell(symbol, shares),
-                    new MathContext(PRICE_SCALE));
+            sellShares = new BigDecimal(proxy.sell(symbol, shares));
             System.out.println("Sold shares " + sellShares);
 
             //adapting current investing volume of the bank
@@ -371,7 +386,7 @@ public class Bank implements BankInterface {
         if (companyShares != null) {
             for (PublicStockQuote temp : companyShares) {
                 found.add(new Share(temp.getSymbol(), temp.getCompanyName(),
-                        temp.getFloatShares(), temp.getLastTradePrice(), null));
+                        temp.getFloatShares(), temp.getLastTradePrice()));
             }
         }
         return found;

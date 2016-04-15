@@ -11,8 +11,10 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.Column;
+import javax.persistence.JoinColumn;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
+import javax.persistence.OneToOne;
 
 /**
  * Customer of bank.
@@ -37,6 +39,10 @@ public class Customer implements Serializable {
     
     @Id @GeneratedValue
     private Long id;
+   
+    @OneToOne(optional=true) 
+    @JoinColumn(name="id", nullable=false, updatable=false)
+    private Depot depot;
     
     
     // limit lenght of customer name to this size
@@ -68,7 +74,15 @@ public class Customer implements Serializable {
     }
 
     
-    
+   public Depot getDepot()
+   {
+      return depot;
+   }
+      
+   public void setDepot(Depot depot)
+   {
+      this.depot = depot;
+   }
     /* @PostConstruct
     private void init()
     {

@@ -39,6 +39,9 @@
                             <p:column headerText="Name" footerText="Name" width="200">
                                 <h:outputText value="#{customer.name}" />
                             </p:column>
+                              <p:column headerText="Depot ID" footerText="Depot ID" width="200">
+                                <h:outputText rendered="#{tradingModel.getDepotByCustomer() ne null}" value="#{tradingModel.getDepotByCustomer().id}" />
+                            </p:column>
                             <p:column style="width:32px;text-align: center">
                                 <p:commandButton action="#{customerController.showCustomer()}" icon="ui-icon-pencil" title="View">
                                      <f:setPropertyActionListener value="#{customer}" target="#{tradingModel.selectedCustomer}" />

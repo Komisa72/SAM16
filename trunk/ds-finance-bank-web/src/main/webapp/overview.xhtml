@@ -36,7 +36,7 @@
                       
                         <h:panelGroup style="text-align:right">
                             <h:outputLabel for="customer" rendered="#{tradingModel.getDepotById() ne null}" value="Customer: " />
-                            <h:outputText id="customer" rendered="#{tradingModel.getDepotById() ne null}" value="#{tradingModel.depot.customerID}" />
+                            <h:outputText id="customer" rendered="#{tradingModel.getDepotById() ne null}" value="#{tradingModel.depot.getCustomer().id}" />
                             <br/>
                             <h:outputLabel for="depotId" rendered="#{tradingModel.getDepotById() ne null}" value="Depot: " />
                             <h:outputText id="depotId" rendered="#{tradingModel.getDepotById() ne null}" value="#{tradingModel.depot.id}" />
@@ -47,9 +47,8 @@
                      
 
                     <p:panel header="Current shares:" >
-                        <h:outputText rendered="#{tradingModel.depotShares eq null}" value ="No shares found"/>
                        
-                        <p:dataTable id="datalist" rendered = "#{tradingModel.searchId ne null and tradingModel.getDepotById() ne null}" scrollable="true" scrollWidth="100%" value="#{tradingModel.depotShares}" var="share"
+                        <p:dataTable id="datalist" rendered = "#{tradingModel.searchId ne null and tradingModel.getDepotById() ne null and tradingModel.depotShares ne null}" scrollable="true" scrollWidth="100%" value="#{tradingModel.depotShares}" var="share"
                                      paginator="false"
                                      rowKey="#{share.companyName}"
                                      rows="20"
