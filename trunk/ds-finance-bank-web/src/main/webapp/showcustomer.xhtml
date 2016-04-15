@@ -19,6 +19,16 @@ and open the template in the editor.
         </h:head>
 
         <h:body>
+            <p:dialog header="Buy Share" widgetVar="buyDialog" modal="true" height="100">
+                <h:form id="buyForm">
+                    <h:outputText value="Anzahl Float" />
+                    <p:inputText value = "#{depotController.buyCount}" id="buyCount" validator ="#{depotController.checkBuyCount}">
+                        <f_converter coverterId="Integer"/>
+                    </p:inputText>
+                    <p:commandButton ajax="true" value = "buy from stock" action="#{depotController.buyShare()}" title="buy from stock" oncomplete="PF('buyDialog').hide()">
+                    </p:commandButton>
+                </h:form>
+            </p:dialog>
             <p:layout fullPage="true">
                 <ui:include  src="resources/includes/header.xhtml" />
                 <p:layoutUnit position="center">
@@ -40,12 +50,10 @@ and open the template in the editor.
                                      rows="#{tradingModel.rowCount}"
                                      >
                             <p:column style="width:70px;text-align: center">
-                                <p:commandButton value="buy" ajax="true" action="#{depotController.buyShare()}" title="buy">
+                                <p:commandButton oncomplete="PF('buyDialog').show()" ajax = "true" value="buy" title="buy">
                                     <f:setPropertyActionListener value="#{share}" target="#{tradingModel.selectedShare}" />
                                 </p:commandButton>
                             </p:column>
-
-
 
                             <p:column headerText ="Company">
                                 <h:outputText value="#{share.companyName}"/>

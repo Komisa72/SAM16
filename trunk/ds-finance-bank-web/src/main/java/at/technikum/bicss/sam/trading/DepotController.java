@@ -17,6 +17,7 @@ import javax.faces.event.ActionEvent;
 import javax.faces.validator.ValidatorException;
 import javax.inject.Inject;
 import javax.inject.Named;
+import org.primefaces.context.RequestContext;
 
 /**
  *
@@ -34,8 +35,7 @@ public class DepotController implements Serializable {
     @Named("tradingModel")
     private TradingModel model;
 
-    private int buyCount = 2;
-
+    private int buyCount = 1;
 
     /**
      *
@@ -61,8 +61,8 @@ public class DepotController implements Serializable {
      */
     public DepotController() {
     }
-    
-        /**
+
+    /**
      * checkUserName if it is not empty and not too long.
      *
      * @param context faces context.
@@ -74,20 +74,26 @@ public class DepotController implements Serializable {
             throw new ValidatorException(new FacesMessage("Anzahl ist 0."));
         }
 
-       // TODO max. soviele shares kaufen wie zur zeit als floatShares verfügbar
-
+        // TODO max. soviele shares kaufen wie zur zeit als floatShares verfügbar
     }
-    
-    
-    
-    public void buyShare() throws StockExchangeUnreachableException
-    {
+
+    public void buyShare() throws StockExchangeUnreachableException {
         try {
             bank.buy(model.getSelectedCustomer(), model.getSelectedShare(), getBuyCount());
+            buyCount = 1;
         } catch (StockExchangeUnreachableException ex) {
-            // TODO AM add error handling
-            throw ex; 
-        } catch (BuySharesException ex) {
+            // in this case show error page, because we can not buy shares.
+            throw ex;
+        } catch (BuySharesNotEnoughException ex) {
+            FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "Buy failed", 
+                    String.format("Not enough shares to buy %s shares.", getBuyCount()));
+            RequestContext.getCurrentInstance().showMessageInDialog(message);
+
+        } catch (BuySharesVolumeException ex) {
+            // 
+            FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, 
+                    "Buy failed", "Bank volume exceeded. Please try later.");
+            RequestContext.getCurrentInstance().showMessageInDialog(message);
             // TODO AM what if it exceeds volume
         }
     }
@@ -105,7 +111,5 @@ public class DepotController implements Serializable {
     public void setBuyCount(int buyCount) {
         this.buyCount = buyCount;
     }
-    
-
 
 }
