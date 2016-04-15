@@ -17,8 +17,8 @@ public class StockExchangeUnreachableException extends TradingServiceException {
      *
      * @param msg the detail message.
      */
-    public StockExchangeUnreachableException(String msg) {
-        super(msg);
+    public StockExchangeUnreachableException() {
+        super("Stock exchange unreachable.");
     }
     
     
@@ -29,9 +29,9 @@ public class StockExchangeUnreachableException extends TradingServiceException {
      * @param msg the detail message.
      * @param cause the inner cause of the exception.
      */
-    public StockExchangeUnreachableException(String msg, Throwable cause)
+    public StockExchangeUnreachableException(Throwable cause)
     {
-        super(msg, cause);
+        super("Stock exchange unreachable.", cause);
     }
 
 }

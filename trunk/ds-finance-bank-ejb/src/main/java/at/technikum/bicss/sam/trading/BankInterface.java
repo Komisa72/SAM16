@@ -37,16 +37,17 @@ public interface BankInterface {
     public List<PublicStockQuote> getStockQuoteHistory(String symbol)
             throws StockExchangeUnreachableException;
 
-     /**
+    /**
      * Buy a share from public stock quote.
+     *
      * @param customer for which customer
      * @param what shares to be bought
      * @param count of shares to be bought
      * @throws StockExchangeUnreachableException
-     * @throws BuySharesException
+     * @throws BuySharesVolumeException
      */
     public void buy(Customer customer, Share what, int count)
-            throws StockExchangeUnreachableException, BuySharesException;
+            throws StockExchangeUnreachableException, BuySharesVolumeException, BuySharesNotEnoughException;
 
     public BigDecimal sell(String symbol, int shares)
             throws StockExchangeUnreachableException;

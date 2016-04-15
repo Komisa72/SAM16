@@ -214,7 +214,7 @@ public class Bank implements BankInterface {
             System.out.println(stockQuotes.toString());
 
         } catch (TradingWSException_Exception e) {
-            throw new StockExchangeUnreachableException("Stock exchange unreachable.", e);
+            throw new StockExchangeUnreachableException(e);
         }
 
         return stockQuotes;
@@ -236,7 +236,7 @@ public class Bank implements BankInterface {
             System.out.println(stockQuoteHistory.toString());
 
         } catch (TradingWSException_Exception e) {
-            throw new StockExchangeUnreachableException("Stock exchange unreachable.", e);
+            throw new StockExchangeUnreachableException(e);
         }
 
         return stockQuoteHistory;
@@ -248,11 +248,11 @@ public class Bank implements BankInterface {
      * @param what shares to be bought
      * @param count of shares to be bought
      * @throws StockExchangeUnreachableException
-     * @throws BuySharesException
+     * @throws BuySharesVolumeException
      */
     @Override
     public void buy(Customer customer, Share what, int count)
-            throws StockExchangeUnreachableException, BuySharesException {
+            throws StockExchangeUnreachableException, BuySharesVolumeException, BuySharesNotEnoughException {
 
         BigDecimal buyShares;
 
@@ -262,7 +262,7 @@ public class Bank implements BankInterface {
 
             sum = buyShares.add(getOverallDepotValues());
             if (sum.compareTo(MAX_VOLUME) == 1) {
-                throw new BuySharesException("Could not buy shares, because volume would exceed allowed value.\n");
+                throw new BuySharesVolumeException();
             }
 
             System.out.println("Bought shares" + buyShares);
@@ -282,10 +282,20 @@ public class Bank implements BankInterface {
             customer.getDepot().add(bought);
             */
             
-        } catch (BuySharesException | TradingWSException_Exception e) {
+        } catch (TradingWSException_Exception e) {
             if (e instanceof TradingWSException_Exception) {
-                throw new StockExchangeUnreachableException("Stock exchange unreachable.", e);
+                String detail = e.getMessage();
+                if (detail != null)
+                {
+                    // TODO AM finde den Fehler nicht, warum exected string nicht in detail enthalten ist
+                    String expected = "Not enough shares available";
+                    if (detail.contains(expected))
+                    {
+                        throw new BuySharesNotEnoughException();
+                    }
+                }
             }
+            throw new StockExchangeUnreachableException(e);
         }
 
     }
@@ -310,7 +320,7 @@ public class Bank implements BankInterface {
             //adapting current investing volume of the bank
             setOverallDepotValues(getOverallDepotValues().subtract(sellShares));
         } catch (TradingWSException_Exception e) {
-            throw new StockExchangeUnreachableException("Stock exchange unreachable.", e);
+            throw new StockExchangeUnreachableException(e);
         }
         return sellShares;
     }
@@ -355,7 +365,7 @@ public class Bank implements BankInterface {
         try {
             companyShares = proxy.findStockQuotesByCompanyName(company);
         } catch (TradingWSException_Exception e) {
-            throw new StockExchangeUnreachableException("Stock exchange unreachable.", e);
+            throw new StockExchangeUnreachableException(e);
         }
         found = new ArrayList<>();
         if (companyShares != null) {
