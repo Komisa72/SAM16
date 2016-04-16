@@ -286,28 +286,30 @@ public class Bank implements BankInterface {
 
             //TODO weil ausgemacht war, dass das Depot erst beim 1. Einkauf 
             // angelegt wird, prüfen ob nicht null sonst anlegen
-           
+           Depot sdepot= null;
             if (customer.getDepot()== null) {
                 System.out.println("No customer depot found");
                 try {
-                    customer.setDepot(createDepot(customer));
+                    sdepot= createDepot(customer);
+                    customer.setDepot(sdepot);
                     System.out.println("Depot was added to customer "+customer.getId()+ "with id:" + customer.getDepot().getId());                 
-                   
+                 
+                  
+                  
                 } catch (DepotCreationFailedException e) {
-                    System.out.println("Depot could not be created");
-                   Share bought = new Share(what.getSymbol(), what.getCompanyName(),
-                   count, buyShares);
-                   bought.setDepot(customer.getDepot());
-                   em.persist(bought);
+                      System.out.println("Depot could not be created");
                 }
             } else {
-                   Share bought = new Share(what.getSymbol(), what.getCompanyName(),
-                   count, buyShares);
-                   bought.setDepot(customer.getDepot());
-                   em.persist(bought);
+                   sdepot=customer.getDepot();
+ 
             }
 
+           Share bought = new Share(what.getSymbol(), what.getCompanyName(),
+           count, buyShares);
+           bought.setDepot(sdepot);
+           em.persist(bought);
           
+           sdepot.setShares(bought);
 
             
 

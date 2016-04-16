@@ -48,7 +48,7 @@
 
                     <p:panel header="Current shares:" >
                        
-                        <p:dataTable id="datalist" rendered = "#{tradingModel.selectedCustomer.getDepot().id ne null and tradingModel.getDepotById(tradingModel.selectedCustomer.getDepot().getId()) ne null}" scrollable="true" scrollWidth="100%" value="#{tradingModel.depotShares}" var="share"
+                        <p:dataTable id="datalist" rendered = "#{tradingModel.selectedCustomer.getDepot() ne null}" scrollable="true" scrollWidth="100%" value="#{tradingModel.selectedCustomer.getDepot().getShares()}" var="share"
                                      paginator="false"
                                      rowKey="#{share.companyName}"
                                      rows="20"

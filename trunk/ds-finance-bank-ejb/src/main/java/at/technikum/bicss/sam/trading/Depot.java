@@ -7,6 +7,8 @@ package at.technikum.bicss.sam.trading;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -17,6 +19,7 @@ import javax.persistence.Column;
 import javax.persistence.JoinColumn;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
+import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.PrimaryKeyJoinColumn;
 
@@ -53,6 +56,10 @@ public class Depot implements Serializable {
     @OneToOne(optional=true, cascade={CascadeType.MERGE}) 
     @PrimaryKeyJoinColumn
     private Customer customer;
+    
+    @Column(name = "Shares")
+    @OneToMany(mappedBy = "depot")
+    private List<Share> shares = new ArrayList<>();
 
     // TODO AM: depot value is a calculated value from the shareList
     // mark this as @Transient and do not persist in database
@@ -152,4 +159,15 @@ public class Depot implements Serializable {
         this.rating = rating;
     }
 
+    public List<Share> getShares()
+    {
+        return shares;
+    }
+    
+     public void setShares(Share bought)
+    {
+        this.shares.add(bought);
+    }
+    
+    
 }
