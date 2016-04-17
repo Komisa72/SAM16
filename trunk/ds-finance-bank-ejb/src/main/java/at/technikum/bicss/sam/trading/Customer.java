@@ -12,6 +12,7 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.Column;
+import javax.persistence.GenerationType;
 import javax.persistence.JoinColumn;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
@@ -43,7 +44,8 @@ public class Customer implements Serializable {
         return MAX_LENGTH_NAME;
     }
     
-    @Id @GeneratedValue
+    @Id //@GeneratedValue
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
    
     

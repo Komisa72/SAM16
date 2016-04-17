@@ -190,12 +190,12 @@ public class Bank implements BankInterface {
     }
 
     @Override
-    public Depot createDepot(Customer customer) throws DepotCreationFailedException {
+    public Depot createDepot(BigDecimal value, Customer customer) throws DepotCreationFailedException {
 
         Long cID;
         cID = customer.getId();
         
-        Depot depot = new Depot(0, cID);
+        Depot depot = new Depot(value, cID);
         depot.setCustomer(customer);
         customer.setDepot(depot);
                 
@@ -267,6 +267,7 @@ public class Bank implements BankInterface {
      * @param count of shares to be bought
      * @throws StockExchangeUnreachableException
      * @throws BuySharesVolumeException
+     * @throws BuySharesNotEnoughException
      */
     @Override
     public void buy(Customer customer, Share what, int count)
@@ -287,13 +288,24 @@ public class Bank implements BankInterface {
             System.out.println("Bought shares" + buyShares);
             setOverallDepotValues(sum);
 
-            //TODO weil ausgemacht war, dass das Depot erst beim 1. Einkauf 
-            // angelegt wird, prüfen ob nicht null sonst anlegen
+           Share bought = new Share(what.getSymbol(), what.getCompanyName(),
+           count, buyShares);
+           
+           Long fCount;
+           fCount = bought.getFloatCount();
+           BigDecimal myPrice;
+           myPrice = bought.getPrice();
+           
+           BigDecimal buyCount = new BigDecimal(fCount);
+           BigDecimal buyValue;
+           buyValue = buyCount.multiply(myPrice).setScale(2, RoundingMode.HALF_UP);
+           
+            
            Depot sdepot= null;
             if (customer.getDepot()== null) {
                 System.out.println("No customer depot found");
                 try {
-                    sdepot= createDepot(customer);
+                    sdepot= createDepot(buyValue, customer);
                     customer.setDepot(sdepot);
                     System.out.println("Depot was added to customer "+customer.getId()+ "with id:" + customer.getDepot().getId());                 
                  
@@ -303,18 +315,26 @@ public class Bank implements BankInterface {
                       System.out.println("Depot could not be created");
                 }
             } else {
+                
                    sdepot=customer.getDepot();
+                   
+                   BigDecimal currentValue;
+                   BigDecimal valueToSet;
+                   currentValue = sdepot.getValue();
+                   
+                   valueToSet = currentValue.add(buyValue);
+                   sdepot.setValue(valueToSet);
  
             }
 
-           Share bought = new Share(what.getSymbol(), what.getCompanyName(),
-           count, buyShares);
+
            bought.setDepot(sdepot);
            em.persist(bought);
           
            sdepot.setShares(bought);
 
-            
+
+           
 
         } catch (TradingWSException_Exception e) {
             if (e instanceof TradingWSException_Exception) {

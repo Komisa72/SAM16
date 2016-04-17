@@ -66,12 +66,13 @@ public class Depot implements Serializable {
     // TODO AM: depot value is a calculated value from the shareList
     // mark this as @Transient and do not persist in database
     @Column(name = "DEPOT_VALUE")
-    private double value;
+    private BigDecimal value;
 
-    public Depot(double value, Long customerID) {
+    public Depot(BigDecimal value, Long customerID) {
 
         this.value = value;
         this.customerID = customerID;
+        
 
     }
 
@@ -105,7 +106,7 @@ public class Depot implements Serializable {
      *
      * @return
      */
-    public double getValue() {
+    public BigDecimal getValue() {
         return value;
     }
 
@@ -113,7 +114,7 @@ public class Depot implements Serializable {
      *
      * @param value
      */
-    public void setValue(double value) {
+    public void setValue(BigDecimal value) {
         this.value = value;
     }
 
