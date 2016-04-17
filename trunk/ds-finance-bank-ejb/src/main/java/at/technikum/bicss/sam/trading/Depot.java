@@ -30,7 +30,7 @@ import javax.persistence.PrimaryKeyJoinColumn;
 @NamedQueries({
     @NamedQuery(name = "getDepot",
             query = "SELECT SUM(d.value) FROM Depot d"),
-
+    
     @NamedQuery(name = "getDepotById",
             query = "SELECT d FROM Depot d WHERE d.id =:depotId"),
 
@@ -75,7 +75,7 @@ public class Depot implements Serializable {
         
 
     }
-
+    
     public Customer getCustomer() {
         return customer;
     }
@@ -172,6 +172,14 @@ public class Depot implements Serializable {
     {
         this.shares.add(bought);
     }
+     
+     public Long getCustomerID() {
+         return customerID;
+     }
+     
+     public void setCustomerID(Long customerID) {
+         this.customerID = customerID;
+     }
     
     
 }

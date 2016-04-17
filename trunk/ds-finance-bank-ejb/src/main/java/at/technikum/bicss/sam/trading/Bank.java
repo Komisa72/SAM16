@@ -291,6 +291,7 @@ public class Bank implements BankInterface {
            Share bought = new Share(what.getSymbol(), what.getCompanyName(),
            count, buyShares);
            
+           /* Variablen für die Berechnung des Depotwertes */
            Long fCount;
            fCount = bought.getFloatCount();
            BigDecimal myPrice;
@@ -300,12 +301,19 @@ public class Bank implements BankInterface {
            BigDecimal buyValue;
            buyValue = buyCount.multiply(myPrice).setScale(2, RoundingMode.HALF_UP);
            
-            
-           Depot sdepot= null;
+           Depot sdepot = null;
+           
+           Long checkID;
+           checkID = customer.getId();
+           
+           //Long depotCustID;
+           //depotCustID = sdepot.getCustomerID();
+           //if (customer.getDepot()== null);
+           
             if (customer.getDepot()== null) {
                 System.out.println("No customer depot found");
                 try {
-                    sdepot= createDepot(buyValue, customer);
+                    sdepot = createDepot(buyValue, customer);
                     customer.setDepot(sdepot);
                     System.out.println("Depot was added to customer "+customer.getId()+ "with id:" + customer.getDepot().getId());                 
                  
@@ -333,9 +341,6 @@ public class Bank implements BankInterface {
           
            sdepot.setShares(bought);
 
-
-           
-
         } catch (TradingWSException_Exception e) {
             if (e instanceof TradingWSException_Exception) {
                 String detail = e.getMessage();
@@ -350,7 +355,7 @@ public class Bank implements BankInterface {
         }
     }
 
-    /**
+/**
      *
      * @param symbol of shares that are sold
      * @param shares number of shares sold
