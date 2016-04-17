@@ -57,6 +57,8 @@ public class Depot implements Serializable {
     @PrimaryKeyJoinColumn
     private Customer customer;
     
+    private Long customerID;
+    
     @Column(name = "Shares")
     @OneToMany(mappedBy = "depot")
     private List<Share> shares = new ArrayList<>();
@@ -66,9 +68,10 @@ public class Depot implements Serializable {
     @Column(name = "DEPOT_VALUE")
     private double value;
 
-    public Depot(double value) {
+    public Depot(double value, Long customerID) {
 
         this.value = value;
+        this.customerID = customerID;
 
     }
 

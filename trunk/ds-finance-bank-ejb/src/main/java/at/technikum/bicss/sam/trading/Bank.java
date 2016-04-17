@@ -192,10 +192,13 @@ public class Bank implements BankInterface {
     @Override
     public Depot createDepot(Customer customer) throws DepotCreationFailedException {
 
-        Depot depot = new Depot(0);
+        Long cID;
+        cID = customer.getId();
+        
+        Depot depot = new Depot(0, cID);
         depot.setCustomer(customer);
         customer.setDepot(depot);
-        
+                
 
         try {
             em.persist(depot);
