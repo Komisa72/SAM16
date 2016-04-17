@@ -61,7 +61,7 @@ public class Depot implements Serializable {
     
     @Column(name = "Shares")
     @OneToMany(mappedBy = "depot")
-    private List<Share> shares = new ArrayList<>();
+    private List<Share> shares  = new ArrayList<>();
 
     // TODO AM: depot value is a calculated value from the shareList
     // mark this as @Transient and do not persist in database
@@ -76,6 +76,29 @@ public class Depot implements Serializable {
 
     }
     
+    /**
+     * Add a share.
+     *
+     * @param share to be added in list.
+     */
+    public void add(Share share) {
+        if (shares == null)
+        {
+             shares = new ArrayList<>();
+        }
+        shares.add(share);
+        share.setDepot(this);
+    }
+
+    /**
+     * Remove a share.
+     *
+     * @param share to be added in list.
+     */
+    public void remove(Share share) {
+        shares.remove(share);
+    }
+
     public Customer getCustomer() {
         return customer;
     }
@@ -145,13 +168,13 @@ public class Depot implements Serializable {
 
     @Transient
     /* rating must be calculated and not persisted */
-    private double rating;
+    private BigDecimal rating = new BigDecimal(0);
 
     /**
      *
      * @return
      */
-    public double getRating() {
+    public BigDecimal getRating() {
         return rating;
     }
 
@@ -159,19 +182,36 @@ public class Depot implements Serializable {
      *
      * @param rating
      */
-    public void setRating(Long rating) {
+    public void setRating(BigDecimal rating) {
         this.rating = rating;
     }
 
-    public List<Share> getShares()
-    {
+    /**
+     * Getter for share list.
+     * @return the shareList
+     */
+    public List<Share> getShares() {
+        if (shares == null)
+        { 
+            
+            // TODO AM shares nicht bei variable deklaration anglegen,
+            // da Entity von JPA via Depot() konstruiert wird und 
+            // die Shares eigentlich automatisch nachgeladen werden sollten
+            // bei Zugriff
+             //shares = new ArrayList<>();
+        }
         return shares;
     }
-    
-     public void setShares(Share bought)
-    {
-        this.shares.add(bought);
+
+    /**
+     * @param shares the shares to set
+     */
+    public void setShares(List<Share> shares) {
+        this.shares = shares;
     }
+
+
+
      
      public Long getCustomerID() {
          return customerID;

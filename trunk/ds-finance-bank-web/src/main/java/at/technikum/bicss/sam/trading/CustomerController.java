@@ -54,6 +54,7 @@ public class CustomerController {
             bank.createCustomer(customer, password);
            // bank.createDepot(customer);
             model.updateCustomerModel();
+            
         } catch (CustomerCreationFailedException  ex) {
             
             if(ex instanceof CustomerCreationFailedException) {

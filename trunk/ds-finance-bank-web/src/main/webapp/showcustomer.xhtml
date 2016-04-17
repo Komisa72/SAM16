@@ -19,9 +19,10 @@ and open the template in the editor.
         </h:head>
 
         <h:body>
-            <p:dialog header="Buy Share" widgetVar="buyDialog" modal="true" height="100">
+
+            <p:dialog header="Buy Share" id="buyDialogId" widgetVar="buyDialog" modal="true" height="100">
                 <h:form id="buyForm">
-                    <h:outputText value="Amount" />
+                    <h:outputText value="Anzahl Kauf" />
                     <p:inputText value = "#{depotController.buyCount}" id="buyCount" validator ="#{depotController.checkBuyCount}">
                         <f_converter coverterId="Integer"/>
                     </p:inputText>
@@ -32,25 +33,28 @@ and open the template in the editor.
             <p:layout fullPage="true">
                 <ui:include  src="resources/includes/header.xhtml" />
                 <p:layoutUnit position="center">
-                    <h:form id ="custForm">
+                    <h:form id="customerForm">
                         Customer name: #{tradingModel.selectedCustomer.name}
                         <br/>
-                        <p>
-                            <h:outputText value ="Show customer depot:"/>
-                            <p:button id="showDepot" value="Show" rendered = "#{tradingModel.selectedCustomer.getDepot() ne null}" outcome="overview"/>
-                            <br />
-                        </p>
+                        <h:outputText value ="Shares in this depot:"/>
+                        <br />
+
                         <p>
                             <h:outputText value ="Get latest stock quotes:"/>
                             <h:inputText id="txtCompany" value="#{tradingModel.company}"/>
-                            <p:commandButton update="searchList" value="Search" action="#{tradingModel.findShares()}" ajax="true" >
+                            <p:commandButton  value="Search" update=":formFindShare" action="#{tradingModel.findShares()}" ajax="true" >
                             </p:commandButton>
                         </p>
-
-                        <p:dataTable id="searchList" scrollable="true" scrollWidth="100%" value="#{tradingModel.findShares()}" var="share"
+                    </h:form>
+                    <h:form id="formFindShare">
+                        <p:dataTable id="searchList" scrollable="true" scrollWidth="100%" value="#{tradingModel.shareModel}" var="share"
                                      paginator="#{tradingModel.companyPaginator}"
                                      rowKey="#{share.companyName}"
-                                     rows="#{tradingModel.rowCount}"
+                                     selection="#{tradingModel.selectedShare}"
+                                     
+                                     selectionMode="single" 
+                                     
+                                     rows="#{tradingModel.companyRowCount}"
                                      >
                             <p:column style="width:70px;text-align: center">
                                 <p:commandButton oncomplete="PF('buyDialog').show()" ajax = "true" value="buy" title="buy">
@@ -80,7 +84,3 @@ and open the template in the editor.
         </h:body>
     </f:view>
 </html>
-
-
-
-

@@ -43,7 +43,8 @@ public class TradingModel implements Serializable {
     private List<Customer> customerList;
     private DataModel<Customer> customerModel;
     private Customer customer = new Customer();
-    private List<Share> companyShares = new ArrayList<>();
+    private DataModel<Share> companyShareModel;
+    //private List<Share> companyShares = new ArrayList<>();
     private List<Share> depotShares = new ArrayList<>();
     private Depot depot;
     private String searchId;
@@ -102,14 +103,22 @@ public class TradingModel implements Serializable {
     }
 
     /**
-     * Number of rows to be shown in any list.
+     * Number of rows to be shown in company list.
      *
      * @return number of rows to be shown in list.
      */
-    public int getRowCount() {
+    public int getCompanyRowCount() {
         return 10;
     }
 
+    /**
+     * Number of rows to be shown in depot list.
+     *
+     * @return number of rows to be shown in list.
+     */
+    public int getDepotRowCount() {
+        return 10;
+    }
     private Share selectedShare;
 
     /**
@@ -118,10 +127,27 @@ public class TradingModel implements Serializable {
      * @return number of rows to be shown in list.
      */
     public boolean getCompanyPaginator() {
-        return companyShares.size() > getRowCount();
+        if (companyShareModel == null) {
+            return false;
+        }
+        if (((List<Share>) companyShareModel.getWrappedData()) == null) {
+            return false;
+        }
+
+        return ((List<Share>) companyShareModel.getWrappedData()).size()
+                > getCompanyRowCount();
     }
 
-    public List<Share> findShares() throws StockExchangeUnreachableException {
+    /**
+     * Determine if we need a paginator in table.
+     *
+     * @return number of rows to be shown in list.
+     */
+    public boolean getDepotPaginator() {
+        return depotShares.size() > getDepotRowCount();
+    }
+
+    public void findShares() throws StockExchangeUnreachableException {
         System.out.println("in web findShares.");
         boolean search = false;
         if (company != null && !company.trim().isEmpty()) {
@@ -136,7 +162,8 @@ public class TradingModel implements Serializable {
             }
             if (search) {
                 try {
-                    companyShares = bank.findShares(company);
+                    List<Share> companyShares = bank.findShares(company);
+                    companyShareModel.setWrappedData(companyShares);
                     lastTime = new Date();
                     lastCompany = company;
                 } catch (StockExchangeUnreachableException ex) {
@@ -145,9 +172,19 @@ public class TradingModel implements Serializable {
                 }
             }
         } else {
-            companyShares.clear();
+            ((List<Share>) companyShareModel.getWrappedData()).clear();
+
         }
-        return companyShares;
+    }
+
+    public List<Share> listDepotShares() {
+        boolean search = false;
+        if (customer != null && customer.getDepot() != null) {
+            depotShares = customer.getDepot().getShares();
+        } else {
+            depotShares.clear();
+        }
+        return depotShares;
     }
 
     public Depot getDepot() {
@@ -155,7 +192,7 @@ public class TradingModel implements Serializable {
        
         return depot;
     }
-    
+/*    
      public Customer getCustomer() {
 
          setCustomer();
@@ -171,7 +208,7 @@ public class TradingModel implements Serializable {
         }
         customer = depot.getCustomer();
     }
-
+*/
     public Depot getDepotById(Long id) {
         //only for testing
         try {
@@ -191,21 +228,19 @@ public class TradingModel implements Serializable {
     
 
     public List<Share> getDepotShares() {
-        
-        
+
         try {
             depotShares = bank.getDepotShares(depot.getId());
             return depotShares;
         } catch (NumberFormatException e) {
         }
         return null;
-       
+
     }
-    
-    public Depot getDepotByCustomer(Long id)
-    {
-          try {
-            depot = bank.getCustomerDepot(id);
+
+    public Depot getDepotByCustomer() {
+        try {
+            depot = bank.getCustomerDepot(customer.getId());
             return depot;
         } catch (NumberFormatException e) {
         }
@@ -254,8 +289,6 @@ public class TradingModel implements Serializable {
             throw new ValidatorException(new FacesMessage("Customer name is invalid!"));
         }
     }
-
-
 
     /**
      * Get current volume of bank.
@@ -325,6 +358,15 @@ public class TradingModel implements Serializable {
     }
 
     /**
+     * getModel as data model for all the xhtml views.
+     *
+     * @return
+     */
+    public DataModel<Share> getShareModel() {
+        return companyShareModel;
+    }
+
+    /**
      * Init this bean.
      */
     @PostConstruct
@@ -345,8 +387,10 @@ public class TradingModel implements Serializable {
         }
 
         customerList = bank.listCustomer();
-      //  setDepot();
+        companyShareModel = new ListDataModel<>();
+        companyShareModel.setWrappedData(new ArrayList<Share>());
 
+        //  setDepot();
     }
 
 }

@@ -8,16 +8,10 @@ package at.technikum.bicss.sam.trading;
 import javax.ejb.Local;
 import javax.ejb.Stateless;
 
-import net.froihofer.util.jboss.WildflyAuthDBHelper;
-
 import java.io.IOException;
 import java.math.BigDecimal;
-import java.math.MathContext;
-import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
 import javax.persistence.EntityManager;
@@ -178,10 +172,10 @@ public class Bank implements BankInterface {
 
         try {
             // TODO check if addUser is threadsafe
-           // customer.setDepot(null);
-             em.persist(customer);
+            // customer.setDepot(null);
+            em.persist(customer);
             info.getAuthHelper().addUser(customer.getName(), password, customerRoles);
-           
+
         } catch (IOException ex) {
             System.out.println("Could not add customer to password database");
             throw new CustomerCreationFailedException("Could not add customer to password database.", ex);
@@ -194,15 +188,15 @@ public class Bank implements BankInterface {
 
         Long cID;
         cID = customer.getId();
-        
+
         Depot depot = new Depot(value, cID);
         depot.setCustomer(customer);
         customer.setDepot(depot);
-                
 
         try {
             em.persist(depot);
             depot.setCustomer(customer);
+            //em.merge(customer);
             System.out.println("Depot was added. Id: " + depot.getId());
         } catch (Exception ex) {
             System.out.println("Could not add depot");
@@ -220,7 +214,6 @@ public class Bank implements BankInterface {
      * @return list of stock quotes
      * @throws StockExchangeUnreachableException
      */
-    @Override
     public List<PublicStockQuote> getStockQuotes(List<String> symbols)
             throws StockExchangeUnreachableException {
 
@@ -243,7 +236,6 @@ public class Bank implements BankInterface {
      * @return list of stock quote history
      * @throws StockExchangeUnreachableException
      */
-    @Override
     public List<PublicStockQuote> getStockQuoteHistory(String symbol)
             throws StockExchangeUnreachableException {
         List<PublicStockQuote> stockQuoteHistory;
@@ -260,7 +252,7 @@ public class Bank implements BankInterface {
     }
 
     /**
-     * Bury a share from public stock quote.
+     * Buy a share from public stock quote.
      *
      * @param customer for which customer
      * @param what shares to be bought
@@ -288,58 +280,44 @@ public class Bank implements BankInterface {
             System.out.println("Bought shares" + buyShares);
             setOverallDepotValues(sum);
 
-           Share bought = new Share(what.getSymbol(), what.getCompanyName(),
-           count, buyShares);
-           
-           /* Variablen für die Berechnung des Depotwertes */
-           Long fCount;
-           fCount = bought.getFloatCount();
-           BigDecimal myPrice;
-           myPrice = bought.getPrice();
-           
-           BigDecimal buyCount = new BigDecimal(fCount);
-           BigDecimal buyValue;
-           buyValue = buyCount.multiply(myPrice).setScale(2, RoundingMode.HALF_UP);
-           
-           Depot sdepot = null;
-           
-           Long checkID;
-           checkID = customer.getId();
-           
-           //Long depotCustID;
-           //depotCustID = sdepot.getCustomerID();
-           //if (customer.getDepot()== null);
-           
-            if (customer.getDepot()== null) {
+            Share bought = new Share(what.getSymbol(), what.getCompanyName(),
+                    count, buyShares);
+
+            /* Variablen für die Berechnung des Depotwertes */
+            BigDecimal buyCount = new BigDecimal(count);
+            BigDecimal buyValue;
+            buyValue = buyCount.multiply(new BigDecimal(val));
+
+            Depot sdepot = null;
+
+            if (customer.getDepot() == null) {
                 System.out.println("No customer depot found");
                 try {
                     sdepot = createDepot(buyValue, customer);
                     customer.setDepot(sdepot);
-                    System.out.println("Depot was added to customer "+customer.getId()+ "with id:" + customer.getDepot().getId());                 
-                 
-                  
-                  
+                    System.out.println("Depot was added to customer " + customer.getId() + "with id:" + customer.getDepot().getId());
+
                 } catch (DepotCreationFailedException e) {
-                      System.out.println("Depot could not be created");
+                    System.out.println("Depot could not be created");
+                    // TODO AM hier darf es nicht normal weitergehen,
+                    // wenn depot nicht angelegt werden kann braucht man 
+                    // eine Fehlerbehandlung.
                 }
             } else {
-                
-                   sdepot=customer.getDepot();
-                   
-                   BigDecimal currentValue;
-                   BigDecimal valueToSet;
-                   currentValue = sdepot.getValue();
-                   
-                   valueToSet = currentValue.add(buyValue);
-                   sdepot.setValue(valueToSet);
- 
+
+                sdepot = customer.getDepot();
+
+                BigDecimal depotValue = sdepot.getValue();
+                BigDecimal valueToSet;
+                valueToSet = depotValue.add(buyValue);
+                sdepot.setValue(valueToSet);
+                em.merge(sdepot);
             }
 
+            bought.setDepot(sdepot);
+            em.persist(bought);
 
-           bought.setDepot(sdepot);
-           em.persist(bought);
-          
-           sdepot.setShares(bought);
+            sdepot.add(bought);
 
         } catch (TradingWSException_Exception e) {
             if (e instanceof TradingWSException_Exception) {
@@ -355,28 +333,45 @@ public class Bank implements BankInterface {
         }
     }
 
-/**
+    /**
+     * Sell a share to public stock quote.
      *
-     * @param symbol of shares that are sold
-     * @param shares number of shares sold
-     * @return sold shares
+     * @param customer for which customer.
+     * @param what shares to be sold.
+     * @param count of shares to be sold.
      * @throws StockExchangeUnreachableException
+     * @throws SellSharesAmountException
      */
     @Override
-    public BigDecimal sell(String symbol, int shares)
-            throws StockExchangeUnreachableException {
+    public void sell(Customer customer, Share what, int count) throws StockExchangeUnreachableException,
+            SellSharesAmountException {
         BigDecimal sellShares;
+        if (count < 1) {
+            throw new SellSharesAmountException();
+        }
+        if (what.getFloatCount() < count) {
+            throw new SellSharesAmountException();
+        }
 
         try {
-            sellShares = new BigDecimal(proxy.sell(symbol, shares));
-            System.out.println("Sold shares " + sellShares);
+
+            sellShares = new BigDecimal(proxy.sell(what.getSymbol(), count));
+            System.out.println("Sold shares " + count);
+
+            if (count < what.getFloatCount()) {
+                what.setFloatCount(what.getFloatCount() - count);
+                em.merge(what);
+            } else {
+                customer.getDepot().remove(what);
+                em.remove(what);
+                em.merge(customer.getDepot());
+            }
 
             //adapting current investing volume of the bank
             setOverallDepotValues(getOverallDepotValues().subtract(sellShares));
         } catch (TradingWSException_Exception e) {
             throw new StockExchangeUnreachableException(e);
         }
-        return sellShares;
     }
 
     /**

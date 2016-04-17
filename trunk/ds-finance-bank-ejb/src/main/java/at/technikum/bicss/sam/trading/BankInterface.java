@@ -10,7 +10,6 @@ import java.util.List;
 import javax.annotation.security.DeclareRoles;
 import javax.annotation.security.RolesAllowed;
 import javax.ejb.Local;
-import net.froihofer.dsfinance.ws.trading.PublicStockQuote;
 
 /**
  * BankInterface Local Interface consumed by web applicaton.
@@ -31,12 +30,6 @@ public interface BankInterface {
     public List<Share> findShares(String company)
             throws StockExchangeUnreachableException;
 
-    public List<PublicStockQuote> getStockQuotes(List<String> symbols)
-            throws StockExchangeUnreachableException;
-
-    public List<PublicStockQuote> getStockQuoteHistory(String symbol)
-            throws StockExchangeUnreachableException;
-
     /**
      * Buy a share from public stock quote.
      *
@@ -47,10 +40,20 @@ public interface BankInterface {
      * @throws BuySharesVolumeException
      */
     public void buy(Customer customer, Share what, int count)
-            throws StockExchangeUnreachableException, BuySharesVolumeException, BuySharesNotEnoughException;
+            throws StockExchangeUnreachableException, BuySharesVolumeException, 
+            BuySharesNotEnoughException;
 
-    public BigDecimal sell(String symbol, int shares)
-            throws StockExchangeUnreachableException;
+    /**
+     * Sell a share to public stock quote.
+     *
+     * @param customer for which customer.
+     * @param what shares to be sold.
+     * @param count of shares to be sold.
+     * @throws StockExchangeUnreachableException
+     * @throws SellSharesAmountException
+     */
+    public void sell(Customer customer, Share what, int count) throws StockExchangeUnreachableException,
+            SellSharesAmountException;
 
     public Depot createDepot(BigDecimal value, Customer customer)
             throws DepotCreationFailedException;
@@ -97,8 +100,8 @@ public interface BankInterface {
     public BigDecimal getDepotValue();
 
     /**
-     *
-     * @return volume that can be invested currently
+     * Get the current volume of the bank.
+     * @return volume that can be invested currently.
      */
     public BigDecimal volume();
 

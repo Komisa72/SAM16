@@ -44,7 +44,7 @@ public class Customer implements Serializable {
         return MAX_LENGTH_NAME;
     }
     
-    @Id //@GeneratedValue
+    @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
    
