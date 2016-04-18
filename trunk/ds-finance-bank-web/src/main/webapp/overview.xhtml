@@ -67,6 +67,11 @@
                                     <f:convertNumber currencyCode="USD" type="currency" />
                                 </h:outputText>
                             </p:column>
+                             <p:column style="width:32px;text-align: center">
+                                <p:commandButton value="Sell" icon="ui-icon-pencil" title="View">
+                                     <f:setPropertyActionListener value="#{share}" target="#{tradingModel.selectedShare}" />
+                                </p:commandButton>
+                            </p:column>
                         </p:dataTable>                        
                     </p:panel>
                     
