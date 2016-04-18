@@ -373,7 +373,8 @@ public class Bank implements BankInterface {
                 em.merge(what);
             } else {
                 customer.getDepot().getShares().remove(what);
-                em.remove(what);
+                em.remove(em.merge(what));
+              
                 em.merge(customer.getDepot());
             }
 
