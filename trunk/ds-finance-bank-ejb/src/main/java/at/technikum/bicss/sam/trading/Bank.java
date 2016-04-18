@@ -172,7 +172,7 @@ public class Bank implements BankInterface {
 
         try {
             // TODO check if addUser is threadsafe
-            // customer.setDepot(null);
+            //customer.setDepot(null);
             em.persist(customer);
             info.getAuthHelper().addUser(customer.getName(), password, customerRoles);
 
@@ -186,17 +186,18 @@ public class Bank implements BankInterface {
     @Override
     public Depot createDepot(BigDecimal value, Customer customer) throws DepotCreationFailedException {
 
-        Long cID;
-        cID = customer.getId();
-
-        Depot depot = new Depot(value, cID);
+        // TODO AM we get a CUSTOMERID column in database with null values
+        // the foreign key CUSTOMER_FK is setup correctly
+        Depot depot = new Depot();
         depot.setCustomer(customer);
+        depot.setValue(value);
         customer.setDepot(depot);
 
         try {
             em.persist(depot);
             depot.setCustomer(customer);
-            //em.merge(customer);
+            em.merge(customer);
+            em.persist(depot);
             System.out.println("Depot was added. Id: " + depot.getId());
         } catch (Exception ex) {
             System.out.println("Could not add depot");
@@ -266,6 +267,7 @@ public class Bank implements BankInterface {
             throws StockExchangeUnreachableException, BuySharesVolumeException, BuySharesNotEnoughException {
 
         BigDecimal buyShares;
+        boolean created = false;
 
         try {
             double val = proxy.buy(what.getSymbol(), count);
@@ -295,6 +297,8 @@ public class Bank implements BankInterface {
                 try {
                     sdepot = createDepot(buyValue, customer);
                     customer.setDepot(sdepot);
+
+                    created = true;
                     System.out.println("Depot was added to customer " + customer.getId() + "with id:" + customer.getDepot().getId());
 
                 } catch (DepotCreationFailedException e) {
@@ -313,11 +317,17 @@ public class Bank implements BankInterface {
                 sdepot.setValue(valueToSet);
                 em.merge(sdepot);
             }
-
             bought.setDepot(sdepot);
             em.persist(bought);
+            sdepot.getShares().add(bought);
+            //sdepot.add(what);
+            em.persist(bought);
+            if (created) {
+                em.persist(sdepot);
 
-            sdepot.add(bought);
+            } else {
+                em.merge(sdepot);
+            }
 
         } catch (TradingWSException_Exception e) {
             if (e instanceof TradingWSException_Exception) {
@@ -362,7 +372,7 @@ public class Bank implements BankInterface {
                 what.setFloatCount(what.getFloatCount() - count);
                 em.merge(what);
             } else {
-                customer.getDepot().remove(what);
+                customer.getDepot().getShares().remove(what);
                 em.remove(what);
                 em.merge(customer.getDepot());
             }

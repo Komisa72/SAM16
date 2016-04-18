@@ -16,6 +16,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.JoinColumn;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
+import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.PrimaryKeyJoinColumn;
 import javax.persistence.Table;
@@ -49,8 +50,7 @@ public class Customer implements Serializable {
     private Long id;
    
     
-    @OneToOne(optional=true, cascade={CascadeType.MERGE}) 
-    @PrimaryKeyJoinColumn
+    @OneToOne(mappedBy = "customer", optional = true)
     private Depot depot;
     
     // limit lenght of customer name to this size

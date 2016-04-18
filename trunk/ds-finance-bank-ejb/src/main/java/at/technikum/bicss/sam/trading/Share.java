@@ -13,6 +13,7 @@ import javax.persistence.Id;
 import javax.persistence.Column;
 import java.text.SimpleDateFormat;
 import javax.persistence.CascadeType;
+import javax.persistence.FetchType;
 import javax.persistence.IdClass;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
@@ -45,8 +46,8 @@ public class Share implements Serializable {
     // number of shares, maybe also used for showing floats of stock exchange.
     private long floatCount;
     
-    @ManyToOne(optional=false) 
-    @JoinColumn(name="id", nullable=false, updatable=false)
+    @ManyToOne(optional=false, fetch = FetchType.EAGER) 
+    @JoinColumn(name="DEPOT_FK", updatable=false)
     private Depot depot;
    
     public Share() {

@@ -44,7 +44,6 @@ public class TradingModel implements Serializable {
     private DataModel<Customer> customerModel;
     private Customer customer = new Customer();
     private DataModel<Share> companyShareModel;
-    //private List<Share> companyShares = new ArrayList<>();
     private List<Share> depotShares = new ArrayList<>();
     private Depot depot;
     private String searchId;
@@ -189,10 +188,10 @@ public class TradingModel implements Serializable {
 
     public Depot getDepot() {
 
-       
         return depot;
     }
-/*    
+
+    /*    
      public Customer getCustomer() {
 
          setCustomer();
@@ -208,7 +207,7 @@ public class TradingModel implements Serializable {
         }
         customer = depot.getCustomer();
     }
-*/
+     */
     public Depot getDepotById(Long id) {
         //only for testing
         try {
@@ -224,17 +223,11 @@ public class TradingModel implements Serializable {
         return depotShares;
 
     }
-    
-    
 
     public List<Share> getDepotShares() {
 
-        try {
-            depotShares = bank.getDepotShares(depot.getId());
-            return depotShares;
-        } catch (NumberFormatException e) {
-        }
-        return null;
+        depotShares = bank.getDepotShares(depot.getId());
+        return depotShares;
 
     }
 
@@ -247,7 +240,6 @@ public class TradingModel implements Serializable {
         return null;
     }
 
-   
     public String getSearchId() {
         return searchId;
     }
@@ -323,8 +315,7 @@ public class TradingModel implements Serializable {
      * @return
      */
     public Customer getSelectedCustomer() {
-        if(customer.getDepot()!=null)
-        {
+        if (customer.getDepot() != null) {
             depot = customer.getDepot();
         }
         return customer;

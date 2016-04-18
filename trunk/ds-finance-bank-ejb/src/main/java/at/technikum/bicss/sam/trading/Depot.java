@@ -16,6 +16,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Transient;
 import javax.persistence.Column;
+import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
@@ -46,59 +47,25 @@ public class Depot implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
-    public Depot() {
-    }
-
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
-    @OneToOne(optional=true, cascade={CascadeType.MERGE}) 
-    @PrimaryKeyJoinColumn
+    @OneToOne() 
+    @JoinColumn(name="CUSTOMER_FK", updatable=false)
     private Customer customer;
     
-    private Long customerID;
-    
     @Column(name = "Shares")
-    @OneToMany(mappedBy = "depot")
+    @OneToMany(mappedBy = "depot", fetch = FetchType.EAGER)
     private List<Share> shares  = new ArrayList<>();
 
-    // TODO AM: depot value is a calculated value from the shareList
-    // mark this as @Transient and do not persist in database
+    // TODO depot value could be calculated from the shares
     @Column(name = "DEPOT_VALUE")
     private BigDecimal value;
 
-    public Depot(BigDecimal value, Long customerID) {
-
-        this.value = value;
-        this.customerID = customerID;
-        
-
+    public Depot() {
     }
     
-    /**
-     * Add a share.
-     *
-     * @param share to be added in list.
-     */
-    public void add(Share share) {
-        if (shares == null)
-        {
-             shares = new ArrayList<>();
-        }
-        shares.add(share);
-        share.setDepot(this);
-    }
-
-    /**
-     * Remove a share.
-     *
-     * @param share to be added in list.
-     */
-    public void remove(Share share) {
-        shares.remove(share);
-    }
-
     public Customer getCustomer() {
         return customer;
     }
@@ -107,19 +74,20 @@ public class Depot implements Serializable {
         this.customer = customer;
     }
 
+    
     /**
      *
-     * Getter & Setter Methods
+     * Getter id.
      *
-     * @return
+     * @return id of depot.
      */
     public Long getId() {
         return id;
     }
 
     /**
-     *
-     * @param id
+     * Setter for id.
+     * @param id of depot.
      */
     public void setId(Long id) {
         this.id = id;
@@ -188,18 +156,9 @@ public class Depot implements Serializable {
 
     /**
      * Getter for share list.
-     * @return the shareList
+     * @return the shares
      */
     public List<Share> getShares() {
-        if (shares == null)
-        { 
-            
-            // TODO AM shares nicht bei variable deklaration anglegen,
-            // da Entity von JPA via Depot() konstruiert wird und 
-            // die Shares eigentlich automatisch nachgeladen werden sollten
-            // bei Zugriff
-             //shares = new ArrayList<>();
-        }
         return shares;
     }
 
@@ -210,16 +169,4 @@ public class Depot implements Serializable {
         this.shares = shares;
     }
 
-
-
-     
-     public Long getCustomerID() {
-         return customerID;
-     }
-     
-     public void setCustomerID(Long customerID) {
-         this.customerID = customerID;
-     }
-    
-    
 }
