@@ -27,7 +27,7 @@
 
         <p:layout fullPage="true">
             <ui:include  src="resources/includes/header.xhtml" />
-            <p:layoutUnit position="center">
+            <p:layoutUnit position="center" resizable="true">
                 <h:form>
 
                     <p:panel header="Enter depot id:" rendered="#{tradingModel.selectedCustomer eq null}">
@@ -61,36 +61,35 @@
 
                     <p:panel header="Current shares:" >
 
-
+                        <h:panelGrid id="panel2" columns="5" columnClasses="table-odd-col, table-even-col" width="100%" border="0" cellpadding="0" cellspacing="">
                         <p:dataTable id="datalist" rendered = "#{tradingModel.selectedCustomer.getDepot() ne null}" scrollable="true" scrollWidth="100%" value="#{tradingModel.selectedCustomer.getDepot().getShares()}" var="share"
                                      paginator="#{tradingModel.companyPaginator}"
                                      rowKey="#{share.companyName}"
                                      selection="#{tradingModel.selectedShare}"
-                                     
                                      selectionMode="single" 
-                                     
                                      rows="#{tradingModel.companyRowCount}"
                                      >
-                            <p:column headerText="Company">
+                            <p:column style="width:18%" headerText="Company">
                                 <h:outputText value="#{share.companyName}"/>
                             </p:column>
-                            <p:column headerText ="Share count">
+                            <p:column style="width:18%" headerText ="Share count">
                                 <h:outputText value="#{share.floatCount}"/>
                             </p:column>
-                            <p:column headerText = "Symbol">
+                            <p:column style="width:18%" headerText = "Symbol">
                                 <h:outputText value="#{share.symbol}"/>
                             </p:column>
-                            <p:column headerText = "Last trading price">
+                            <p:column style="width:18%" headerText = "Last trading price">
                                 <h:outputText value="#{share.price}">
                                     <f:convertNumber currencyCode="USD" type="currency" />
                                 </h:outputText>
                             </p:column>
                             <p:column style="width:32px;text-align: center">
-                                <p:commandButton value="Sell" title="sell selected shares" oncomplete="PF('sellDialog').show()">
+                                <p:commandButton value="Sell" title="Sell selected shares" oncomplete="PF('sellDialog').show()">
                                     <f:setPropertyActionListener value="#{share}" target="#{tradingModel.selectedShare}" />
                                 </p:commandButton>
                             </p:column>
-                        </p:dataTable>                        
+                        </p:dataTable>  
+                        </h:panelGrid>     
                     </p:panel>
 
                 </h:form>

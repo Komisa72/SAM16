@@ -57,7 +57,7 @@ and open the template in the editor.
                                      rows="#{tradingModel.companyRowCount}"
                                      >
                             <p:column style="width:70px;text-align: center">
-                                <p:commandButton oncomplete="PF('buyDialog').show()" ajax = "true" value="buy" title="buy">
+                                <p:commandButton oncomplete="PF('buyDialog').show()" ajax = "true" value="buy" title="Buy selected shares">
                                     <f:setPropertyActionListener value="#{share}" target="#{tradingModel.selectedShare}" />
                                 </p:commandButton>
                             </p:column>
