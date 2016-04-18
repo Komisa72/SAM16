@@ -22,7 +22,7 @@ and open the template in the editor.
 
             <p:dialog header="Buy Share" id="buyDialogId" widgetVar="buyDialog" modal="true" height="100">
                 <h:form id="buyForm">
-                    <h:outputText value="Anzahl Kauf" />
+                    <h:outputText value="Amount:" />
                     <p:inputText value = "#{depotController.buyCount}" id="buyCount" validator ="#{depotController.checkBuyCount}">
                         <f_converter coverterId="Integer"/>
                     </p:inputText>
