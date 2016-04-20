@@ -37,9 +37,7 @@ and open the template in the editor.
                     <h:form id="customerForm">
                         Customer name: #{tradingModel.selectedCustomer.name}
                         <br/>
-                        <h:outputText value ="Shares in this depot:"/>
-                        <br />
-                        <h:button rendered="#{tradingModel.selectedCustomer ne null}" value="Show Depot"  outcome="overview" />
+                        <p:link rendered="#{tradingModel.selectedCustomer ne null}" value="Show Depot"  outcome="overview" />
                         <p>
                             <h:outputText value ="Get latest stock quotes:"/>
                             <h:inputText id="txtCompany" value="#{tradingModel.company}"/>
