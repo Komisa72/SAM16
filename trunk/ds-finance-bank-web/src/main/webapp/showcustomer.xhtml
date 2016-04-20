@@ -33,6 +33,7 @@ and open the template in the editor.
             <p:layout fullPage="true">
                 <ui:include  src="resources/includes/header.xhtml" />
                 <p:layoutUnit position="center">
+                    <p:link rendered="#{tradingModel.role.bank}" value = "Back" outcome="bankBack"/>
                     <h:form id="customerForm">
                         Customer name: #{tradingModel.selectedCustomer.name}
                         <br/>
@@ -51,9 +52,9 @@ and open the template in the editor.
                                      paginator="#{tradingModel.companyPaginator}"
                                      rowKey="#{share.companyName}"
                                      selection="#{tradingModel.selectedShare}"
-                                     
+
                                      selectionMode="single" 
-                                     
+
                                      rows="#{tradingModel.companyRowCount}"
                                      >
                             <p:column style="width:70px;text-align: center">
@@ -79,6 +80,7 @@ and open the template in the editor.
                         </p:dataTable>
 
                     </h:form>
+
                 </p:layoutUnit>
             </p:layout>
         </h:body>

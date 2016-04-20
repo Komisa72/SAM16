@@ -26,6 +26,14 @@
             <to-view-id>showcustomer.xhtml</to-view-id>
         </navigation-case>
     </navigation-rule>
+    <navigation-rule>
+        <from-view-id>showcustomer.xhtml</from-view-id>
+        <navigation-case>
+            <from-outcome>bankBack</from-outcome>
+            <to-view-id>/bank/createcustomer.xhtml</to-view-id>
+            <redirect/>
+        </navigation-case>
+    </navigation-rule>
     <servlet-mapping>
         <servlet-name>Faces Servlet</servlet-name>
         <url-pattern>*.xhtml</url-pattern>
