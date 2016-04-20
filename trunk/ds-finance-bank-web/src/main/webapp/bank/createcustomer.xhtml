@@ -43,7 +43,7 @@
                                 <h:outputText value="#{customer.depot.id}" />
                             </p:column>
                             <p:column style="width:32px;text-align: center">
-                                <p:commandButton action="#{customerController.showCustomer()}" value="Buy" icon="ui-icon-pencil" title="View">
+                                <p:commandButton action="#{customerController.showCustomer()}" value="Open" icon="ui-icon-pencil" title="View">
                                      <f:setPropertyActionListener value="#{customer}" target="#{tradingModel.selectedCustomer}" />
                                 </p:commandButton>
                             </p:column>

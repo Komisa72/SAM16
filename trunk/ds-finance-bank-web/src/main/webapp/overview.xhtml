@@ -12,28 +12,40 @@
             <meta content='text/html; charset=UTF-8' http-equiv="Content-Type"/>
         </f:facet>
     </h:head>
+
     <h:body>
+        <p:dialog header="Sell Share" id="sellDialog" widgetVar="sellDialog" modal="true" height="100">
+            <h:form id="sellForm">
+                <h:outputText value="Amount:" />
+                <p:inputText value = "#{depotController.sellCount}" id="sellCount" validator ="#{depotController.checkSellCount}">
+                    <f_converter coverterId="Integer"/>
+                </p:inputText>
+                <p:commandButton ajax="true" value = "sell from depot" action="#{depotController.sellShare()}" title="sell from depot" oncomplete="PF('sellDialog').hide()">
+                </p:commandButton>
+            </h:form>
+        </p:dialog>
+
         <p:layout fullPage="true">
             <ui:include  src="resources/includes/header.xhtml" />
-            <p:layoutUnit position="center">
+            <p:layoutUnit position="center" resizable="true">
                 <h:form>
-                    
+
                     <p:panel header="Enter depot id:" rendered="#{tradingModel.selectedCustomer eq null}">
-                          <h:inputText id="txtSearchId" value="#{tradingModel.searchId}" rendered="#{tradingModel.selectedCustomer eq null}"/>
-                          <br></br>
-                           <h:outputText rendered="#{tradingModel.getDepotById(tradingModel.selectedCustomer.getDepot().id) eq null}" value ="No depot found with entered ID" />
-                     </p:panel>
-                    
+                        <h:inputText id="txtSearchId" value="#{tradingModel.searchId}" rendered="#{tradingModel.selectedCustomer eq null}"/>
+                        <br></br>
+                        <h:outputText rendered="#{tradingModel.getDepotById(tradingModel.selectedCustomer.getDepot().id) eq null}" value ="No depot found with entered ID" />
+                    </p:panel>
+
                     <h:panelGrid id="panel" columns="2" columnClasses="table-odd-col, table-even-col" width="500" border="0" cellpadding="0" cellspacing="">
                         <h:panelGroup style="text-align:left" >
-                           
+
                             <h:outputLabel for="value" rendered="#{tradingModel.selectedCustomer.getDepot().id ne null}" value="Value: " />
                             <h:outputText id="value" rendered="#{tradingModel.selectedCustomer.getDepot().id ne null}" value="#{tradingModel.selectedCustomer.getDepot().value}" />
                             <br/>
                             <h:outputLabel for="rating" rendered="#{tradingModel.selectedCustomer.getDepot().id ne null}" value="Rating: " />
                             <h:outputText id="rating" rendered="#{tradingModel.selectedCustomer.getDepot().id ne null}" value="#{tradingModel.selectedCustomer.getDepot().rating}" />
                         </h:panelGroup>
-                      
+
                         <h:panelGroup style="text-align:right">
                             <h:outputLabel for="customer" rendered="#{tradingModel.selectedCustomer ne null}" value="Customer: " />
                             <h:outputText id="customer" rendered="#{tradingModel.selectedCustomer ne null}" value="#{tradingModel.selectedCustomer.name}" />
@@ -42,34 +54,44 @@
                             <h:outputText id="depotId" rendered="#{tradingModel.selectedCustomer.getDepot().id ne null}" value="#{tradingModel.selectedCustomer.getDepot().id}" />
                             <br/>
                         </h:panelGroup>
-                       
+
                     </h:panelGrid>
-                     
+
+
 
                     <p:panel header="Current shares:" >
-                       
+
+                        <h:panelGrid id="panel2" columns="5" columnClasses="table-odd-col, table-even-col" width="100%" border="0" cellpadding="0" cellspacing="">
                         <p:dataTable id="datalist" rendered = "#{tradingModel.selectedCustomer.getDepot() ne null}" scrollable="true" scrollWidth="100%" value="#{tradingModel.selectedCustomer.getDepot().getShares()}" var="share"
-                                     paginator="false"
+                                     paginator="#{tradingModel.companyPaginator}"
                                      rowKey="#{share.companyName}"
-                                     rows="20"
+                                     selection="#{tradingModel.selectedShare}"
+                                     selectionMode="single" 
+                                     rows="#{tradingModel.companyRowCount}"
                                      >
-                            <p:column headerText="Company">
+                            <p:column style="width:18%" headerText="Company">
                                 <h:outputText value="#{share.companyName}"/>
                             </p:column>
-                            <p:column headerText ="Float Shares">
+                            <p:column style="width:18%" headerText ="Share count">
                                 <h:outputText value="#{share.floatCount}"/>
                             </p:column>
-                            <p:column headerText = "Symbol">
+                            <p:column style="width:18%" headerText = "Symbol">
                                 <h:outputText value="#{share.symbol}"/>
                             </p:column>
-                            <p:column headerText = "Last trading price">
+                            <p:column style="width:18%" headerText = "Last trading price">
                                 <h:outputText value="#{share.price}">
                                     <f:convertNumber currencyCode="USD" type="currency" />
                                 </h:outputText>
                             </p:column>
-                        </p:dataTable>                        
+                            <p:column style="width:32px;text-align: center">
+                                <p:commandButton value="Sell" title="Sell selected shares" oncomplete="PF('sellDialog').show()">
+                                    <f:setPropertyActionListener value="#{share}" target="#{tradingModel.selectedShare}" />
+                                </p:commandButton>
+                            </p:column>
+                        </p:dataTable>  
+                        </h:panelGrid>     
                     </p:panel>
-                    
+
                 </h:form>
             </p:layoutUnit>
         </p:layout>

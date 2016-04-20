@@ -22,7 +22,7 @@ and open the template in the editor.
 
             <p:dialog header="Buy Share" id="buyDialogId" widgetVar="buyDialog" modal="true" height="100">
                 <h:form id="buyForm">
-                    <h:outputText value="Anzahl Kauf" />
+                    <h:outputText value="Amount:" />
                     <p:inputText value = "#{depotController.buyCount}" id="buyCount" validator ="#{depotController.checkBuyCount}">
                         <f_converter coverterId="Integer"/>
                     </p:inputText>
@@ -39,7 +39,7 @@ and open the template in the editor.
                         <br/>
                         <h:outputText value ="Shares in this depot:"/>
                         <br />
-
+                        <h:button rendered="#{tradingModel.selectedCustomer ne null}" value="Show Depot"  outcome="overview" />
                         <p>
                             <h:outputText value ="Get latest stock quotes:"/>
                             <h:inputText id="txtCompany" value="#{tradingModel.company}"/>
@@ -58,7 +58,7 @@ and open the template in the editor.
                                      rows="#{tradingModel.companyRowCount}"
                                      >
                             <p:column style="width:70px;text-align: center">
-                                <p:commandButton oncomplete="PF('buyDialog').show()" ajax = "true" value="buy" title="buy">
+                                <p:commandButton oncomplete="PF('buyDialog').show()" ajax = "true" value="buy" title="Buy selected shares">
                                     <f:setPropertyActionListener value="#{share}" target="#{tradingModel.selectedShare}" />
                                 </p:commandButton>
                             </p:column>

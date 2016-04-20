@@ -56,7 +56,7 @@ public class Depot implements Serializable {
     private Customer customer;
     
     @Column(name = "Shares")
-    @OneToMany(mappedBy = "depot", fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "depot", fetch = FetchType.EAGER, orphanRemoval=true)
     private List<Share> shares  = new ArrayList<>();
 
     // TODO depot value could be calculated from the shares
