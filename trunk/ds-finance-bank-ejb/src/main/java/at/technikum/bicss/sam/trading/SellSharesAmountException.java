@@ -6,7 +6,7 @@
 package at.technikum.bicss.sam.trading;
 
 /**
- *
+ * SellSharesAmountException thron on sell when underflow or nothing to sell.
  */
 public class SellSharesAmountException extends TradingServiceException {
     

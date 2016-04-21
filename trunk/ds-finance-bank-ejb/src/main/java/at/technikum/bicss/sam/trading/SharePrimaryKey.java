@@ -9,7 +9,7 @@ import java.io.Serializable;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 
 /**
- *
+ * Class representing the combined key of share {symbol, time}
  */
 public class SharePrimaryKey implements Serializable {
 
@@ -35,13 +35,24 @@ public class SharePrimaryKey implements Serializable {
         this.time = time;
     }
 
+    /**
+     * hashCode used by persistenc framework.
+     * @return the hashcode of this key. 
+     */
+    @Override
     public int hashCode() {
+        // HashCodeBuilder enables a good hashCode for this class.
         return new HashCodeBuilder(17, 31). // two randomly chosen prime numbers
                 append(symbol).
                 append(time).
                 toHashCode();
     }
 
+    /**
+     * equals used by persistance framework.
+     * @obj object to be compared to this.
+    */
+    @Override
     public boolean equals(Object obj) {
         if (obj == this) {
             return true;
@@ -53,6 +64,7 @@ public class SharePrimaryKey implements Serializable {
             return false;
         }
         SharePrimaryKey pk = (SharePrimaryKey) obj;
+        // both time and symbols build the primary key
         return pk.time.equals(time) && pk.symbol.equals(symbol);
     }
 }

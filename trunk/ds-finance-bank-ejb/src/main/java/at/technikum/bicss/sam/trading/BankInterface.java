@@ -38,6 +38,7 @@ public interface BankInterface {
      * @param count of shares to be bought
      * @throws StockExchangeUnreachableException
      * @throws BuySharesVolumeException
+     * @throws at.technikum.bicss.sam.trading.BuySharesNotEnoughException
      */
     public void buy(Customer customer, Share what, int count)
             throws StockExchangeUnreachableException, BuySharesVolumeException, 
@@ -55,6 +56,13 @@ public interface BankInterface {
     public void sell(Customer customer, Share what, int count) throws StockExchangeUnreachableException,
             SellSharesAmountException;
 
+    /**
+     * createDepot for the given customer.
+     * @param value
+     * @param customer
+     * @return
+     * @throws DepotCreationFailedException 
+     */
     public Depot createDepot(BigDecimal value, Customer customer)
             throws DepotCreationFailedException;
 

@@ -9,7 +9,6 @@ import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
-import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -22,16 +21,15 @@ import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
-import javax.persistence.PrimaryKeyJoinColumn;
 
 /**
- *
+ * Depot related to one customer. Contains all the bought shares.
  */
 @Entity
 @NamedQueries({
     @NamedQuery(name = "getDepot",
             query = "SELECT SUM(d.value) FROM Depot d"),
-    
+
     @NamedQuery(name = "getDepotById",
             query = "SELECT d FROM Depot d WHERE d.id =:depotId"),
 
@@ -42,7 +40,6 @@ import javax.persistence.PrimaryKeyJoinColumn;
             query = "SELECT d FROM Depot d WHERE d.customer.id =:customerId")
 
 })
-
 public class Depot implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -51,32 +48,41 @@ public class Depot implements Serializable {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
-    @OneToOne() 
-    @JoinColumn(name="CUSTOMER_FK", updatable=false)
+    @OneToOne()
+    @JoinColumn(name = "CUSTOMER_FK", updatable = false)
     private Customer customer;
-    
+
     @Column(name = "Shares")
-    @OneToMany(mappedBy = "depot", fetch = FetchType.EAGER, orphanRemoval=true)
-    private List<Share> shares  = new ArrayList<>();
+    @OneToMany(mappedBy = "depot", fetch = FetchType.EAGER, orphanRemoval = true)
+    private List<Share> shares = new ArrayList<>();
 
     // TODO depot value could be calculated from the shares
     @Column(name = "DEPOT_VALUE")
     private BigDecimal value;
 
-    public Depot() {
-    }
-    
+    @Transient
+    /* rating must be calculated and not persisted */
+    private BigDecimal rating = new BigDecimal(0);
+
+    /**
+     * Getter of customer.
+     *
+     * @return the customer assigned to this depot.
+     */
     public Customer getCustomer() {
         return customer;
     }
 
+    /**
+     * Setter of customer.
+     *
+     * @param customer set the customer assigned to this depot.
+     */
     public void setCustomer(Customer customer) {
         this.customer = customer;
     }
 
-    
     /**
-     *
      * Getter id.
      *
      * @return id of depot.
@@ -87,6 +93,7 @@ public class Depot implements Serializable {
 
     /**
      * Setter for id.
+     *
      * @param id of depot.
      */
     public void setId(Long id) {
@@ -94,21 +101,26 @@ public class Depot implements Serializable {
     }
 
     /**
-     *
-     * @return
+     * Getter for value.
+     * @return value of depot.
      */
     public BigDecimal getValue() {
         return value;
     }
 
     /**
+     * Setter for value.
      *
-     * @param value
+     * @param value of depot.
      */
     public void setValue(BigDecimal value) {
         this.value = value;
     }
 
+    /**
+     * hashCode of this instance, maybe used by persistence framework.
+     * @return 
+     */
     @Override
     public int hashCode() {
         int hash = 0;
@@ -134,10 +146,6 @@ public class Depot implements Serializable {
         return "at.technikum.bicss.sam.trading.Depot[ id=" + id + " ]";
     }
 
-    @Transient
-    /* rating must be calculated and not persisted */
-    private BigDecimal rating = new BigDecimal(0);
-
     /**
      *
      * @return
@@ -156,13 +164,16 @@ public class Depot implements Serializable {
 
     /**
      * Getter for share list.
-     * @return the shares
+     *
+     * @return the shares.
      */
     public List<Share> getShares() {
         return shares;
     }
 
     /**
+     * Setter for share list.
+     *
      * @param shares the shares to set
      */
     public void setShares(List<Share> shares) {

@@ -191,23 +191,6 @@ public class TradingModel implements Serializable {
         return depot;
     }
 
-    /*    
-     public Customer getCustomer() {
-
-         setCustomer();
-        return customer;
-    }
-
-
-    private void setCustomer()
-    {
-         if(depot.getCustomer()!=null)
-        {
-            customer = depot.getCustomer();
-        }
-        customer = depot.getCustomer();
-    }
-     */
     public Depot getDepotById(Long id) {
         //only for testing
         try {
@@ -381,7 +364,6 @@ public class TradingModel implements Serializable {
         companyShareModel = new ListDataModel<>();
         companyShareModel.setWrappedData(new ArrayList<Share>());
 
-        //  setDepot();
     }
 
 }

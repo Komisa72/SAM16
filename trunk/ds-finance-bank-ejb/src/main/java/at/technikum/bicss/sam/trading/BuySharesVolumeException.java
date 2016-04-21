@@ -6,11 +6,13 @@
 package at.technikum.bicss.sam.trading;
 
 /**
- *
- * @author Claudia
+ * BuySharesVolumeException thrown when bank volume would be exceeded on buy.
  */
 public class BuySharesVolumeException extends TradingServiceException {
     
+    /**
+     * Constructor.
+     */
     public BuySharesVolumeException() {
         super("Could not buy shares, because volume would exceed allowed value.");
     }

@@ -6,7 +6,7 @@
 package at.technikum.bicss.sam.trading;
 
 /**
- *
+ * BuySharesNotEnoughException thrown if too less shares available for this buy.
  */
 public class BuySharesNotEnoughException extends TradingServiceException {
     

@@ -7,7 +7,7 @@ package at.technikum.bicss.sam.trading;
 
 /**
  *
- * @author amaierhofer
+ *  CustomerCreationFailedException thrown on customer creation failure.
  */
 public class CustomerCreationFailedException extends TradingServiceException {
 

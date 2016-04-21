@@ -6,8 +6,7 @@
 package at.technikum.bicss.sam.trading;
 
 /**
- *
- * @author amaierhofer
+ *  DepotCreationFailedException thrown on depot creation failure.
  */
 public class DepotCreationFailedException extends TradingServiceException {
 

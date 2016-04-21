@@ -20,7 +20,6 @@ import javax.persistence.ManyToOne;
 
 /**
  *
- * @author cbaierl
  */
 @Entity
 @IdClass(SharePrimaryKey.class)
@@ -42,14 +41,16 @@ public class Share implements Serializable {
     @Column(name = "BUY_TIME")
     private String time;
 
-  
     // number of shares, maybe also used for showing floats of stock exchange.
     private long floatCount;
-    
-    @ManyToOne(optional=false, fetch = FetchType.EAGER) 
-    @JoinColumn(name="DEPOT_FK", updatable=false)
+
+    @ManyToOne(optional = false, fetch = FetchType.EAGER)
+    @JoinColumn(name = "DEPOT_FK", updatable = false)
     private Depot depot;
-   
+
+    /**
+     * Default constructor needed by persistance framework.
+     */
     public Share() {
     }
 
@@ -73,20 +74,16 @@ public class Share implements Serializable {
                 new Timestamp(System.currentTimeMillis()));
     }
 
-    /*
-     * 
-     * Getter & Setter Methods 
-     */
     /**
-     *
-     * @return
+     * Getter for symbol.
+     * @return symbol.
      */
     public String getSymbol() {
         return symbol;
     }
 
     /**
-     *
+     * Setter for symbol.
      * @param symbol
      */
     public void setSymbol(String symbol) {
@@ -134,7 +131,7 @@ public class Share implements Serializable {
     /**
      * Getter of company name.
      *
-     * @return the companyName
+     * @return the companyName.
      */
     public String getCompanyName() {
         return companyName;
@@ -143,7 +140,7 @@ public class Share implements Serializable {
     /**
      * Setter of company name.
      *
-     * @param companyName the companyName to set
+     * @param companyName the companyName to set.
      */
     public void setCompanyName(String companyName) {
         this.companyName = companyName;
@@ -166,15 +163,13 @@ public class Share implements Serializable {
     public void setFloatCount(long floatCount) {
         this.floatCount = floatCount;
     }
-    
-   public Depot getDepot()
-   {
-      return depot;
-   }
-   public void setDepot(Depot depot)
-   {
-      this.depot = depot;
-   }
 
- 
+    public Depot getDepot() {
+        return depot;
+    }
+
+    public void setDepot(Depot depot) {
+        this.depot = depot;
+    }
+
 }

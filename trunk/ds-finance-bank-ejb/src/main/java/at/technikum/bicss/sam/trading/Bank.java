@@ -35,10 +35,11 @@ public class Bank implements BankInterface {
 
     @PersistenceContext
     private EntityManager em;
+    
     @EJB
     private StartupTradingService info;
 
-    // 1 Mrd. US dollar, limit to be checked against when a share is bought
+    // 1 Mrd. US dollar, initial limit to be checked against when a share is bought
     private final static BigDecimal MAX_VOLUME = new BigDecimal("1E9");
 
     @WebServiceRef(name = "TradingWebServiceService")
@@ -48,13 +49,6 @@ public class Bank implements BankInterface {
     //get current total value of depots
     //public double currentValue = getDepotValue();
     private BigDecimal currentValue = new BigDecimal("2449010.20149");
-
-    /**
-     * Constructor.
-     */
-    public Bank() {
-
-    }
 
     /**
      * Retrieves all the Customer
@@ -99,7 +93,7 @@ public class Bank implements BankInterface {
      * getCustomer retrieves the customer with the given name.
      *
      * @param name of the customer.
-     * @return the found customer.
+     * @return the found customer or null.
      */
     @Override
     public Customer getCustomer(String name) {
@@ -119,7 +113,6 @@ public class Bank implements BankInterface {
      * @return the found depot.
      */
     @Override
-
     public Depot getDepot(Long id) {
         Query query = em.createNamedQuery("getDepotById");
         try {
@@ -172,7 +165,6 @@ public class Bank implements BankInterface {
 
         try {
             // TODO check if addUser is threadsafe
-            //customer.setDepot(null);
             em.persist(customer);
             info.getAuthHelper().addUser(customer.getName(), password, customerRoles);
 
@@ -186,8 +178,6 @@ public class Bank implements BankInterface {
     @Override
     public Depot createDepot(BigDecimal value, Customer customer) throws DepotCreationFailedException {
 
-        // TODO AM we get a CUSTOMERID column in database with null values
-        // the foreign key CUSTOMER_FK is setup correctly
         Depot depot = new Depot();
         depot.setCustomer(customer);
         depot.setValue(value);
