@@ -20,7 +20,7 @@
                 <p:inputText value = "#{depotController.sellCount}" id="sellCount" validator ="#{depotController.checkSellCount}">
                     <f_converter coverterId="Integer"/>
                 </p:inputText>
-                <p:commandButton ajax="true" value = "sell from depot" action="#{depotController.sellShare()}" title="sell from depot" oncomplete="PF('sellDialog').hide()">
+                <p:commandButton ajax="true" update=":overviewCustomer" value = "sell from depot" action="#{depotController.sellShare()}" title="sell from depot" oncomplete="PF('sellDialog').hide()">
                 </p:commandButton>
             </h:form>
         </p:dialog>
@@ -30,7 +30,7 @@
             <p:layoutUnit position="center" resizable="true">
                 <p:link rendered="#{tradingModel.role.bank}" value = "Back" outcome="bankBack"/>
                 <p:link rendered="#{tradingModel.role.bank == false}" value = "Back" outcome="customerBack"/>
-                <h:form>
+                <h:form id="overviewCustomer">
 
                     <p:panel header="Enter depot id:" rendered="#{tradingModel.selectedCustomer eq null}">
                         <h:inputText id="txtSearchId" value="#{tradingModel.searchId}" rendered="#{tradingModel.selectedCustomer eq null}"/>
@@ -66,7 +66,7 @@
 
 
 
-                    <p:panel header="Current shares:" >
+                    <p:panel id="currentShares" header="Current shares:" >
 
                         <h:panelGrid id="panel2" columns="5" columnClasses="table-odd-col, table-even-col" width="100%" border="0" cellpadding="0" cellspacing="">
                             <p:dataTable id="datalist" rendered = "#{tradingModel.selectedCustomer.getDepot() ne null}" scrollable="true" scrollWidth="100%" value="#{tradingModel.selectedCustomer.getDepot().getShares()}" var="share"
