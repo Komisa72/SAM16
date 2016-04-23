@@ -35,7 +35,7 @@
                         <p:messages id="messages" showDetail="true" autoUpdate="true" />
                             <h:outputText value="Customer name" />
                             <p:inputText id="customerNameSearch" />                       
-                        <p:commandButton update=":customerList:customerTable" value="Search" actionListener="#{tradingModel.setCustomerList(param['searchUserForm:customerName'])}"/>
+                        <p:commandButton update=":customerList:customerTable" value="Search" actionListener="#{tradingModel.setCustomerList(param['searchUserForm:customerNameSearch'])}"/>
                     </h:form>
                     <p:spacer width="10" height="10" />
                     <h:form id="customerList" rendered="#{not empty tradingModel.model}">
