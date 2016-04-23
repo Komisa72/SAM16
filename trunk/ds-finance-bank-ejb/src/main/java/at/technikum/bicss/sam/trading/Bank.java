@@ -43,7 +43,6 @@ public class Bank implements BankInterface {
     private TradingWebServiceService stockService;
     private TradingWebService proxy;
 
-
     /**
      * Retrieves all the Customer
      *
@@ -55,7 +54,6 @@ public class Bank implements BankInterface {
         Query query = em.createNamedQuery("allCustomers");
         return query.getResultList();
     }
-
 
     /**
      *
@@ -83,6 +81,16 @@ public class Bank implements BankInterface {
         }
     }
 
+    public Customer getCustomerName(String name) {
+        try {
+            Query query = em.createNamedQuery("customerName");
+            query.setParameter("givenName", name);
+            return (Customer) query.getResultList();
+        } catch (NoResultException e) {
+            return null;
+        }
+    }
+
     /**
      * getDepot retrieves the depot with the given name.
      *
@@ -100,10 +108,11 @@ public class Bank implements BankInterface {
         }
 
     }
+
     /**
-     * 
+     *
      * @param customerId
-     * @return customer depot 
+     * @return customer depot
      */
     @Override
     public Depot getCustomerDepot(Long customerId) {
@@ -115,8 +124,9 @@ public class Bank implements BankInterface {
             return null;
         }
     }
+
     /**
-     * 
+     *
      * @param id
      * @return shares that belong to a depot
      */
@@ -159,11 +169,12 @@ public class Bank implements BankInterface {
         }
 
     }
+
     /**
-     * 
+     *
      * @param customer
      * @return depot that was created
-     * @throws DepotCreationFailedException 
+     * @throws DepotCreationFailedException
      */
     @Override
     public Depot createDepot(Customer customer) throws DepotCreationFailedException {

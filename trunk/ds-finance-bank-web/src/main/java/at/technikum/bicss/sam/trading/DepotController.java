@@ -61,8 +61,8 @@ public class DepotController implements Serializable {
      * checkSellCount.
      *
      * @param context faces context.
-     * @param component from ui which request the check.
-     * @param value the string input to be ckecked.
+     * @param component from ui which requests the check.
+     * @param value the string input to be checked.
      */
     public void checkSellCount(FacesContext context, UIComponent component, Object value) {
         if (value == null) {
@@ -81,10 +81,11 @@ public class DepotController implements Serializable {
         try {
             bank.buy(model.getSelectedCustomer(), model.getSelectedShare(), getBuyCount());
             model.findShares();
-            buyCount = 1;
-             FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "Buy OK",
-                    String.format("(%s) shares have been added to depot.", getBuyCount()));
+            
+             FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "Transaction: Buy Shares OK",
+                    String.format("(%s) shares have been added to your depot.", getBuyCount()));
             RequestContext.getCurrentInstance().showMessageInDialog(message);
+            buyCount = 1;
 
         } catch (StockExchangeUnreachableException ex) {
             // in this case show error page, because we can not buy shares.
@@ -96,23 +97,24 @@ public class DepotController implements Serializable {
 
         } catch (BuySharesVolumeException ex) {
             FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO,
-                    "Buy failed", "Bank volume exceeded. Please try later.");
+                    "Buy failed", "Bank volume exceeded. Please try again later.");
             RequestContext.getCurrentInstance().showMessageInDialog(message);
         }
     }
 
     /**
-     * Sell Shares for the selcted customer.
+     * Sell Shares for the selected customer.
      *
      * @throws StockExchangeUnreachableException
      */
     public void sellShare() throws StockExchangeUnreachableException {
         try {
             bank.sell(model.getSelectedCustomer(), model.getSelectedShare(), getSellCount());
-            sellCount = 1;
-              FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "Buy OK",
+            
+              FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "Transaction: Sell Shares OK",
                     String.format("(%s) shares removed from depot.", getSellCount()));
             RequestContext.getCurrentInstance().showMessageInDialog(message);
+            sellCount = 1;
         } catch (StockExchangeUnreachableException ex) {
             // in this case show error page, because we can not sell shares.
             throw ex;
