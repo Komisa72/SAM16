@@ -53,10 +53,6 @@ public class Depot implements Serializable {
     @OneToMany(mappedBy = "depot", fetch = FetchType.EAGER, orphanRemoval = true)
     private List<Share> shares = new ArrayList<>();
 
-    // TODO depot value could be calculated from the shares
-    @Column(name = "DEPOT_VALUE")
-    private BigDecimal value;
-
     @Transient
     /* rating must be calculated and not persisted */
     private BigDecimal rating = new BigDecimal(0);
@@ -113,22 +109,6 @@ public class Depot implements Serializable {
         this.id = id;
     }
 
-    /**
-     * Getter for value.
-     * @return value of depot.
-     */
-    public BigDecimal getValue() {
-        return value;
-    }
-
-    /**
-     * Setter for value.
-     *
-     * @param value of depot.
-     */
-    public void setValue(BigDecimal value) {
-        this.value = value;
-    }
 
     /**
      * hashCode of this instance, maybe used by persistence framework.

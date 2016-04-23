@@ -41,8 +41,8 @@
                     <h:panelGrid id="panel" columns="2" columnClasses="table-odd-col, table-even-col" width="500" border="0" cellpadding="0" cellspacing="">
                         <h:panelGroup style="text-align:left" >
 
-                            <h:outputLabel for="value" rendered="#{tradingModel.selectedCustomer.getDepot().id ne null}" value="Value: " />
-                            <h:outputText id="value" rendered="#{tradingModel.selectedCustomer.getDepot().id ne null}" value="#{tradingModel.selectedCustomer.getDepot().value}">
+                            <h:outputLabel for="boughtValue" rendered="#{tradingModel.selectedCustomer.getDepot().id ne null}" value="Bought Value: " />
+                            <h:outputText id="boughtValue" rendered="#{tradingModel.selectedCustomer.getDepot().id ne null}" value="#{tradingModel.selectedCustomer.depot.buyValue}">
                                 <f:convertNumber currencyCode="USD" type="currency" />
                             </h:outputText>
                             <br/>
@@ -51,10 +51,6 @@
                                 <f:convertNumber currencyCode="USD" type="currency" />
                             </h:outputText>
                             <br/>
-                            <h:outputLabel for="boughtValue" rendered="#{tradingModel.selectedCustomer.getDepot().id ne null}" value="Bought Value: " />
-                            <h:outputText id="boughtValue" rendered="#{tradingModel.selectedCustomer.getDepot().id ne null}" value="#{tradingModel.selectedCustomer.depot.buyValue}">
-                                <f:convertNumber currencyCode="USD" type="currency" />
-                            </h:outputText>
 
                         </h:panelGroup>
 
