@@ -79,7 +79,8 @@ public class Bank implements BankInterface {
 
         return sum;
     }
-
+    
+    
     /**
      *
      * @return current volume that can be invested

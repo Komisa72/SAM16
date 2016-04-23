@@ -81,7 +81,23 @@ public class Depot implements Serializable {
     public void setCustomer(Customer customer) {
         this.customer = customer;
     }
-
+    
+    /**
+     * retrieves value of all shares on the day they were bought
+     * @return sum of share value on the day bought
+     */
+    public BigDecimal getBuyValue() {
+        
+        BigDecimal sum = new BigDecimal(0);
+        
+        for (Share share : shares) {
+            sum = sum.add(share.getPrice().multiply(new BigDecimal(share.getFloatCount())));
+        }
+            
+        return sum;
+    }
+    
+    
     /**
      * Getter id.
      *

@@ -112,5 +112,6 @@ public interface BankInterface {
      * @return volume that can be invested currently.
      */
     public BigDecimal volume();
+    
 
 }

@@ -50,6 +50,11 @@
                             <h:outputText id="rating" rendered="#{tradingModel.selectedCustomer.getDepot().id ne null}" value="#{tradingModel.selectedCustomer.getDepot().rating}">
                                 <f:convertNumber currencyCode="USD" type="currency" />
                             </h:outputText>
+                            <br/>
+                            <h:outputLabel for="boughtValue" rendered="#{tradingModel.selectedCustomer.getDepot().id ne null}" value="Bought Value: " />
+                            <h:outputText id="boughtValue" rendered="#{tradingModel.selectedCustomer.getDepot().id ne null}" value="#{tradingModel.selectedCustomer.depot.buyValue}">
+                                <f:convertNumber currencyCode="USD" type="currency" />
+                            </h:outputText>
 
                         </h:panelGroup>
 
