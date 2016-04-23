@@ -82,6 +82,9 @@ public class DepotController implements Serializable {
             bank.buy(model.getSelectedCustomer(), model.getSelectedShare(), getBuyCount());
             model.findShares();
             buyCount = 1;
+             FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "Buy OK",
+                    String.format("(%s) shares have been added to depot.", getBuyCount()));
+            RequestContext.getCurrentInstance().showMessageInDialog(message);
 
         } catch (StockExchangeUnreachableException ex) {
             // in this case show error page, because we can not buy shares.
@@ -107,6 +110,9 @@ public class DepotController implements Serializable {
         try {
             bank.sell(model.getSelectedCustomer(), model.getSelectedShare(), getSellCount());
             sellCount = 1;
+              FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "Buy OK",
+                    String.format("(%s) shares removed from depot.", getSellCount()));
+            RequestContext.getCurrentInstance().showMessageInDialog(message);
         } catch (StockExchangeUnreachableException ex) {
             // in this case show error page, because we can not sell shares.
             throw ex;

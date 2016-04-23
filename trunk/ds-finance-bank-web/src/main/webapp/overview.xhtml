@@ -14,22 +14,13 @@
     </h:head>
 
     <h:body>
-        <p:dialog header="Sell Share" id="sellConfirm" widgetVar="sellConfirm" modal="true" height="100">
-                <h:form id="sellConf">
-                    <h:outputText value="The shares were removed from to your depot" />
-                    <br/>
-                    <br/>
-                    <p:commandButton ajax="true" update=":overviewCustomer" value = "OK" title="Sell shares" oncomplete="PF('sellConfirm').hide()" style="float:right">
-                    </p:commandButton>
-                </h:form>
-            </p:dialog>
         <p:dialog header="Sell Share" id="sellDialog" widgetVar="sellDialog" modal="true" height="100">           
             <h:form id="sellForm">
                 <h:outputText value="Amount:" />
                 <p:inputText value = "#{depotController.sellCount}" id="sellCount" validator ="#{depotController.checkSellCount}">
                     <f_converter coverterId="Integer"/>
                 </p:inputText>
-                <p:commandButton ajax="true" update=":overviewCustomer" value = "sell from depot" action="#{depotController.sellShare()}" title="sell from depot" oncomplete="PF('sellDialog').hide();PF('sellConfirm').show()">
+                <p:commandButton ajax="true" update=":overviewCustomer" value = "sell from depot" action="#{depotController.sellShare()}" title="sell from depot" oncomplete="PF('sellDialog').hide()">
                 </p:commandButton>
             </h:form>
         </p:dialog>
