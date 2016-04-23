@@ -271,7 +271,7 @@ public class TradingModel implements Serializable {
      * @return volume in USD.
      */
     public BigDecimal getVolume() {
-        return bank.volume();
+        return bank.getVolume();
     }
 
     /**

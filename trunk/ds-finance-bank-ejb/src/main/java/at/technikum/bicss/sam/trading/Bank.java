@@ -35,7 +35,7 @@ public class Bank implements BankInterface {
 
     @PersistenceContext
     private EntityManager em;
-    
+
     @EJB
     private StartupTradingService info;
 
@@ -79,15 +79,14 @@ public class Bank implements BankInterface {
 
         return sum;
     }
-    
-    
+
     /**
      *
      * @return current volume that can be invested
      */
     @Override
-    public BigDecimal volume() {
-        return MAX_VOLUME.subtract(getOverallDepotValues());
+    public BigDecimal getVolume() {
+        return em.find(Volume.class, new Long(1)).getInvestVolume();
     }
 
     /**
@@ -261,25 +260,33 @@ public class Bank implements BankInterface {
         boolean created = false;
 
         try {
-            double val = proxy.buy(what.getSymbol(), count);
-            buyShares = new BigDecimal(val);
-            BigDecimal sum;
 
-            sum = buyShares.add(getOverallDepotValues());
-            if (sum.compareTo(MAX_VOLUME) == 1) {
-                throw new BuySharesVolumeException();
-            }
-
-            System.out.println("Bought shares" + buyShares);
-            setOverallDepotValues(sum);
-
-            Share bought = new Share(what.getSymbol(), what.getCompanyName(),
-                    count, buyShares);
+            BigDecimal wert = proxy.findStockQuotesByCompanyName(what.getCompanyName()).get(0).getLastTradePrice();
 
             /* Variablen für die Berechnung des Depotwertes */
             BigDecimal buyCount = new BigDecimal(count);
             BigDecimal buyValue;
-            buyValue = buyCount.multiply(new BigDecimal(val));
+            buyValue = buyCount.multiply(wert);
+
+            /* fetch managed instance to adapt investment volume */
+            Volume volume = em.find(Volume.class, new Long(1));
+            BigDecimal newVolume = volume.getInvestVolume();
+            newVolume = newVolume.subtract(buyValue);
+            
+            if (newVolume.compareTo(BigDecimal.ZERO) == -1) {
+                throw new BuySharesVolumeException();   
+            }
+
+            double val = proxy.buy(what.getSymbol(), count);
+            buyShares = new BigDecimal(val);
+       
+            System.out.println("Bought shares" + buyShares);
+
+            Share bought = new Share(what.getSymbol(), what.getCompanyName(),
+                    count, buyShares);
+
+            volume.setInvestVolume(newVolume);
+            em.persist(volume);
 
             Depot sdepot = null;
 
@@ -365,7 +372,7 @@ public class Bank implements BankInterface {
             } else {
                 customer.getDepot().getShares().remove(what);
                 em.remove(em.merge(what));
-              
+
                 em.merge(customer.getDepot());
             }
 
