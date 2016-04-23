@@ -19,6 +19,10 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import net.froihofer.util.jboss.WildflyAuthDBHelper;
 
+/**
+ * Initialize bank application.
+ *
+ */
 @Startup
 @Singleton
 public class StartupTradingService {

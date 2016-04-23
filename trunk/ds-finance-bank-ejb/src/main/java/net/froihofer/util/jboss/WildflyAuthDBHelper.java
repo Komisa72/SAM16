@@ -120,7 +120,11 @@ public class WildflyAuthDBHelper {
     //addUserToDBs(user,password,roles,applicationUsersDbDomain,rolesDbDomain);
   }
   
-  public void removeUser(String user) {
+  /**
+   * Removes a user from the JBoss authentication database.
+   * @param user username of the user
+   * @throws UnsupportedOperationException because not implemented.
+   */  public void removeUser(String user) {
     throw new UnsupportedOperationException("removeUser(user) is left as an exercise");
   }
   

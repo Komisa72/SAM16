@@ -16,21 +16,34 @@ public class SharePrimaryKey implements Serializable {
     private String time;
     private String symbol;
 
-    public SharePrimaryKey() {
-    }
-
+    /**
+     * Getter for symbol name.
+     * @return symbol name.
+     */
     public String getSymbol() {
         return symbol;
     }
 
+    /**
+     * Setter for symbol.
+     * @param symbol to be set.
+     */
     public void setSymbol(String symbol) {
         this.symbol = symbol;
     }
 
+    /**
+     * Getter for time of buy.
+     * @return time of buy.
+     */
     public String getTime() {
         return time;
     }
 
+    /**
+     * Setter for buy time.
+     * @param time of buy.
+     */
     public void setTime(String time) {
         this.time = time;
     }
