@@ -7,6 +7,7 @@ package at.technikum.bicss.sam.trading;
 
 import java.io.File;
 import java.io.IOException;
+import java.math.BigDecimal;
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import javax.ejb.Singleton;
@@ -14,25 +15,31 @@ import javax.ejb.Startup;
 import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 import net.froihofer.util.jboss.WildflyAuthDBHelper;
 
 @Startup
 @Singleton
 public class StartupTradingService {
-
+    
     private WildflyAuthDBHelper authHelper;
-
+    
+    @PersistenceContext
+    private EntityManager em;
+    
+    Volume volume;
+    
     @PreDestroy
-    void shutdownStartup()
-    {
+    void shutdownStartup() {
         System.out.println("PreDestroy StartupTradingServcie.");
     }
     
     @PostConstruct
     void init() {
-      
-         System.out.println("PostConstruct StartupTradingServcie.");
-  
+        
+        System.out.println("PostConstruct StartupTradingServcie.");
+
         // setup initial default bank user with default credentials and role.
         try {
             String password = "bank";
@@ -45,9 +52,16 @@ public class StartupTradingService {
             authHelper = new WildflyAuthDBHelper(new File(homeDir));
             String[] bankRoles = new String[1];
             bankRoles[0] = "bank";
-
+            
             getAuthHelper().addUser("bank", password, bankRoles);
             System.out.println("Bank user prepared.");
+            
+            if (null == em.find(Volume.class, new Long(1))) {
+                volume = new Volume();
+                volume.setId(new Long(1));
+                volume.setInvestVolume(new BigDecimal("1E9"));
+                em.persist(volume);
+            }
 
             //} 
             //catch (NamingException ex) {
@@ -55,15 +69,14 @@ public class StartupTradingService {
         } catch (IOException ex) {
             System.out.println("Bank user setup bank role io exception.");
         }
- 
-        }
+        
+    }
 
     /**
      * @return the authHelper
      */
-
     public WildflyAuthDBHelper getAuthHelper() {
         return authHelper;
     }
-
+    
 }
