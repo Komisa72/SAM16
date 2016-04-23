@@ -100,6 +100,10 @@ public class TradingModel implements Serializable {
     public List<Customer> getCustomerList() {
         return customerList;
     }
+    
+     public void setCustomerList(String search) {
+       customerList = bank.getCustomerName(search);
+    }
 
     /**
      * Number of rows to be shown in company list.
@@ -340,6 +344,8 @@ public class TradingModel implements Serializable {
         return companyShareModel;
     }
 
+   
+    
     /**
      * Init this bean.
      */

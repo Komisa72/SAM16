@@ -120,5 +120,7 @@ public interface BankInterface {
      */
     public BigDecimal getVolume();
     
+    public List<Customer> getCustomerName(String name);
+    
 
 }

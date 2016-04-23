@@ -30,6 +30,13 @@
                         </h:panelGrid>
                         <p:commandButton update=":customerList:customerTable" value="Add customer" actionListener="#{customerController.createCustomer(param['createUserForm:customerName'], param['createUserForm:pwd1'])}"/>
                     </h:form>
+                     <h:form id="searchUserForm">
+                        <p:growl showDetail="true"/>
+                        <p:messages id="messages" showDetail="true" autoUpdate="true" />
+                            <h:outputText value="Customer name" />
+                            <p:inputText id="customerNameSearch" />                       
+                        <p:commandButton update=":customerList:customerTable" value="Search" actionListener="#{tradingModel.setCustomerList(param['searchUserForm:customerName'])}"/>
+                    </h:form>
                     <p:spacer width="10" height="10" />
                     <h:form id="customerList" rendered="#{not empty tradingModel.model}">
                          <p:dataTable id="customerTable" selection="#{tradingModel.selectedCustomer}" rowKey="#{customer.id}" var="customer" value="#{tradingModel.model}" scrollable="true" scrollWidth="100%" scrollHeight="450">

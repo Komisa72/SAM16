@@ -81,11 +81,14 @@ public class Bank implements BankInterface {
         }
     }
 
-    public Customer getCustomerName(String name) {
+    public List<Customer> getCustomerName(String name) {
+        
+        List<Customer> cust = null;
         try {
             Query query = em.createNamedQuery("customerName");
             query.setParameter("givenName", name);
-            return (Customer) query.getResultList();
+            cust = query.getResultList();
+            return cust;//(Customer) query.getResultList();
         } catch (NoResultException e) {
             return null;
         }
