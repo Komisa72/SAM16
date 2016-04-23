@@ -20,16 +20,28 @@ and open the template in the editor.
 
         <h:body>
 
-            <p:dialog header="Buy Share" id="buyDialogId" widgetVar="buyDialog" modal="true" height="100">
-                <h:form id="buyForm">
-                    <h:outputText value="Amount:" />
-                    <p:inputText value = "#{depotController.buyCount}" id="buyCount" validator ="#{depotController.checkBuyCount}">
-                        <f_converter coverterId="Integer"/>
-                    </p:inputText>
-                    <p:commandButton ajax="true" value = "buy from stock" action="#{depotController.buyShare()}" title="buy from stock" oncomplete="PF('buyDialog').hide()">
+            <p:dialog header="Buy Share" id="buyConfirm" widgetVar="buyConfirm" modal="true" height="100">
+                <h:form id="buyConf">
+                    <h:outputText value="The shares were added to your depot" />
+                    <br/>
+                    <br/>
+                    <p:commandButton ajax="true" value = "OK" title="Buy shares" oncomplete="PF('buyConfirm').hide()" style="float:right">
                     </p:commandButton>
                 </h:form>
             </p:dialog>
+            <p:dialog header="Buy Share" id="buyDialogId" widgetVar="buyDialog" modal="true" height="100">
+                <h:form id="buyForm">
+                    <h:outputText value="Amount:" />
+                    <br/>
+
+                    <p:inputText value = "#{depotController.buyCount}" id="buyCount" validator ="#{depotController.checkBuyCount}">
+                        <f_converter coverterId="Integer"/>
+                    </p:inputText>
+                    <p:commandButton ajax="true" value = "buy from stock" action="#{depotController.buyShare()}" title="buy from stock" oncomplete="PF('buyDialog').hide();PF('buyConfirm').show()" >      
+                    </p:commandButton>
+                </h:form>
+            </p:dialog>
+
             <p:layout fullPage="true">
                 <ui:include  src="resources/includes/header.xhtml" />
                 <p:layoutUnit position="center">
