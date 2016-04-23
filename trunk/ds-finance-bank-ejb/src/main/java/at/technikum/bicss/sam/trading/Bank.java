@@ -100,7 +100,11 @@ public class Bank implements BankInterface {
         }
 
     }
-
+    /**
+     * 
+     * @param customerId
+     * @return customer depot 
+     */
     @Override
     public Depot getCustomerDepot(Long customerId) {
         Query query = em.createNamedQuery("getCustomerDepot");
@@ -111,7 +115,11 @@ public class Bank implements BankInterface {
             return null;
         }
     }
-
+    /**
+     * 
+     * @param id
+     * @return shares that belong to a depot
+     */
     @Override
     public List<Share> getDepotShares(Long id) {
         List<Share> allShares;
@@ -151,7 +159,12 @@ public class Bank implements BankInterface {
         }
 
     }
-
+    /**
+     * 
+     * @param customer
+     * @return depot that was created
+     * @throws DepotCreationFailedException 
+     */
     @Override
     public Depot createDepot(Customer customer) throws DepotCreationFailedException {
 

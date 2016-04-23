@@ -141,7 +141,7 @@ public class Depot implements Serializable {
 
     /**
      *
-     * @return
+     * @return rating
      */
     public BigDecimal getRating() {
         return rating;
