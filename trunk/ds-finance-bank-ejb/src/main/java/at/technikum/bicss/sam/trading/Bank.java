@@ -272,14 +272,14 @@ public class Bank implements BankInterface {
             Volume volume = em.find(Volume.class, new Long(1));
             BigDecimal newVolume = volume.getInvestVolume();
             newVolume = newVolume.subtract(buyValue);
-            
+
             if (newVolume.compareTo(BigDecimal.ZERO) == -1) {
-                throw new BuySharesVolumeException();   
+                throw new BuySharesVolumeException();
             }
 
             double val = proxy.buy(what.getSymbol(), count);
             buyShares = new BigDecimal(val);
-       
+
             System.out.println("Bought shares" + buyShares);
 
             Share bought = new Share(what.getSymbol(), what.getCompanyName(),
@@ -365,6 +365,21 @@ public class Bank implements BankInterface {
 
             sellShares = new BigDecimal(proxy.sell(what.getSymbol(), count));
             System.out.println("Sold shares " + count);
+
+            BigDecimal wert = proxy.findStockQuotesByCompanyName(what.getCompanyName()).get(0).getLastTradePrice();
+
+            /* Variablen für die Berechnung des Depotwertes */
+            BigDecimal sellCount = new BigDecimal(count);
+            BigDecimal sellValue;
+            sellValue = sellCount.multiply(wert);
+
+            /* fetch managed instance to adapt investment volume */
+            Volume volume = em.find(Volume.class, new Long(1));
+            BigDecimal newVolume = volume.getInvestVolume();
+            newVolume = newVolume.add(sellValue);
+
+            volume.setInvestVolume(newVolume);
+            em.persist(volume);
 
             if (count < what.getFloatCount()) {
                 what.setFloatCount(what.getFloatCount() - count);
