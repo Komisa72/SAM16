@@ -58,7 +58,6 @@ public interface BankInterface {
 
     /**
      * createDepot for the given customer.
-     * @param value
      * @param customer
      * @return
      * @throws DepotCreationFailedException 
@@ -93,11 +92,26 @@ public interface BankInterface {
      * @return the found customer.
      */
     public Customer getCustomer(String name);
-
+    
+    /**
+     * 
+     * @param id
+     * @return depot
+     */
     public Depot getDepot(Long id);
     
+    /**
+     * 
+     * @param customerId
+     * @return depot for customer
+     */
     public Depot getCustomerDepot(Long customerId);
-
+    
+    /**
+     * 
+     * @param id
+     * @return shares of depot
+     */
     public List<Share> getDepotShares(Long id);
 
     /**

@@ -12,14 +12,14 @@ import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Column;
 import java.text.SimpleDateFormat;
-import javax.persistence.CascadeType;
 import javax.persistence.FetchType;
 import javax.persistence.IdClass;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 
 /**
- *
+ * Entity Share
+ * 
  */
 @Entity
 @IdClass(SharePrimaryKey.class)
@@ -92,7 +92,7 @@ public class Share implements Serializable {
 
     /**
      *
-     * @return
+     * @return price
      */
     public BigDecimal getPrice() {
         return price;
@@ -108,7 +108,7 @@ public class Share implements Serializable {
 
     /**
      *
-     * @return
+     * @return buy time
      */
     public String getTime() {
         return time;
@@ -163,11 +163,17 @@ public class Share implements Serializable {
     public void setFloatCount(long floatCount) {
         this.floatCount = floatCount;
     }
-
+    /**
+     * 
+     * @return depot
+     */
     public Depot getDepot() {
         return depot;
     }
-
+    /**
+     * 
+     * @param depot 
+     */
     public void setDepot(Depot depot) {
         this.depot = depot;
     }
