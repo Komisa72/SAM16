@@ -39,16 +39,10 @@ public class Bank implements BankInterface {
     @EJB
     private StartupTradingService info;
 
-    // 1 Mrd. US dollar, initial limit to be checked against when a share is bought
-    private final static BigDecimal MAX_VOLUME = new BigDecimal("1E9");
-
     @WebServiceRef(name = "TradingWebServiceService")
     private TradingWebServiceService stockService;
     private TradingWebService proxy;
 
-    //get current total value of depots
-    //public double currentValue = getDepotValue();
-    private BigDecimal currentValue = new BigDecimal("2449010.20149");
 
     /**
      * Retrieves all the Customer
@@ -62,23 +56,6 @@ public class Bank implements BankInterface {
         return query.getResultList();
     }
 
-    /**
-     *
-     * @return total value of bought shares
-     */
-    @Override
-    public BigDecimal getDepotValue() {
-        List<PublicStockQuote> allShares;
-
-        BigDecimal sum = new BigDecimal("0");
-        Query query = em.createNamedQuery("getDepot");
-        allShares = query.getResultList();
-        for (PublicStockQuote a : allShares) {
-            sum.add(a.getLastTradePrice().multiply(new BigDecimal(a.getFloatShares())));
-        }
-
-        return sum;
-    }
 
     /**
      *
@@ -176,11 +153,10 @@ public class Bank implements BankInterface {
     }
 
     @Override
-    public Depot createDepot(BigDecimal value, Customer customer) throws DepotCreationFailedException {
+    public Depot createDepot(Customer customer) throws DepotCreationFailedException {
 
         Depot depot = new Depot();
         depot.setCustomer(customer);
-        depot.setValue(value);
         customer.setDepot(depot);
 
         try {
@@ -293,7 +269,7 @@ public class Bank implements BankInterface {
             if (customer.getDepot() == null) {
                 System.out.println("No customer depot found");
                 try {
-                    sdepot = createDepot(buyValue, customer);
+                    sdepot = createDepot(customer);
                     customer.setDepot(sdepot);
 
                     created = true;
@@ -309,10 +285,6 @@ public class Bank implements BankInterface {
 
                 sdepot = customer.getDepot();
 
-                BigDecimal depotValue = sdepot.getValue();
-                BigDecimal valueToSet;
-                valueToSet = depotValue.add(buyValue);
-                sdepot.setValue(valueToSet);
                 em.merge(sdepot);
             }
             bought.setDepot(sdepot);
@@ -391,8 +363,6 @@ public class Bank implements BankInterface {
                 em.merge(customer.getDepot());
             }
 
-            //adapting current investing volume of the bank
-            setOverallDepotValues(getOverallDepotValues().subtract(sellShares));
         } catch (TradingWSException_Exception e) {
             throw new StockExchangeUnreachableException(e);
         }
@@ -450,22 +420,5 @@ public class Bank implements BankInterface {
         return found;
     }
 
-    /**
-     * Retrieve the sum of all depot values.
-     *
-     * @return overall sum of depot values.
-     */
-    private BigDecimal getOverallDepotValues() {
-        return currentValue;
-    }
-
-    /**
-     * Retrieve the sum of all depot values.
-     *
-     * @return overall sum of depot values.
-     */
-    private void setOverallDepotValues(BigDecimal newValue) {
-        currentValue = newValue;
-    }
 
 }

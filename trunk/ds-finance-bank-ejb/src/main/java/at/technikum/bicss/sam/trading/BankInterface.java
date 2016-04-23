@@ -63,7 +63,7 @@ public interface BankInterface {
      * @return
      * @throws DepotCreationFailedException 
      */
-    public Depot createDepot(BigDecimal value, Customer customer)
+    public Depot createDepot(Customer customer)
             throws DepotCreationFailedException;
 
     /**
@@ -99,13 +99,6 @@ public interface BankInterface {
     public Depot getCustomerDepot(Long customerId);
 
     public List<Share> getDepotShares(Long id);
-
-    /**
-     * volume used by bank role.
-     *
-     * @return the volume which is available as of now.
-     */
-    public BigDecimal getDepotValue();
 
     /**
      * Get the current volume of the bank.

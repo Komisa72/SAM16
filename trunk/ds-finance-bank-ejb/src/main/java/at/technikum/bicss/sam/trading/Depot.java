@@ -27,9 +27,6 @@ import javax.persistence.OneToOne;
  */
 @Entity
 @NamedQueries({
-    @NamedQuery(name = "getDepot",
-            query = "SELECT SUM(d.value) FROM Depot d"),
-
     @NamedQuery(name = "getDepotById",
             query = "SELECT d FROM Depot d WHERE d.id =:depotId"),
 
