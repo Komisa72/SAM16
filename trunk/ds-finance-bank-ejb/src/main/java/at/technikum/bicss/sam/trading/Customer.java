@@ -25,7 +25,9 @@ import javax.persistence.UniqueConstraint;
     @NamedQuery(name = "allCustomers",
             query = "SELECT c FROM Customer c ORDER BY c.id"),
     @NamedQuery(name = "singleCustomer",
-            query = "SELECT c FROM Customer c WHERE c.name IS :customerName")
+            query = "SELECT c FROM Customer c WHERE c.name IS :customerName"),
+    @NamedQuery(name = "customerName",
+            query = "SELECT c FROM Customer c WHERE c.name LIKE :givenName")
 })
 
 @Table(uniqueConstraints = {
@@ -48,8 +50,9 @@ public class Customer implements Serializable {
     private String name;
 
     /**
-     * getMaxLengthName returns the maximum length of customer name,
-     * e. g. used for setting column length in table.
+     * getMaxLengthName returns the maximum length of customer name, e. g. used
+     * for setting column length in table.
+     *
      * @return the MAX_LENGTH_NAME
      */
     public static int getMaxLengthName() {
@@ -58,6 +61,7 @@ public class Customer implements Serializable {
 
     /**
      * Getter of customer name.
+     *
      * @return the name.
      */
     public String getName() {
@@ -66,6 +70,7 @@ public class Customer implements Serializable {
 
     /**
      * Setter of customer name.
+     *
      * @param name the name to set
      */
     public void setName(String name) {
@@ -74,6 +79,7 @@ public class Customer implements Serializable {
 
     /**
      * Getter of identifier.
+     *
      * @return the identifier
      */
     public Long getId() {
@@ -82,6 +88,7 @@ public class Customer implements Serializable {
 
     /**
      * Getter of the customers depot.
+     *
      * @return the assigned depot, maybe null.
      */
     public Depot getDepot() {
@@ -90,6 +97,7 @@ public class Customer implements Serializable {
 
     /**
      * Setter of customers depot.
+     *
      * @param depot to be assigned or null.
      */
     public void setDepot(Depot depot) {
