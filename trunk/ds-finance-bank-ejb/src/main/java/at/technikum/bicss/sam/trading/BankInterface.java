@@ -53,7 +53,8 @@ public interface BankInterface {
      * @throws StockExchangeUnreachableException
      * @throws SellSharesAmountException
      */
-    public void sell(Customer customer, Share what, int count) throws StockExchangeUnreachableException,
+    public void sell(Customer customer, Share what, int count) throws 
+            StockExchangeUnreachableException,
             SellSharesAmountException;
 
     /**

@@ -16,7 +16,6 @@ import javax.ejb.EJB;
 import javax.enterprise.context.SessionScoped;
 import javax.faces.application.FacesMessage;
 import javax.faces.component.UIComponent;
-import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
 import javax.faces.model.DataModel;
 import javax.faces.model.ListDataModel;
@@ -24,12 +23,10 @@ import javax.faces.validator.ValidatorException;
 import javax.inject.Named;
 
 /**
- *
- * @author amaierhofer
+ * TradingModel as general backing bean for JSF pages.
  */
 @Named("tradingModel")
 @SessionScoped
-
 public class TradingModel implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -219,15 +216,6 @@ public class TradingModel implements Serializable {
 
     }
 
-    public Depot getDepotByCustomer() {
-        try {
-            depot = bank.getCustomerDepot(customer.getId());
-            return depot;
-        } catch (NumberFormatException e) {
-        }
-        return null;
-    }
-
     public String getSearchId() {
         return searchId;
     }
@@ -339,7 +327,7 @@ public class TradingModel implements Serializable {
     /**
      * getModel as data model for all the xhtml views.
      *
-     * @return
+     * @return data model of the hares.
      */
     public DataModel<Share> getShareModel() {
         return companyShareModel;
@@ -350,7 +338,6 @@ public class TradingModel implements Serializable {
      */
     @PostConstruct
     public void init() {
-        // TODO remove unused code
         // aufgrund der session feststellen, in welcher rolle wir uns gerade
         // befinden
         Role who = getRole();

@@ -4,51 +4,57 @@
  * and open the template in the editor.
  */
 package at.technikum.bicss.sam.trading;
+
 import javax.persistence.Entity;
 import javax.persistence.Id;
-import javax.persistence.Column;
-
 import java.io.Serializable;
 import java.math.BigDecimal;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
 
 /**
- *
- * @author Claudia
+ * This entity contains the invest volume, helper class for perstisting
+ * the invest volume of the bank.
  */
 @Entity
-public class Volume implements Serializable{
-    
+public class Volume implements Serializable {
+
     @Id
     private Long Id;
-    
-    private BigDecimal investVolume;
-    
-    
-    
 
+    private BigDecimal investVolume;
+
+    /**
+     * Getter of id.
+     *
+     * @return the id.
+     */
     public Long getId() {
         return Id;
     }
-    
+
+    /**
+     * Setter of id.
+     *
+     * @param Id to set.
+     */
     public void setId(Long Id) {
         this.Id = Id;
     }
+
     /**
-     * @return the investVolume
+     * Getter of invest volume.
+     *
+     * @return the investVolume,.
      */
     public BigDecimal getInvestVolume() {
         return investVolume;
     }
 
     /**
+     * Setter of inveset volume.
      * @param investVolume the investVolume to set
      */
     public void setInvestVolume(BigDecimal investVolume) {
         this.investVolume = investVolume;
     }
-    
-    
-    
+
 }

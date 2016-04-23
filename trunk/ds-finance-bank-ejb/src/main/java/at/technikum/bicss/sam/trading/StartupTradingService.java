@@ -32,13 +32,25 @@ public class StartupTradingService {
     @PersistenceContext
     private EntityManager em;
     
+    // Initial invest volume in US Dollar.
+    private static final BigDecimal INITIAL_VOLUME = new BigDecimal("1E9");
+    
+    // The volume is stored as entity with id = 1.
+    private static final Long ID_VOLUME = new Long(1);
+    
     Volume volume;
     
     @PreDestroy
+    /** 
+     * shutdownStartup called to shutdown this service properly. 
+     */
     void shutdownStartup() {
         System.out.println("PreDestroy StartupTradingServcie.");
     }
     
+    /**
+     * Init this instance.
+     */
     @PostConstruct
     void init() {
         
@@ -60,10 +72,10 @@ public class StartupTradingService {
             getAuthHelper().addUser("bank", password, bankRoles);
             System.out.println("Bank user prepared.");
             
-            if (null == em.find(Volume.class, new Long(1))) {
+            if (null == em.find(Volume.class, ID_VOLUME)) {
                 volume = new Volume();
-                volume.setId(new Long(1));
-                volume.setInvestVolume(new BigDecimal("1E9"));
+                volume.setId(ID_VOLUME);
+                volume.setInvestVolume(INITIAL_VOLUME);
                 em.persist(volume);
             }
 
@@ -77,6 +89,7 @@ public class StartupTradingService {
     }
 
     /**
+     * Getter for authentication helper class.
      * @return the authHelper
      */
     public WildflyAuthDBHelper getAuthHelper() {
