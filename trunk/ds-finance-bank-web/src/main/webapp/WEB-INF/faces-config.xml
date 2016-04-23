@@ -35,7 +35,7 @@
         </navigation-case>
     </navigation-rule>
     <navigation-rule>
-        <from-view-id>overview.xhtml</from-view-id>
+        <from-view-id>/overview.xhtml</from-view-id>
         <navigation-case>
             <from-outcome>bankBack</from-outcome>
             <to-view-id>/bank/createcustomer.xhtml</to-view-id>
