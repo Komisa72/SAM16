@@ -11,6 +11,7 @@ import javax.ejb.Stateless;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
@@ -134,13 +135,15 @@ public class Bank implements BankInterface {
      * @return shares that belong to a depot
      */
     @Override
-    public List<Share> getDepotShares(Long id) {
+    public List<Share> getDepotShares(Long id) 
+    throws StockExchangeUnreachableException
+    {
         List<Share> allShares;
         try {
             Query query = em.createNamedQuery("getDepotShares");
             query.setParameter("depotId", id);
             allShares = query.getResultList();
-
+            allShares=updateDepotShares(id);
             return allShares;
         } catch (NoResultException e) {
             return null;
@@ -148,6 +151,35 @@ public class Bank implements BankInterface {
 
     }
 
+        /**
+     * 
+     * @param id
+     * @updates shares that belong to a depot
+     */
+    @Override
+    public List<Share> updateDepotShares(Long id)
+    throws StockExchangeUnreachableException
+    {
+        List<Share> allShares;
+        try {
+            Query query = em.createNamedQuery("getDepotShares");
+            query.setParameter("depotId", id);
+            allShares = query.getResultList();
+            for(Iterator<Share> i = allShares.iterator(); i.hasNext(); ) {
+                Share item = i.next();                       
+                try {
+                    BigDecimal wert = proxy.findStockQuotesByCompanyName(item.getCompanyName()).get(0).getLastTradePrice();
+                    item.setstockPrice(wert);
+                } catch (TradingWSException_Exception e) {
+                    throw new StockExchangeUnreachableException(e);
+                }
+            }
+            return allShares;
+        } catch (NoResultException e) {
+            return null;
+        }
+
+    }
     /**
      * createCustomer creates a new customer and stores its credentials in
      * webserver realm, customer data is stored via JPA.

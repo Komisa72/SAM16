@@ -187,6 +187,8 @@ public class TradingModel implements Serializable {
         }
         return depotShares;
     }
+    
+    
 
     public Depot getDepot() {
 
@@ -211,9 +213,12 @@ public class TradingModel implements Serializable {
 
     public List<Share> getDepotShares() {
 
-        depotShares = bank.getDepotShares(depot.getId());
+        try {
+            depotShares = bank.getDepotShares(depot.getId());
+        }
+        catch(StockExchangeUnreachableException e){            
+        }
         return depotShares;
-
     }
 
     public String getSearchId() {

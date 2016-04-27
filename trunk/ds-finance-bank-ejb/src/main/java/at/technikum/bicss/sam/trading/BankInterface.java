@@ -113,7 +113,8 @@ public interface BankInterface {
      * @param id
      * @return shares of depot
      */
-    public List<Share> getDepotShares(Long id);
+    public List<Share> getDepotShares(Long id)
+    throws StockExchangeUnreachableException;
 
     /**
      * Get the current volume of the bank.
@@ -123,5 +124,6 @@ public interface BankInterface {
     
     public List<Customer> getCustomerName(String name);
     
-
+    public List<Share> updateDepotShares(Long id)
+    throws StockExchangeUnreachableException;
 }

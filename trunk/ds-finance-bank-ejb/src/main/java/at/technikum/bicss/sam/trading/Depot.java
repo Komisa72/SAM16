@@ -144,7 +144,19 @@ public class Depot implements Serializable {
      * @return rating
      */
     public BigDecimal getRating() {
-        return rating;
+        BigDecimal sum = new BigDecimal(0);
+        BigDecimal value = new BigDecimal(0);
+
+        for (Share share : shares) {
+            value=share.getstockPrice();
+            if(value == null) {
+                return new BigDecimal(0);
+            }
+            sum = sum.add(share.getstockPrice().multiply(new BigDecimal(share.getFloatCount())));
+        }
+            
+        return sum;
+        
     }
 
     /**
