@@ -20,7 +20,7 @@ import javax.persistence.Transient;
 
 /**
  * Entity Share
- * 
+ *
  */
 @Entity
 @IdClass(SharePrimaryKey.class)
@@ -51,7 +51,7 @@ public class Share implements Serializable {
 
     @Column(precision = 19, scale = 2)
     private BigDecimal stockPrice;
-    
+
     /**
      * Default constructor needed by persistance framework.
      */
@@ -80,6 +80,7 @@ public class Share implements Serializable {
 
     /**
      * Getter for symbol.
+     *
      * @return symbol.
      */
     public String getSymbol() {
@@ -88,6 +89,7 @@ public class Share implements Serializable {
 
     /**
      * Setter for symbol.
+     *
      * @param symbol
      */
     public void setSymbol(String symbol) {
@@ -95,7 +97,7 @@ public class Share implements Serializable {
     }
 
     /**
-     *
+     * Getter for buy price.
      * @return price
      */
     public BigDecimal getPrice() {
@@ -103,7 +105,7 @@ public class Share implements Serializable {
     }
 
     /**
-     *
+     * Setter for buy price.
      * @param price
      */
     public void setPrice(BigDecimal price) {
@@ -112,7 +114,7 @@ public class Share implements Serializable {
 
     /**
      *
-     * @return buy time
+     * @return price at stock.
      */
     public BigDecimal getstockPrice() {
         return this.stockPrice;
@@ -122,10 +124,10 @@ public class Share implements Serializable {
      *
      * @param stockPrice
      */
-    public void setstockPrice(BigDecimal stockPrice) {        
+    public void setstockPrice(BigDecimal stockPrice) {
         this.stockPrice = stockPrice;
-    }    
-    
+    }
+
     /**
      *
      * @return stockPrice
@@ -176,23 +178,25 @@ public class Share implements Serializable {
     }
 
     /**
-     * Setter.
+     * Setter of count.
      *
      * @param floatCount the floatCount to set
      */
     public void setFloatCount(long floatCount) {
         this.floatCount = floatCount;
     }
+
     /**
-     * 
+     * Getter of depot.
      * @return depot
      */
     public Depot getDepot() {
         return depot;
     }
+
     /**
-     * 
-     * @param depot 
+     * Setter of depot.
+     * @param depot
      */
     public void setDepot(Depot depot) {
         this.depot = depot;

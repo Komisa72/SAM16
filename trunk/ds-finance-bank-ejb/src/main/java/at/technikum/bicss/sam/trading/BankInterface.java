@@ -41,7 +41,7 @@ public interface BankInterface {
      * @throws at.technikum.bicss.sam.trading.BuySharesNotEnoughException
      */
     public void buy(Customer customer, Share what, int count)
-            throws StockExchangeUnreachableException, BuySharesVolumeException, 
+            throws StockExchangeUnreachableException, BuySharesVolumeException,
             BuySharesNotEnoughException;
 
     /**
@@ -53,15 +53,16 @@ public interface BankInterface {
      * @throws StockExchangeUnreachableException
      * @throws SellSharesAmountException
      */
-    public void sell(Customer customer, Share what, int count) throws 
+    public void sell(Customer customer, Share what, int count) throws
             StockExchangeUnreachableException,
             SellSharesAmountException;
 
     /**
      * createDepot for the given customer.
+     *
      * @param customer
      * @return
-     * @throws DepotCreationFailedException 
+     * @throws DepotCreationFailedException
      */
     public Depot createDepot(Customer customer)
             throws DepotCreationFailedException;
@@ -93,37 +94,37 @@ public interface BankInterface {
      * @return the found customer.
      */
     public Customer getCustomer(String name);
-    
+
     /**
-     * 
+     *
      * @param id
      * @return depot
      */
     public Depot getDepot(Long id);
-    
+
     /**
-     * 
+     *
      * @param customerId
      * @return depot for customer
      */
     public Depot getCustomerDepot(Long customerId);
-    
+
     /**
-     * 
-     * @param id
+     *
+     * @param depot to be queried
      * @return shares of depot
+     * @throws at.technikum.bicss.sam.trading.StockExchangeUnreachableException
      */
-    public List<Share> getDepotShares(Long id)
-    throws StockExchangeUnreachableException;
+    public List<Share> getDepotShares(Depot depot)
+            throws StockExchangeUnreachableException;
 
     /**
      * Get the current volume of the bank.
+     *
      * @return volume that can be invested currently.
      */
     public BigDecimal getVolume();
-    
+
     public List<Customer> getCustomerName(String name);
-    
-    public List<Share> updateDepotShares(Long id)
-    throws StockExchangeUnreachableException;
+
 }

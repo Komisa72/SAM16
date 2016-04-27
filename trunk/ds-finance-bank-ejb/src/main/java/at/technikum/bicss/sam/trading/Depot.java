@@ -140,12 +140,13 @@ public class Depot implements Serializable {
     }
 
     /**
+     * Setter for rating represent current value of shares on stock.
      *
      * @return rating
      */
     public BigDecimal getRating() {
         BigDecimal sum = new BigDecimal(0);
-        BigDecimal value = new BigDecimal(0);
+        BigDecimal value;
 
         for (Share share : shares) {
             value=share.getstockPrice();
@@ -160,7 +161,7 @@ public class Depot implements Serializable {
     }
 
     /**
-     *
+     * Setter for rating represent current value of shares on stock.
      * @param rating
      */
     public void setRating(BigDecimal rating) {

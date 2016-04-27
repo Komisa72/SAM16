@@ -81,9 +81,10 @@ public class Bank implements BankInterface {
             return null;
         }
     }
+
     @Override
     public List<Customer> getCustomerName(String name) {
-        
+
         List<Customer> cust = null;
         try {
             Query query = em.createNamedQuery("customerName");
@@ -133,17 +134,14 @@ public class Bank implements BankInterface {
      *
      * @param id
      * @return shares that belong to a depot
+     * @throws at.technikum.bicss.sam.trading.StockExchangeUnreachableException
      */
     @Override
-    public List<Share> getDepotShares(Long id) 
-    throws StockExchangeUnreachableException
-    {
+    public List<Share> getDepotShares(Depot depot)
+            throws StockExchangeUnreachableException {
         List<Share> allShares;
         try {
-            Query query = em.createNamedQuery("getDepotShares");
-            query.setParameter("depotId", id);
-            allShares = query.getResultList();
-            allShares=updateDepotShares(id);
+            allShares = updateDepotShares(depot);
             return allShares;
         } catch (NoResultException e) {
             return null;
@@ -151,22 +149,21 @@ public class Bank implements BankInterface {
 
     }
 
-        /**
-     * 
-     * @param id
+    /**
+     * Update the values for the depot.
+     *
+     * @param depot to be queried
+     * @throws at.technikum.bicss.sam.trading.StockExchangeUnreachableException
      * @updates shares that belong to a depot
      */
-    @Override
-    public List<Share> updateDepotShares(Long id)
-    throws StockExchangeUnreachableException
-    {
+    private List<Share> updateDepotShares(Depot depot)
+            throws StockExchangeUnreachableException {
         List<Share> allShares;
         try {
             Query query = em.createNamedQuery("getDepotShares");
-            query.setParameter("depotId", id);
+            query.setParameter("depotId", depot.getId());
             allShares = query.getResultList();
-            for(Iterator<Share> i = allShares.iterator(); i.hasNext(); ) {
-                Share item = i.next();                       
+            for (Share item : allShares) {
                 try {
                     BigDecimal wert = proxy.findStockQuotesByCompanyName(item.getCompanyName()).get(0).getLastTradePrice();
                     item.setstockPrice(wert);
@@ -180,6 +177,7 @@ public class Bank implements BankInterface {
         }
 
     }
+
     /**
      * createCustomer creates a new customer and stores its credentials in
      * webserver realm, customer data is stored via JPA.
@@ -337,7 +335,7 @@ public class Bank implements BankInterface {
                 } catch (DepotCreationFailedException e) {
                     System.out.println("Depot could not be created");
                     // TODO AM hier darf es nicht normal weitergehen,
-                    // wenn depot nicht angelegt werden kann braucht man 
+                    // wenn depot nicht angelegt werden kann braucht man
                     // eine Fehlerbehandlung.
                 }
             } else {
@@ -349,7 +347,6 @@ public class Bank implements BankInterface {
             bought.setDepot(sdepot);
             em.persist(bought);
             sdepot.getShares().add(bought);
-            //sdepot.add(what);
             em.persist(bought);
             if (created) {
                 em.persist(sdepot);
@@ -478,6 +475,5 @@ public class Bank implements BankInterface {
         }
         return found;
     }
-
 
 }
