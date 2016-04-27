@@ -16,6 +16,7 @@ import javax.persistence.FetchType;
 import javax.persistence.IdClass;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.Transient;
 
 /**
  * Entity Share
@@ -48,6 +49,9 @@ public class Share implements Serializable {
     @JoinColumn(name = "DEPOT_FK", updatable = false)
     private Depot depot;
 
+    @Column(precision = 19, scale = 2)
+    private BigDecimal stockPrice;
+    
     /**
      * Default constructor needed by persistance framework.
      */
@@ -68,7 +72,7 @@ public class Share implements Serializable {
         this.companyName = companyName;
         this.price = price;
         this.floatCount = count;
-
+        this.stockPrice = price;
         // set the time as of now
         time = new SimpleDateFormat(TIME_FORMAT).format(
                 new Timestamp(System.currentTimeMillis()));
@@ -109,6 +113,22 @@ public class Share implements Serializable {
     /**
      *
      * @return buy time
+     */
+    public BigDecimal getstockPrice() {
+        return this.stockPrice;
+    }
+
+    /**
+     *
+     * @param stockPrice
+     */
+    public void setstockPrice(BigDecimal stockPrice) {        
+        this.stockPrice = stockPrice;
+    }    
+    
+    /**
+     *
+     * @return stockPrice
      */
     public String getTime() {
         return time;
