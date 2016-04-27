@@ -77,26 +77,33 @@
                                          selectionMode="single"
                                          rows="#{tradingModel.companyRowCount}"
                                          >
-                                <p:column style="width:18%" headerText="Company">
+                                <p:column style="width:14%" headerText="Company">
                                     <h:outputText value="#{share.companyName}"/>
                                 </p:column>
-                                <p:column style="width:18%" headerText ="Share count">
+                                <p:column style="width:14%" headerText ="Share count">
                                     <h:outputText value="#{share.floatCount}"/>
                                 </p:column>
-                                <p:column style="width:18%" headerText = "Symbol">
+                                <p:column style="width:14%" headerText = "Symbol">
                                     <h:outputText value="#{share.symbol}"/>
                                 </p:column>
-                                <p:column style="width:18%" headerText = "Price at purchase">
+                                <p:column style="width:14%" headerText = "Price at purchase">
                                     <h:outputText value="#{share.price}">
                                         <f:convertNumber currencyCode="USD" type="currency" />
                                     </h:outputText>
                                 </p:column>
-                                <p:column style="width:36px;text-align: center">
+                                <p:column style="width:14%" headerText = "last known price">
+                                    <h:outputText value="#{share.stockPrice}">
+                                        <f:convertNumber currencyCode="USD" type="currency" />
+                                    </h:outputText>
+                                </p:column>
+                                <p:column style="width:32px;text-align: center">
                                     <p:commandButton value="Sell" title="Sell selected shares" oncomplete="PF('sellDialog').show()">
                                         <f:setPropertyActionListener value="#{share}" target="#{tradingModel.selectedShare}" />
                                     </p:commandButton>
                                 </p:column>
                             </p:dataTable>
+                            <p:commandButton ajax="true" value = "get current quotes" action="#{tradingModel.getDepotShares()}" title="get current quotes"  >  </p:commandButton>
+
                         </h:panelGrid>
                     </p:panel>
 
